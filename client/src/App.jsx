@@ -10,7 +10,6 @@ function App() {
     <Routes>
       <Route path="/" element={<Landing />} />
 
-      {/* Protected group */}
       <Route element={<ProtectedRoute />}>
         <Route path="/home" element={<Home />} />
         <Route path="/add" element={<Add />} />
