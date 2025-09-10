@@ -31,4 +31,25 @@ db.prepare(`CREATE TABLE IF NOT EXISTS sessions (
     )
 `).run();
 
+db.prepare(`CREATE TABLE IF NOT EXISTS recipes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    instructions TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+`).run();
+
+db.prepare(`CREATE TABLE IF NOT EXISTS ingredients(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    recipe_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    amount TEXT,
+    FOREIGN KEY (recipe_id) REFERENCES recipes(id)
+    )
+`).run();
+
+
 export default db;

@@ -36,6 +36,7 @@ function Home() {
       console.log(error);
     }
   }
+
   return (
     <div className="text-white p-5 lg:p-15 flex flex-col gap-5">
       <h2>User: {user.email}</h2>
