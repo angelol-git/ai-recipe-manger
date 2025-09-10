@@ -1,0 +1,37 @@
+import GoogleLoginButton from "../components/GoogleLoginButton";
+import { useNavigate } from "react-router";
+function Landing() {
+  const navigate = useNavigate();
+  async function handleSuccess(response) {
+    try {
+      const result = await fetch("http://localhost:8080/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: response.credential }),
+        credentials: "include",
+      });
+
+      if (result.ok) {
+        const data = await result.json();
+        console.log("Signed in as", data.user);
+        navigate("/home");
+      } else {
+        const err = await result.json();
+        console.error("Login failed:", err);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  return (
+    <div className="p-10 text-white bg-black h-screen flex flex-col gap-10">
+      <h1 className="text-2xl">Landing page</h1>
+      <div>
+        <GoogleLoginButton onSuccess={handleSuccess} />
+      </div>
+    </div>
+  );
+}
+
+export default Landing;
