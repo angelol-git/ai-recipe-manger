@@ -47,7 +47,7 @@ function Home() {
   }
 
   return (
-    <div className="text-white p-5 lg:p-15 flex flex-col gap-5">
+    <div className="text-text-primary bg-base p-5 lg:p-15 flex flex-col gap-5">
       <div className="flex gap-5 justify-between items-center">
         <h2>User: {user.email}</h2>
         <button

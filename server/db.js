@@ -38,11 +38,12 @@ db.prepare(`CREATE TABLE IF NOT EXISTS recipes (
     title TEXT NOT NULL,
     description TEXT,
     instructions TEXT NOT NULL,
+    ingredients TEXT NOT NULL,
     source_prompt TEXT,
     ai_model TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
-  FOREIGN KEY (parent_id) REFERENCES recipes(id)
+    FOREIGN KEY (parent_id) REFERENCES recipes(id)
     )
 `).run();
 

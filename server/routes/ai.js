@@ -9,11 +9,44 @@ const genAI = new GoogleGenAI(process.env.GOOGLE_API_KEY);
 router.post("/message", async (req, res) => {
     try {
         const { message } = req.body;
+        const prompt = `
+            You are a recipe extraction assistant. 
+
+            The user will send you a recipe request or modification. 
+            You must extract the recipe information and respond ONLY in raw valid JSON with this format (no markdown, no backticks, no extra text):
+            Do not include any text outside the JSON.
+
+            {
+            "title": "...",
+            "description": "...",
+            "ingredients": "...",
+            "instructions": "...",
+            "source_prompt": "...",
+            "ai_model": "gemini-2.5-flash"
+            }
+
+            Here is the user message: "${message}"
+        `;
+
         const response = await genAI.models.generateContent({
-            model: "gemini-2.0-flash",
-            contents: message,
+            model: "gemini-2.5-flash",
+            contents: prompt,
+
         });
-        res.json({ reply: response.text });
+        let recipe;
+
+        try {
+            recipe = JSON.parse(response.candidates[0].content.parts[0].text)
+            //console.log(recipe);
+        } catch (err) {
+            return res.status(500).json({ error: `Invalid JSON from AI: ${error}` });
+        }
+        // db.prepare(`
+        //     INSERT INTO recipes (user_id, title, description, instructions, source_prompt, ai_model)
+        //     VALUES (?, ?, ?, ?, ?, ?)
+        // `).run(userId, "Pasta", "Creamy pasta dish", "Boil pasta...", "Make pasta recipe", "gpt-4");
+
+        res.json({ reply: recipe });
     }
     catch (err) {
         console.error(err);

@@ -1,11 +1,11 @@
 @import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap');
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  background-color: rgb(112, 112, 112);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -19,5 +19,18 @@ body,
   margin: 0;
   padding: 0;
   height: 100%;
+}
 
+@theme {
+  --font-lora: "Lora,serif";
+
+  --color-base: #F8F5F1;
+  --color-mantle: #F1EAE4;
+  --color-crust: #EAE2DC;
+
+  --color-text-primary: #2C3039;
+  --color-text-secondary: #55595E;
+  --color-text-accent: #74B7C4;
+
+  --color-accent: #74B7C4;
 }
