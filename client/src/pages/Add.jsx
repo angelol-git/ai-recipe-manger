@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router";
+import DotsSvg from "../components/icons/DotsSvg.jsx";
+import SaveSvg from "../components/icons/SaveSvg.jsx";
+import DeleteSvg from "../components/icons/DeleteSvg.jsx";
+import ShareSvg from "../components/icons/ShareSvg.jsx";
 
 function Add() {
   const { state } = useLocation();
@@ -87,19 +91,38 @@ function Add() {
 
   return (
     <div className="bg-base flex flex-col h-screen text-text-primary p-5">
-      <div className="flex justify-between py-2 border-b-1 border-black/40 items-start">
+      <div className="gap-2 flex justify-between py-2 border-b-1 border-black/40 items-start">
         <h1 className="text-xl font-bold font-lora">
           {formData ? formData?.title : "Add"}
         </h1>
         <div className="flex sticky top-0 z-10 rounded justify-end gap-2">
           <button
             onClick={saveRecipe}
-            className="px-2 py-1 text-text-secondary bg-crust rounded-md"
+            className="px-2 py-1 bg-yellow flex font-semibold gap-2 rounded-md items-center"
           >
+            <SaveSvg />
             Save
           </button>
-          <button className="font-bold px-2 py-1 color-black rounded-md">
-            ...
+          <button className="font-bold px-2 py-1 color-black rounded-md relative">
+            <DotsSvg />
+            <div className="absolute right-0 z-10 bg-crust translate-y-3 p-2 rounded-lg  font-medium">
+              <ul className="p-1 flex flex-col">
+                <li className="border-b-1 border-black/40 py-2">
+                  <button className="flex items-center">
+                    <button className="flex w-[125px] justify-between items-center">
+                      <ShareSvg />
+                      <div>Share</div>
+                    </button>
+                  </button>
+                </li>
+                <li className="text-rose py-2">
+                  <button className="flex w-[125px] justify-between items-center ">
+                    <DeleteSvg />
+                    <div>Delete</div>
+                  </button>
+                </li>
+              </ul>
+            </div>
           </button>
         </div>
       </div>

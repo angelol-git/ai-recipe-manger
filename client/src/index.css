@@ -24,13 +24,30 @@ body,
 @theme {
   --font-lora: "Lora,serif";
 
+  /* Base layers */
   --color-base: #F8F5F1;
   --color-mantle: #F1EAE4;
   --color-crust: #EAE2DC;
+  --color-modal: #D6CFC7;
 
+  /* Text */
   --color-text-primary: #2C3039;
   --color-text-secondary: #55595E;
   --color-text-accent: #74B7C4;
 
+  /* Accents */
   --color-accent: #74B7C4;
+  --color-rose: #A94D54;
+  --color-peach: #FFB86C;
+  --color-yellow: #E5C890;
+  --color-green: #A6D189;
+  --color-sky: #89DCEB;
+  --color-blue: #739DF2;
+  --color-lavender: #B4BEFE;
+  --color-pink: #F5C2E7;
+
+  /* Subtle neutrals */
+  --color-overlay0: #DFD7D2;
+  --color-overlay1: #CFC7C2;
+  --color-overlay2: #BFB7B2;
 }
