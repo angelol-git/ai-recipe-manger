@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
+import ChatTitle from "../components/chat/ChatTitle.jsx";
 import DotsSvg from "../components/icons/DotsSvg.jsx";
 import SaveSvg from "../components/icons/SaveSvg.jsx";
 import DeleteSvg from "../components/icons/DeleteSvg.jsx";
@@ -13,6 +14,7 @@ function Chat() {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   useEffect(() => {
     if (state?.recipe) {
@@ -61,6 +63,17 @@ function Chat() {
     }
   }
 
+  function saveFormData(object) {
+    setFormData({
+      title: object.title,
+      description: object.description,
+      instructions: object.instructions,
+      ingredients: object.ingredients,
+      source_prompt: object.source_prompt,
+      ai_model: object.ai_model,
+    });
+  }
+
   async function saveRecipe() {
     if (Object.keys(formData).length === 0) return;
     try {
@@ -78,25 +91,9 @@ function Chat() {
     }
   }
 
-  function saveFormData(object) {
-    setFormData({
-      title: object.title,
-      description: object.description,
-      instructions: object.instructions,
-      ingredients: object.ingredients,
-      source_prompt: object.source_prompt,
-      ai_model: object.ai_model,
-    });
-  }
-
   async function handleDelete() {
     if (!id) return;
-    // setFormData(prev=>({
-    //   ...prev,
-    //   title:""
-    // }));
     try {
-      console.log("HERE");
       const result = await fetch(
         `http://localhost:8080/api/recipes/delete/${id}`,
         {
@@ -107,21 +104,44 @@ function Chat() {
       if (!result.ok) {
         throw new Error(`Server returned ${result.status}`);
       }
-
       navigate("/home");
     } catch (error) {
       console.log(`Error: ${error}`);
     }
   }
 
-  if (loading) return <p>Loading...</p>;
+  async function handleRename(draftTitle) {
+    try {
+      const result = await fetch(
+        `http://localhost:8080/api/recipes/editTitle/${id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ newTitle: draftTitle }),
+        }
+      );
 
+      console.log("HERE");
+      if (!result.ok) {
+        throw new Error(`Server returned ${result.status}`);
+      }
+    } catch (error) {
+      console.log(`Error: ${error}`);
+    }
+  }
+
+  if (loading) return <p>Loading...</p>;
   return (
     <div className="bg-base flex flex-col h-screen text-text-primary p-5">
       <div className="gap-2 flex justify-between py-2 border-b-1 border-black/40 items-start">
-        <h1 className="text-xl font-bold font-lora">
-          {formData ? formData?.title : "Chat"}
-        </h1>
+        <ChatTitle
+          title={formData.title}
+          setFormData={setFormData}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+          handleRename={handleRename}
+        />
         <div className="flex sticky top-0 z-10 rounded justify-end gap-2">
           <button
             onClick={saveRecipe}
@@ -139,16 +159,21 @@ function Chat() {
             <DotsSvg />
           </button>
           {isOptionsOpen ? (
-            <div className="absolute  right-0 z-10 bg-crust translate-y-10 p-2 rounded-lg  font-medium">
-              <ul className="p-1 flex gap-2 flex-col">
+            <div className="absolute right-0 z-10 bg-crust translate-y-12 p-2 rounded-lg  font-medium">
+              <ul className="p-1 flex gap-2 flex-col w-[150px]">
                 <li className="border-b-1 border-black/40 py-2">
-                  <button className="flex w-[125px] justify-between items-center">
+                  <button className="flex w-full justify-between items-center">
                     <ShareSvg />
                     <div>Share</div>
                   </button>
                 </li>
                 <li className="border-b-1 border-black/40 py-2">
-                  <button className="flex w-[125px] justify-between items-center">
+                  <button
+                    onClick={() => {
+                      setIsEditing(!isEditing);
+                    }}
+                    className="flex w-full justify-between items-center"
+                  >
                     <EditSvg />
                     <div>Rename</div>
                   </button>
@@ -156,7 +181,7 @@ function Chat() {
                 <li className="text-rose py-2">
                   <button
                     onClick={handleDelete}
-                    className="flex w-[125px] justify-between items-center"
+                    className="flex w-full justify-between items-center"
                   >
                     <DeleteSvg />
                     <div>Delete</div>

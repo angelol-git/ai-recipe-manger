@@ -1,7 +1,6 @@
 import express from "express";
 import db from "../db.js";
 import authMiddleware from "../middleware.js";
-import { auth } from "google-auth-library";
 
 const router = express.Router();
 
@@ -15,7 +14,6 @@ router.get("/", authMiddleware, async (req, res) => {
             LEFT JOIN tags t ON rt.tag_id = t.id
             WHERE r.user_id = ?
             GROUP BY r.id`).all(userId);
-        console.log(recipes);
         return res.json(recipes);
     }
     catch (error) {
@@ -34,7 +32,6 @@ router.get("/:id", authMiddleware, async (req, res) => {
             LEFT JOIN tags t ON rt.tag_id = t.id
             WHERE r.id = ?
             GROUP BY r.id`).get(id);
-        console.log(recipe);
         return res.json(recipe);
     }
     catch (error) {
@@ -65,6 +62,26 @@ router.delete("/delete/:id", authMiddleware, async (req, res) => {
         const result = db.prepare(`DELETE FROM recipes WHERE id = ?`).run(id);
 
         if (result.changes === 0) {
+            return res.status(404).json(({ message: "Recipe not found" }));
+        }
+        res.status(204).send();
+    }
+
+    catch (error) {
+        console.error("DB error:", error);
+        return res.status(500).json({ error: `DB error: ${error}` });
+    }
+})
+
+router.post("/editTitle/:id", authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    const { newTitle } = req.body;
+    console.log(newTitle);
+    try {
+        const result = db.prepare("UPDATE recipes SET title = ? WHERE id = ?").run(newTitle, id);
+        if (result.changes === 0) {
+
+            console.log("here");
             return res.status(404).json(({ message: "Recipe not found" }));
         }
         res.status(204).send();
