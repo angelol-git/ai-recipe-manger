@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
 import ChatTitle from "../components/chat/ChatTitle.jsx";
+import ChatInput from "../components/chat/ChatInput.jsx";
 import DotsSvg from "../components/icons/DotsSvg.jsx";
 import SaveSvg from "../components/icons/SaveSvg.jsx";
 import DeleteSvg from "../components/icons/DeleteSvg.jsx";
@@ -16,6 +17,18 @@ function Chat() {
   const [message, setMessage] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+
+  function saveFormData(object) {
+    setFormData({
+      title: object.title,
+      description: object.description,
+      instructions: object.instructions,
+      ingredients: object.ingredients,
+      source_prompt: object.source_prompt,
+      ai_model: object.ai_model,
+    });
+  }
+
   useEffect(() => {
     if (state?.recipe) {
       const stateData = state.recipe;
@@ -61,17 +74,6 @@ function Chat() {
     } catch (error) {
       console.log(`Error: ${error}`);
     }
-  }
-
-  function saveFormData(object) {
-    setFormData({
-      title: object.title,
-      description: object.description,
-      instructions: object.instructions,
-      ingredients: object.ingredients,
-      source_prompt: object.source_prompt,
-      ai_model: object.ai_model,
-    });
   }
 
   async function saveRecipe() {
@@ -122,7 +124,6 @@ function Chat() {
         }
       );
 
-      console.log("HERE");
       if (!result.ok) {
         throw new Error(`Server returned ${result.status}`);
       }
@@ -222,21 +223,11 @@ function Chat() {
           <div className="text-gray-400">No messages yet</div>
         )}
       </div>
-
-      <div className="flex gap-2 py-2">
-        <textarea
-          className="flex-1 border rounded p-2 text-primary border-black resize-none h-20"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Enter a recipe and any changes you will like to make..."
-        />
-        <button
-          className="cursor-pointer text-white bg-accent hover:bg-accent-dark px-4 py-2 rounded"
-          onClick={sendMessage}
-        >
-          Send
-        </button>
-      </div>
+      <ChatInput
+        message={message}
+        setMessage={setMessage}
+        sendMessage={sendMessage}
+      />
     </div>
   );
 }

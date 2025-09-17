@@ -76,7 +76,6 @@ router.delete("/delete/:id", authMiddleware, async (req, res) => {
 router.post("/editTitle/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
     const { newTitle } = req.body;
-    console.log(newTitle);
     try {
         const result = db.prepare("UPDATE recipes SET title = ? WHERE id = ?").run(newTitle, id);
         if (result.changes === 0) {
