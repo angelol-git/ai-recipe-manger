@@ -141,6 +141,12 @@ function Chat() {
         isSideBarOpen={isSideBarOpen}
         setIsSideBarOpen={setIsSideBarOpen}
       />
+      {isSideBarOpen && (
+        <div
+          className="fixed inset-0 bg-black/10 z-5"
+          onClick={() => setIsSideBarOpen(false)}
+        />
+      )}
       <div className="gap-2 flex w-full justify-between py-2 border-b-1 border-black/40 items-start">
         <div className="flex gap-3 items-center">
           <button onClick={() => setIsSideBarOpen(!isSideBarOpen)}>
@@ -155,7 +161,7 @@ function Chat() {
             handleRename={handleRename}
           />
         </div>
-        <div className="flex sticky top-0 z-10 rounded justify-end gap-2">
+        <div className="flex sticky top-0 rounded justify-end gap-2">
           <button
             onClick={saveRecipe}
             className="px-2 py-1 bg-yellow flex font-semibold gap-2 rounded-md items-center"

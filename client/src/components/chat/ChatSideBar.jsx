@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import CloseSvg from "../icons/CloseSvg";
 function ChatSideBar({ isSideBarOpen, setIsSideBarOpen }) {
   const [recipes, setRecipes] = useState([]);
+
   useEffect(() => {
     async function getData() {
       try {
@@ -19,6 +20,7 @@ function ChatSideBar({ isSideBarOpen, setIsSideBarOpen }) {
 
     getData();
   }, []);
+
   return (
     <nav
       className={`z-10 p-7 fixed top-0 left-0 h-full w-72 bg-base transition-transform duration-300 ease-in-out ${
