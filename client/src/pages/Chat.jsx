@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router";
 import ChatTitle from "../components/chat/ChatTitle.jsx";
+import ChatSideBar from "../components/chat/ChatSideBar.jsx";
+import ChatOptions from "../components/chat/ChatOptions.jsx";
 import ChatInput from "../components/chat/ChatInput.jsx";
 import DotsSvg from "../components/icons/DotsSvg.jsx";
 import MenuSvg from "../components/icons/MenuSvg.jsx";
 import SaveSvg from "../components/icons/SaveSvg.jsx";
-import DeleteSvg from "../components/icons/DeleteSvg.jsx";
-import ShareSvg from "../components/icons/ShareSvg.jsx";
-import EditSvg from "../components/icons/EditSvg.jsx";
-import ChatSideBar from "../components/chat/ChatSideBar.jsx";
 
 function Chat() {
   const navigate = useNavigate();
@@ -31,32 +29,35 @@ function Chat() {
     });
   }
 
-  useEffect(() => {
-    if (state?.recipe) {
-      const stateData = state.recipe;
-      saveFormData(stateData);
-      setLoading(false);
-    }
-  }, [state]);
+  // useEffect(() => {
+  //   if (state?.recipe) {
+  //     const stateData = state.recipe;
+  //     saveFormData(stateData);
+  //     setLoading(false);
+  //   }
+  // }, [state]);
 
   useEffect(() => {
-    if (!state?.recipe && id) {
-      async function fetchRecipe() {
-        try {
-          const result = await fetch(
-            `http://localhost:8080/api/recipes/${id}`,
-            {
-              credentials: "include",
-            }
-          );
-          const data = await result.json();
-          setFormData(data);
-        } catch (error) {
-          console.log(`Error fetching recipe: `, error);
-        } finally {
-          setLoading(false);
-        }
+    async function fetchRecipe() {
+      try {
+        const result = await fetch(`http://localhost:8080/api/recipes/${id}`, {
+          credentials: "include",
+        });
+        const data = await result.json();
+        saveFormData(data);
+      } catch (error) {
+        console.log("Error fetching recipe:", error);
+      } finally {
+        setLoading(false);
       }
+    }
+
+    if (state?.recipe) {
+      saveFormData(state.recipe);
+      setLoading(false);
+    }
+
+    if (id) {
       fetchRecipe();
     }
   }, [id, state]);
@@ -143,12 +144,12 @@ function Chat() {
       />
       {isSideBarOpen && (
         <div
-          className="fixed inset-0 bg-black/10 z-5"
+          className="fixed inset-0 bg-black/10 z-20"
           onClick={() => setIsSideBarOpen(false)}
         />
       )}
       <div className="gap-2 flex w-full justify-between py-2 border-b-1 border-black/40 items-start">
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-3 items-start">
           <button onClick={() => setIsSideBarOpen(!isSideBarOpen)}>
             <MenuSvg />
           </button>
@@ -161,13 +162,12 @@ function Chat() {
             handleRename={handleRename}
           />
         </div>
-        <div className="flex sticky top-0 rounded justify-end gap-2">
+        <div className="flex sticky z-10 top-0 rounded justify-end gap-2">
           <button
             onClick={saveRecipe}
             className="px-2 py-1 bg-yellow flex font-semibold gap-2 rounded-md items-center"
           >
             <SaveSvg />
-            Save
           </button>
           <button
             onClick={() => {
@@ -178,36 +178,11 @@ function Chat() {
             <DotsSvg />
           </button>
           {isOptionsOpen ? (
-            <div className="absolute right-0 z-10 bg-crust translate-y-12 p-2 rounded-lg  font-medium">
-              <ul className="p-1 flex gap-2 flex-col w-[150px]">
-                <li className="border-b-1 border-black/40 py-2">
-                  <button className="flex w-full justify-between items-center">
-                    <ShareSvg />
-                    <div>Share</div>
-                  </button>
-                </li>
-                <li className="border-b-1 border-black/40 py-2">
-                  <button
-                    onClick={() => {
-                      setIsEditing(!isEditing);
-                    }}
-                    className="flex w-full justify-between items-center"
-                  >
-                    <EditSvg />
-                    <div>Rename</div>
-                  </button>
-                </li>
-                <li className="text-rose py-2">
-                  <button
-                    onClick={handleDelete}
-                    className="flex w-full justify-between items-center"
-                  >
-                    <DeleteSvg />
-                    <div>Delete</div>
-                  </button>
-                </li>
-              </ul>
-            </div>
+            <ChatOptions
+              isEditing={isEditing}
+              setIsEditing={setIsEditing}
+              handleDelete={handleDelete}
+            />
           ) : null}
         </div>
       </div>

@@ -79,8 +79,6 @@ router.post("/editTitle/:id", authMiddleware, async (req, res) => {
     try {
         const result = db.prepare("UPDATE recipes SET title = ? WHERE id = ?").run(newTitle, id);
         if (result.changes === 0) {
-
-            console.log("here");
             return res.status(404).json(({ message: "Recipe not found" }));
         }
         res.status(204).send();
