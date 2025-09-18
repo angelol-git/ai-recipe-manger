@@ -1,7 +1,8 @@
 import { useRef, useEffect } from "react";
 import UpArrowSvg from "../icons/UpArrowSvg";
+import SpinnerSvg from "../icons/SpinnerSvg";
 
-function ChatInput({ message, setMessage, sendMessage }) {
+function ChatInput({ message, setMessage, sendMessage, isReplyLoading }) {
   const maxHeight = 160;
   const ref = useRef();
   useEffect(() => {
@@ -29,7 +30,7 @@ function ChatInput({ message, setMessage, sendMessage }) {
           className="flex items-center justify-center w-10 h-10 p-0 text-white bg-accent hover:bg-accent-dark rounded-full shrink-0"
           onClick={sendMessage}
         >
-          <UpArrowSvg />
+          {isReplyLoading ? <SpinnerSvg /> : <UpArrowSvg />}
         </button>
       )}
     </div>

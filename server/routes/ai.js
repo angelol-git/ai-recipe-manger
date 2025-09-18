@@ -10,36 +10,39 @@ router.post("/message", async (req, res) => {
     try {
         const { message } = req.body;
         const prompt = `
-        You are a recipe extraction assistant. 
+You are a recipe extraction assistant.
 
-        The user will send you a recipe request or modification. 
-        You must extract the recipe information and respond ONLY in raw valid JSON with this format (no markdown, no backticks, no extra text):
-        Do not include any text outside the JSON.
+The user will send you a recipe request, modification, or a URL pointing to a recipe.
 
-        If the user's message is NOT about a recipe, respond with this exact JSON (leaving fields empty except source_prompt and ai_model):
+1. If the user's message is a URL, fetch the webpage content and extract the recipe information from that page.
+2. If the user's message is plain text about a recipe, extract the recipe information from it.
+3. If the user's message is NOT about a recipe and not a URL, respond with an "empty" JSON.
 
-        {
-        "title": "",
-        "description": "",
-        "ingredients": "",
-        "instructions": "",
-        "source_prompt": "<copy the user message here>",
-        "ai_model": "gemini-2.5-flash"
-        }
+You must respond ONLY in raw valid JSON (no markdown, no backticks, no extra text):
 
-        Otherwise, return a properly extracted recipe in this JSON format:
+If the user's message is NOT about a recipe, return:
+{
+"title": "",
+"description": "",
+"ingredients": "",
+"instructions": "",
+"source_prompt": "<copy the user message here>",
+"ai_model": "gemini-2.5-flash"
+}
 
-        {
-        "title": "...",
-        "description": "...",
-        "ingredients": "...",
-        "instructions": "...",
-        "source_prompt": "<copy the user message here>",
-        "ai_model": "gemini-2.5-flash"
-        }
+Otherwise, return a properly extracted recipe in this format:
+{
+"title": "...",
+"description": "...",
+"ingredients": "...",
+"instructions": "...",
+"source_prompt": "<copy the user message here>",
+"ai_model": "gemini-2.5-flash"
+}
 
-        Here is the user message: "${message}"
-        `;
+Here is the user message: "${message}"
+`;
+
 
 
         const response = await genAI.models.generateContent({

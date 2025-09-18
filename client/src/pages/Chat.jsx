@@ -18,7 +18,7 @@ function Chat() {
   const [isValidResponse, setIsValidResponse] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
-
+  const [isReplyLoading, setIsReplyLoading] = useState(false);
   useEffect(() => {
     async function fetchRecipe() {
       try {
@@ -47,6 +47,7 @@ function Chat() {
   async function sendMessage() {
     if (message.length <= 0) return;
     try {
+      setIsReplyLoading(true);
       const result = await fetch("http://localhost:8080/api/ai/message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -54,7 +55,6 @@ function Chat() {
       });
 
       const data = await result.json();
-      console.log(data);
 
       saveCurrentRecipe(data.recipe);
       setMessage("");
@@ -74,6 +74,8 @@ function Chat() {
       setIsError(
         "Something went wrong while sending your message. Please try again."
       );
+    } finally {
+      setIsReplyLoading(false);
     }
   }
 
@@ -186,7 +188,7 @@ function Chat() {
         <div className="relative flex-1 py-3 overflow-y-auto">
           {isError && (
             <div className="flex flex-col gap-3">
-              <div className="p-3 rounded bg-gray-200 max-w-[80%] self-end">
+              <div className="p-3 rounded bg-gray-200 max-w-[80%] self-end wrap-break-word">
                 {currentRecipe.source_prompt}
               </div>
               <div className="p-3  rounded bg-rose-100 text-rose-700">
@@ -229,6 +231,7 @@ function Chat() {
         message={message}
         setMessage={setMessage}
         sendMessage={sendMessage}
+        isReplyLoading={isReplyLoading}
       />
     </div>
   );
