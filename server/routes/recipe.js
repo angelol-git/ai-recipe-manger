@@ -88,7 +88,6 @@ router.get("/:id", authMiddleware, async (req, res) => {
 router.post("/save", authMiddleware, async (req, res) => {
     const userId = req.user.id;
     const { recipeId, recipe } = req.body;
-    console.log(recipe);
     try {
         //if first save/new insert into recipes parent
         if (!recipeId) {

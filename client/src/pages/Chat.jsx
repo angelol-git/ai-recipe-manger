@@ -21,7 +21,7 @@ function Chat() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [isReplyLoading, setIsReplyLoading] = useState(false);
-
+  const [currentVersion, setCurrentVersion] = useState(0);
   useEffect(() => {
     async function fetchRecipe() {
       try {
@@ -170,16 +170,6 @@ function Chat() {
     );
   }
 
-  function saveRootRecipe(object) {
-    // console.log(object);
-    setRecipe({
-      id: object.id || null,
-      title: object.title,
-      relation: object.relation || "reply",
-      versions: object.versions,
-    });
-  }
-
   if (isLoading) return <p>Loading...</p>;
   return (
     <div className="relative bg-base flex flex-col h-screen text-text-primary p-5 w-full">
@@ -227,6 +217,7 @@ function Chat() {
 
         {!errorMessage && isValidResponse && Object.keys(recipe).length > 0 && (
           <ChatReply
+            currentVersion={currentVersion}
             versions={recipe.versions}
             isReplyLoading={isReplyLoading}
           />
@@ -241,6 +232,9 @@ function Chat() {
         setMessage={setMessage}
         sendMessage={sendMessage}
         isReplyLoading={isReplyLoading}
+        recipeVersions={recipe.versions}
+        currentVersion={currentVersion}
+        setCurrentVersion={setCurrentVersion}
       />
     </div>
   );

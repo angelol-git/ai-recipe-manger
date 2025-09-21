@@ -1,8 +1,19 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import UpArrowSvg from "../icons/UpArrowSvg";
+import LeftArrowSvg from "../icons/LeftArrowSvg";
+import RightArrowSvg from "../icons/RightArrowSvg";
 import SpinnerSvg from "../icons/SpinnerSvg";
 
-function ChatInput({ message, setMessage, sendMessage, isReplyLoading }) {
+function ChatInput({
+  message,
+  setMessage,
+  sendMessage,
+  isReplyLoading,
+  recipeVersions,
+  currentVersion,
+  setCurrentVersion,
+}) {
+  const [focused, setFocused] = useState(false);
   const maxHeight = 160;
   const ref = useRef();
   useEffect(() => {
@@ -14,13 +25,39 @@ function ChatInput({ message, setMessage, sendMessage, isReplyLoading }) {
       )}px`;
     }
   }, [message, maxHeight]);
+
+  function handleNextVersion() {
+    if (recipeVersions.length > currentVersion + 1) {
+      setCurrentVersion((prev) => prev + 1);
+    }
+  }
+
+  function handlePrevVersion() {
+    if (currentVersion > 0) {
+      setCurrentVersion((prev) => prev - 1);
+    }
+  }
+
   return (
-    <div className="flex  max-h-40 items-end gap-2 p-1 border rounded-2xl border-gray-300">
+    <div className="flex items-center max-h-40 gap-2 px-2 py-1 border rounded-2xl border-gray-300">
+      {!focused && (
+        <div className="flex gap-2">
+          <button onClick={handlePrevVersion}>
+            <LeftArrowSvg />
+          </button>
+          <button onClick={handleNextVersion}>
+            <RightArrowSvg />
+          </button>
+        </div>
+      )}
+
       <textarea
         ref={ref}
         className="flex-1 px-3 py-2 h-2 outline-none"
         style={{ maxHeight: `${maxHeight}px`, overflowY: "auto" }}
         value={message}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Enter a recipe or any changes"
       />
