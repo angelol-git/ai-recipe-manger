@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 
 function ChatTitle({
   title,
-  setCurrentRecipe,
+  setRecipe,
   isEditing,
   setIsEditing,
   handleRename,
@@ -21,7 +21,7 @@ function ChatTitle({
   }, [isEditing]);
 
   function handleSave() {
-    setCurrentRecipe((prev) => ({
+    setRecipe((prev) => ({
       ...prev,
       title: draftTitle,
     }));

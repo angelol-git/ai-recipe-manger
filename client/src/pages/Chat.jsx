@@ -22,6 +22,7 @@ function Chat() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [isReplyLoading, setIsReplyLoading] = useState(false);
   const [currentVersion, setCurrentVersion] = useState(0);
+
   useEffect(() => {
     async function fetchRecipe() {
       try {
@@ -126,13 +127,10 @@ function Chat() {
   async function handleDelete() {
     if (!id) return;
     try {
-      const result = await fetch(
-        `http://localhost:8080/api/recipes/delete/${id}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      const result = await fetch(`http://localhost:8080/api/recipes/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       if (!result.ok) {
         throw new Error(`Server returned ${result.status}`);
       }
@@ -173,10 +171,10 @@ function Chat() {
   if (isLoading) return <p>Loading...</p>;
   return (
     <div className="relative bg-base flex flex-col h-screen text-text-primary p-5 w-full">
-      {/* <ChatSideBar
+      <ChatSideBar
         isSideBarOpen={isSideBarOpen}
         setIsSideBarOpen={setIsSideBarOpen}
-      /> */}
+      />
       {isSideBarOpen && (
         <div
           className="fixed inset-0 bg-black/10 z-20"
@@ -190,7 +188,7 @@ function Chat() {
           </button>
           <ChatTitle
             title={recipe.title}
-            setCurrentRecipe={recipe}
+            setRecipe={setRecipe}
             isEditing={isEditing}
             setIsEditing={setIsEditing}
             handleRename={handleRename}

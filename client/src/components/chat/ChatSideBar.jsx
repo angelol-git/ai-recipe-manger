@@ -17,7 +17,6 @@ function ChatSideBar({ isSideBarOpen, setIsSideBarOpen }) {
         console.log(error);
       }
     }
-
     getData();
   }, []);
 
