@@ -127,6 +127,7 @@ function Chat() {
 
     const prevRecipe = recipe;
     const v_id = recipe.versions[currentVersion].id;
+    console.log(recipe);
     const updatedVersions = recipe.versions.filter((item) => {
       return item.id !== v_id;
     });
