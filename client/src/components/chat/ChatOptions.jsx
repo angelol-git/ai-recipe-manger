@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import DeleteSvg from "../icons/DeleteSvg.jsx";
 import ShareSvg from "../icons/ShareSvg.jsx";
 import EditSvg from "../icons/EditSvg.jsx";
-import ForkSvg from "../icons/ForkSvg.jsx";
+
 import DotsSvg from "../icons/DotsSvg.jsx";
 import WarningSvg from "../icons/WarningSvg.jsx";
 
 function ChatOptions({
   recipe,
-  handleFork,
   isEditing,
   setIsEditing,
   handleDelete,
@@ -17,6 +16,8 @@ function ChatOptions({
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const menuRef = useRef(null);
   useEffect(() => {
+    if (!isOptionsOpen) return;
+
     function handleClickOutside(e) {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setIsOptionsOpen(false);
@@ -31,16 +32,10 @@ function ChatOptions({
   }, [isOptionsOpen]);
 
   return (
-    <div className="flex sticky z-10 top-0 rounded justify-end gap-2">
-      <button
-        onClick={handleFork}
-        className="px-2 py-1 bg-yellow flex font-semibold gap-2 rounded-md items-center"
-      >
-        <ForkSvg />
-      </button>
+    <div ref={menuRef}>
       <button
         onClick={() => {
-          setIsOptionsOpen(!isOptionsOpen);
+          setIsOptionsOpen((prev) => !prev);
         }}
         className={`cursor-pointer font-bold px-2 py-1 color-black rounded-md relative ${
           isOptionsOpen ? "bg-gray-300/30" : null
@@ -50,14 +45,14 @@ function ChatOptions({
       </button>
       {isOptionsOpen ? (
         <div
-          ref={menuRef}
-          className="absolute right-0 z-100 bg-crust translate-y-12 p-2 rounded-lg shadow-lg"
+          className="absolute right-0 z-50 bg-crust translate-y-12 p-2 rounded-lg shadow-lg"
+          role="menu"
         >
           <ul className="p-1 flex gap-2 flex-col w-[150px]">
-            <li className="border-b-1 border-black/40 py-2">
+            <li className="border-b-1 border-black/40 py-2" role="menu-item">
               <button
                 onClick={() => {
-                  setIsOptionsOpen(!isOptionsOpen);
+                  setIsOptionsOpen((prev) => !prev);
                 }}
                 className="flex z-100 w-full justify-between items-center"
               >
@@ -68,7 +63,7 @@ function ChatOptions({
             <li className="border-b-1 border-black/40 py-2">
               <button
                 onClick={() => {
-                  setIsOptionsOpen(!isOptionsOpen);
+                  setIsOptionsOpen((prev) => !prev);
                   setIsEditing(!isEditing);
                 }}
                 className="flex w-full justify-between items-center"
@@ -80,8 +75,8 @@ function ChatOptions({
             <li className="text-rose py-2 border-black/40 border-b-1">
               <button
                 onClick={() => {
-                  setIsOptionsOpen(!isOptionsOpen);
-                  if (recipe.versions.length === 1) {
+                  setIsOptionsOpen((prev) => !prev);
+                  if (recipe.versions?.length === 1) {
                     handleDeleteAll();
                   } else {
                     handleDelete();
@@ -96,7 +91,7 @@ function ChatOptions({
             <li className="text-rose py-2 font-bold">
               <button
                 onClick={() => {
-                  setIsOptionsOpen(!isOptionsOpen);
+                  setIsOptionsOpen((prev) => !prev);
                   handleDeleteAll();
                 }}
                 className="flex w-full justify-between items-center"

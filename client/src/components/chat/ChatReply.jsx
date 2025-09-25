@@ -1,4 +1,9 @@
-function ChatReply({ currentVersion, versions, isReplyLoading }) {
+function ChatReply({
+  currentVersion,
+  versions,
+  isReplyLoading,
+  setIsModalOpen,
+}) {
   return (
     <div className="flex flex-col gap-3">
       <div>{versions?.[currentVersion]?.description}</div>
@@ -31,7 +36,9 @@ function ChatReply({ currentVersion, versions, isReplyLoading }) {
       )}
       {versions[currentVersion].source_prompt && !isReplyLoading && (
         <div className="flex justify-between text-text-secondary/80 text-sm">
-          <button className="underline">View prompt</button>
+          <button onClick={() => setIsModalOpen(true)} className="underline">
+            View prompt
+          </button>
           <p className="text-text-secondary/80">
             {currentVersion + 1} of {versions.length}
           </p>

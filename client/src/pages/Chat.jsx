@@ -4,23 +4,24 @@ import ChatTitle from "../components/chat/ChatTitle.jsx";
 import ChatSideBar from "../components/chat/ChatSideBar.jsx";
 import ChatOptions from "../components/chat/ChatOptions.jsx";
 import ChatInput from "../components/chat/ChatInput.jsx";
-
-import MenuSvg from "../components/icons/MenuSvg.jsx";
 import ChatReply from "../components/chat/ChatReply.jsx";
+import ChatModal from "../components/chat/ChatModal.jsx";
+import MenuSvg from "../components/icons/MenuSvg.jsx";
+import ForkSvg from "../components/icons/ForkSvg.jsx";
 
 function Chat() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { state: initialState } = useLocation();
-
   const [recipe, setRecipe] = useState({});
+  const [currentVersion, setCurrentVersion] = useState(0);
+
+  const [isReplyLoading, setIsReplyLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState("");
-
   const [isEditing, setIsEditing] = useState(false);
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
-  const [isReplyLoading, setIsReplyLoading] = useState(false);
-  const [currentVersion, setCurrentVersion] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // const [errorMessage, setErrorMessage] = useState(null);
   const [isValidResponse, setIsValidResponse] = useState(true);
@@ -127,11 +128,13 @@ function Chat() {
 
     const prevRecipe = recipe;
     const v_id = recipe.versions[currentVersion].id;
-    console.log(recipe);
     const updatedVersions = recipe.versions.filter((item) => {
       return item.id !== v_id;
     });
 
+    if (currentVersion === recipe.versions.length - 1) {
+      setCurrentVersion((prev) => prev - 1);
+    }
     setRecipe((prev) => {
       return { ...prev, versions: updatedVersions };
     });
@@ -227,14 +230,21 @@ function Chat() {
             handleRename={handleRename}
           />
         </div>
-        <ChatOptions
-          recipe={recipe}
-          handleFork={handleFork}
-          isEditing={isEditing}
-          setIsEditing={setIsEditing}
-          handleDelete={handleDelete}
-          handleDeleteAll={handleDeleteAll}
-        />
+        <div className="flex gap-2">
+          <button
+            onClick={handleFork}
+            className="px-2 py-1 bg-yellow flex font-semibold gap-2 rounded-md items-center"
+          >
+            <ForkSvg />
+          </button>
+          <ChatOptions
+            recipe={recipe}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
+            handleDelete={handleDelete}
+            handleDeleteAll={handleDeleteAll}
+          />
+        </div>
       </div>
       <div className="relative flex-1 py-3 overflow-y-auto">
         {isValidResponse && Object.keys(recipe).length > 0 && (
@@ -242,12 +252,18 @@ function Chat() {
             currentVersion={currentVersion}
             versions={recipe.versions}
             isReplyLoading={isReplyLoading}
+            setIsModalOpen={setIsModalOpen}
           />
         )}
         {(!isValidResponse || Object.keys(recipe).length === 0) && (
           <div className="text-gray-400">No messages yet</div>
         )}
       </div>
+      <ChatModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        source_prompt={recipe.versions[currentVersion].source_prompt}
+      />
       <ChatInput
         message={message}
         setMessage={setMessage}
