@@ -1,3 +1,7 @@
+import UtensilsSvg from "../icons/UtensilsSvg";
+import FireSvg from "../icons/FireSvg";
+import ClockSvg from "../icons/ClockSvg";
+
 function ChatReply({
   version,
   isReplyLoading,
@@ -8,10 +12,22 @@ function ChatReply({
   if (!version) return null;
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex gap-5">
-        <div>{version.calories} kcal</div>
-        <div>{version.total_time}</div>
-        <div>{version.servings}</div>
+      <div className="flex gap-4">
+        <div className="flex gap-1 items-center">
+          <FireSvg />
+          <div>{version.calories}</div>
+          kcal
+        </div>
+        <div className="flex gap-1 items-center">
+          <ClockSvg />
+          <div>{version.total_time}</div>
+          mins
+        </div>
+        <div className="flex gap-1 items-center">
+          <UtensilsSvg />
+          <div>{version.servings}</div>
+          servings
+        </div>
       </div>
       <div>{version.description}</div>
       {version.ingredients && (

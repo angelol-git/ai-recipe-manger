@@ -60,8 +60,6 @@ function Home() {
     return new Date(dateString).toLocaleDateString(undefined, options);
   }
 
-  console.log(recipes);
-
   return (
     <div className="text-text-primary bg-base p-5 lg:p-15 flex flex-col h-screen gap-5">
       <div className="flex gap-5 justify-between items-center">
