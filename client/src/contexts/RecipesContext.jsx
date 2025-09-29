@@ -24,7 +24,7 @@ export function RecipesProvider({ children }) {
         });
         const recipesData = await recipesRes.json();
         setRecipes(recipesData);
-        console.log(recipesData);
+        //console.log(recipesData);
       } catch (error) {
         console.error(error);
       } finally {
@@ -153,8 +153,8 @@ export function RecipesProvider({ children }) {
       if (!result.ok) {
         throw new Error("Failed to update recipe");
       }
-      const data = await result.json();
-      console.log(data);
+      // const data = await result.json();
+      // console.log(data);
     } catch (error) {
       console.error(error);
       setRecipes(prevRecipe);
