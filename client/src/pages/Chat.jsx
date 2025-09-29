@@ -101,8 +101,7 @@ function Chat() {
 
   async function handleDelete() {
     if (!recipe.id) return;
-
-    deleteRecipe(recipe.id, recipe[currentVersion]);
+    deleteRecipe(recipe.id, recipe.versions[currentVersion].id);
 
     if (currentVersion === recipe.versions.length - 1) {
       setCurrentVersion((prev) => prev - 1);
@@ -112,8 +111,7 @@ function Chat() {
   async function handleDeleteAll() {
     if (!recipe.id) return;
 
-    const result = deleteRecipeAll(recipe.id);
-    console.log(result);
+    const result = await deleteRecipeAll(recipe.id);
     if (result.ok) {
       navigate("/home");
     }

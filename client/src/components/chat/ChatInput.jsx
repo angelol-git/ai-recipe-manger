@@ -72,7 +72,7 @@ function ChatInput({
 
       {message.length > 0 && (
         <button
-          className="flex items-center justify-center w-10 h-10 p-0 text-white bg-accent hover:bg-accent-dark rounded-full shrink-0"
+          className="cursor-pointer flex items-center justify-center w-10 h-10 p-0 text-white bg-accent hover:bg-accent-dark rounded-full shrink-0"
           onClick={sendMessage}
         >
           {isReplyLoading ? <SpinnerSvg /> : <UpArrowSvg />}

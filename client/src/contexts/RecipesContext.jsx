@@ -24,6 +24,7 @@ export function RecipesProvider({ children }) {
         });
         const recipesData = await recipesRes.json();
         setRecipes(recipesData);
+        console.log(recipesData);
       } catch (error) {
         console.error(error);
       } finally {
@@ -60,17 +61,24 @@ export function RecipesProvider({ children }) {
   }
 
   async function deleteRecipe(recipeId, recipeVersionId) {
-    console.log(recipeVersionId);
     const prevRecipe = recipes;
     const index = recipes.findIndex((r) => r.id === recipeId);
-    console.log(recipes[index].versions);
+
+    if (index === -1) return;
+
     const updatedVersions = recipes[index].versions.filter((item) => {
       return item.id !== recipeVersionId;
     });
 
     setRecipes((prev) => {
-      return { ...prev, versions: updatedVersions };
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        versions: updatedVersions,
+      };
+      return updated;
     });
+
     try {
       const result = await fetch(
         `http://localhost:8080/api/recipes/version/${recipeVersionId}`,
@@ -90,6 +98,17 @@ export function RecipesProvider({ children }) {
   }
 
   async function deleteRecipeAll(recipeId) {
+    const prevRecipes = recipes;
+    const index = recipes.findIndex((r) => r.id === recipeId);
+
+    if (index === -1) return;
+    setRecipes((prev) => {
+      return prev.filter((item) => {
+        if (item.id !== recipeId) {
+          return item;
+        }
+      });
+    });
     try {
       const result = await fetch(
         `http://localhost:8080/api/recipes/${recipeId}`,
@@ -105,6 +124,7 @@ export function RecipesProvider({ children }) {
       }
       return result;
     } catch (error) {
+      setRecipes(prevRecipes);
       console.log(error);
     }
   }
