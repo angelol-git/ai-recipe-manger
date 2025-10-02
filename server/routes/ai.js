@@ -96,7 +96,6 @@ function validateAiResponse(response, recipe, recipeId, req, res) {
             reply.id = recipeId;
             reply.versionId = versionResult.lastInsertRowid;
         }
-        console.log(reply);
         return res.json({ reply });
     }
 

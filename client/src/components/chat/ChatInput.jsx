@@ -14,14 +14,32 @@ function ChatInput({
   currentVersion,
   setCurrentVersion,
 }) {
-  const [focused, setFocused] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const isExpandedRef = useRef();
+  const textAreaRef = useRef();
   const maxHeight = 160;
-  const ref = useRef();
+
   useEffect(() => {
-    if (ref.current) {
-      ref.current.style = "auto";
-      ref.current.style.height = `${Math.min(
-        ref.current.scrollHeight,
+    if (!isExpanded) return;
+
+    function handleClickOutside(e) {
+      if (isExpandedRef.current && !isExpandedRef.current.contains(e.target)) {
+        setIsExpanded(false);
+      }
+    }
+    if (isExpanded) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isExpanded]);
+
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style = "auto";
+      textAreaRef.current.style.height = `${Math.min(
+        textAreaRef.current.scrollHeight,
         maxHeight
       )}px`;
     }
@@ -40,13 +58,19 @@ function ChatInput({
   }
 
   return (
-    <div className="flex-col px-3 py-1 border rounded-2xl border-gray-300">
+    <div
+      ref={isExpandedRef}
+      onClick={() => {
+        setIsExpanded(true);
+      }}
+      className="flex-col px-3 py-1 border rounded-2xl border-gray-300"
+    >
       <div
         className={`flex gap-3 items-center w-full max-h-40 ${
           message.length > 0 ? "items-start" : "items-center"
         }`}
       >
-        {!focused && recipeVersions?.length > 0 && message.length === 0 && (
+        {!isExpanded && recipeVersions?.length > 0 && message.length === 0 && (
           <div className="flex gap-3">
             <button
               onClick={handlePrevVersion}
@@ -66,12 +90,12 @@ function ChatInput({
         )}
 
         <textarea
-          ref={ref}
+          ref={textAreaRef}
           className={`flex-1 h-4 outline-none `}
           style={{ maxHeight: `${maxHeight}px`, overflowY: "auto" }}
           value={message}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          // onFocus={() => setIsExpanded(true)}
+          // onBlur={() => setIsExpanded(false)}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Enter any recipe"
         />
@@ -83,7 +107,7 @@ function ChatInput({
           {isReplyLoading ? <SpinnerSvg /> : <UpArrowSvg />}
         </button>
       </div>
-      {(message.length > 0 || focused) && (
+      {(message.length > 0 || isExpanded) && (
         <div className="flex gap-2">
           <div className="flex gap-3">
             <button
