@@ -121,7 +121,7 @@ function ChatInput({
             <button onClick={handleNextVersion} className="cursor-pointer">
               <RightArrowSvg
                 currentVersion={currentVersion}
-                max={recipeVersions.length - 1}
+                max={recipeVersions?.length - 1}
               />
             </button>
           </div>

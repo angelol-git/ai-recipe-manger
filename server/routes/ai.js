@@ -158,8 +158,16 @@ function genAIPrompt(currentVersion, message) {
     Rules:
     - If no servings, calories, or total_time are available from the source, give an approximate numeric estimate.
     - The instructions field must always be a numbered list (1., 2., 3. ...).
-    - The ingredients field must always be a plain list of strings, one ingredient per item, without dashes or bullets.
-
+    - The ingredients field must always be a plain list of strings, one ingredient per item, without dashes or bullets. 
+    - The ingredients field must always be a plain list of strings, one ingredient per item, without dashes or bullets. 
+    - If an ingredient lists a volume or count (e.g. "1/2 cup flour", "1 onion") but does NOT include grams, 
+    then add the approximate grams in parentheses (e.g. "1/2 cup flour (60g)").
+    - If an ingredient lists grams but no cups/volume, add the approximate cup/tablespoon equivalent in parentheses 
+    (e.g. "200g sugar (1 cup)").
+    - If both are present in the source, keep them as-is without duplication.
+    - If an ingredient uses teaspoons (tsp) or tablespoons (tbsp), do NOT add grams.
+    - Only add grams for larger volume-based measurements like cups, pints, or quarts.
+    
     Here is the user message: "${message}"
     `)
 }
