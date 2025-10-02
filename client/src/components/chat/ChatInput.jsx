@@ -45,13 +45,15 @@ function ChatInput({
     }
   }, [message, maxHeight]);
 
-  function handleNextVersion() {
+  function handleNextVersion(event) {
+    event.stopPropagation();
     if (recipeVersions?.length > currentVersion + 1) {
       setCurrentVersion((prev) => prev + 1);
     }
   }
 
-  function handlePrevVersion() {
+  function handlePrevVersion(event) {
+    event.stopPropagation();
     if (currentVersion > 0) {
       setCurrentVersion((prev) => prev - 1);
     }
