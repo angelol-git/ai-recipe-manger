@@ -11,6 +11,7 @@ import ChatModal from "../components/chat/ChatModal.jsx";
 import MenuSvg from "../components/icons/MenuSvg.jsx";
 import ForkSvg from "../components/icons/ForkSvg.jsx";
 import { useEffect } from "react";
+import ChatErrorModal from "../components/chat/ChatErrorModal.jsx";
 
 function Chat() {
   const navigate = useNavigate();
@@ -24,7 +25,8 @@ function Chat() {
   const [isReplyLoading, setIsReplyLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [errors, setErrors] = useState([]);
   const [toast, setToast] = useState(null);
 
@@ -182,7 +184,10 @@ function Chat() {
       )}
       <div className="gap-2 flex w-full justify-between py-2 border-b-1 border-black/40 items-start">
         <div className="flex gap-3 items-start">
-          <button onClick={() => setIsSideBarOpen(!isSideBarOpen)}>
+          <button
+            onClick={() => setIsSideBarOpen(!isSideBarOpen)}
+            className="cursor-pointer"
+          >
             <MenuSvg />
           </button>
           <ChatTitle
@@ -212,8 +217,10 @@ function Chat() {
         {recipe?.id ? (
           <ChatReply
             versions={recipe.versions}
+            errors={errors}
             isReplyLoading={isReplyLoading}
-            setIsModalOpen={setIsModalOpen}
+            setIsPromptModalOpen={setIsPromptModalOpen}
+            setIsErrorModalOpen={setIsErrorModalOpen}
             currentVersion={currentVersion}
             totalVersion={recipe.versions.length}
           />
@@ -222,9 +229,14 @@ function Chat() {
         )}
       </div>
       <ChatModal
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
+        isPromptModalOpen={isPromptModalOpen}
+        setIsPromptModalOpen={setIsPromptModalOpen}
         source_prompt={recipe?.versions?.[currentVersion].source_prompt}
+      />
+      <ChatErrorModal
+        isErrorModalOpen={isErrorModalOpen}
+        setIsErrorModalOpen={setIsErrorModalOpen}
+        errors={errors}
       />
       {toast && (
         <Toast

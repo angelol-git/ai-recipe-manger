@@ -118,7 +118,7 @@ router.get("/errors/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
     try {
         const response = db.prepare(`
-            SELECT status,content,created_at
+            SELECT id,status,content,created_at
             FROM messages
             WHERE recipe_id = ?
                 AND status = 'error'

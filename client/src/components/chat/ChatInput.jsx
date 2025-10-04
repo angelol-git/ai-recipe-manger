@@ -43,7 +43,6 @@ function ChatInput({
         Math.max(textAreaRef.current.scrollHeight, minHeight),
         maxHeight
       )}px`;
-      console.log(textAreaRef);
     }
   }, [message]);
 

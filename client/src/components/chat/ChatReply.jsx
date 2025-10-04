@@ -4,8 +4,10 @@ import ClockSvg from "../icons/ClockSvg";
 
 function ChatReply({
   versions,
+  errors,
   isReplyLoading,
-  setIsModalOpen,
+  setIsPromptModalOpen,
+  setIsErrorModalOpen,
   currentVersion,
   totalVersion,
 }) {
@@ -66,16 +68,16 @@ function ChatReply({
         <div className="flex justify-between text-text-secondary/80 text-sm">
           <div className="flex gap-2">
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => setIsPromptModalOpen(true)}
               className="underline cursor-pointer"
             >
               View prompt
             </button>
             <button
-              onClick={() => setIsModalOpen(true)}
-              className="underline text-rose"
+              onClick={() => setIsErrorModalOpen(true)}
+              className="underline text-rose cursor-pointer"
             >
-              Errors(2)
+              Errors {errors?.length > 0 ? `(${errors.length})` : null}
             </button>
           </div>
           <p className="text-text-secondary/80">

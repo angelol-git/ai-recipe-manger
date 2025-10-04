@@ -7,6 +7,7 @@ import { GoogleGenAI } from "@google/genai";
 dotenv.config();
 const router = express.Router();
 const genAI = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+
 router.post("/message", authMiddleware, async (req, res) => {
     const { message, recipe, currentVersion, recipeId } = req.body;
     try {
@@ -41,8 +42,10 @@ function validateAiResponse(response, recipe, recipeId, req, res) {
     try {
         reply = JSON.parse(rawResponse);
     } catch (err) {
+
         reply = {
             error: "Invalid JSON from AI",
+            errorMessage: "The recipe could not be generated because the AI’s response was incomplete. Please try again.",
             raw: rawResponse,
             source_prompt: req.body.message,
             ai_model: "gemini-2.5-flash"
@@ -60,10 +63,21 @@ function validateAiResponse(response, recipe, recipeId, req, res) {
         if (!reply.title?.trim() ||
             !reply.ingredients?.trim() ||
             !reply.instructions?.trim()) {
+
+            reply = {
+                error: "Invalid input",
+                errorMessage: "Recipe could not be generated from this input. Please try again.",
+                raw: rawResponse,
+                source_prompt: req.body.message,
+                ai_model: "gemini-2.5-flash"
+            };
+
             db.prepare(`
                 INSERT INTO messages (user_id, recipe_id, role, content,status)
                 VALUES (?, ?, 'assistant', ?,'error')
             `).run(req.user.id, recipeId || null, JSON.stringify(reply));
+
+
             return res.status(400).json({ error: { code: "INVALID_RECIPE", message: "Recipe could not be generated from this input", details: reply } });
         }
         db.prepare(`
