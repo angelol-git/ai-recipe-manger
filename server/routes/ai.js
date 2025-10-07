@@ -12,17 +12,42 @@ router.post("/message", authMiddleware, async (req, res) => {
     const { message, recipe, currentVersion, recipeId } = req.body;
     try {
         db.prepare(`
-            INSERT INTO messages (user_id, recipe_id, role, content)
-            VALUES (?, ?, 'user', ?)
+            INSERT INTO messages (user_id, recipe_id, role, content,status)
+            VALUES (?, ?, 'user', ?,'create')
         `).run(req.user.id, recipeId || null, message);
 
-        const prompt = genAIPrompt(currentVersion, message);
+        const prompt = createPrompt(currentVersion, message);
         const response = await genAI.models.generateContent({
             model: "gemini-2.5-flash",
             contents: [{ type: "text", text: prompt }],
         });
 
         validateAiResponse(response, recipe, recipeId, req, res);
+    }
+
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Something went wrong" })
+    }
+})
+
+router.post("/ask", authMiddleware, async (req, res) => {
+    const { message, currentVersion, recipeId } = req.body;
+
+    try {
+        db.prepare(`
+            INSERT INTO messages (user_id, recipe_id, role, content,status)
+            VALUES (?, ?, 'user', ?,'ask')
+        `).run(req.user.id, recipeId || null, message);
+
+        const prompt = askPrompt(currentVersion, message);
+        const response = await genAI.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: [{ type: "text", text: prompt }],
+        });
+
+        let reply = response.candidates[0].content.parts[0].text.trim();
+        return res.json({ reply });
     }
 
     catch (err) {
@@ -118,7 +143,7 @@ function validateAiResponse(response, recipe, recipeId, req, res) {
     }
 }
 
-function genAIPrompt(currentVersion, message) {
+function createPrompt(currentVersion, message) {
     return (`
     You are a recipe extraction assistant.
 
@@ -184,4 +209,32 @@ function genAIPrompt(currentVersion, message) {
     Here is the user message: "${message}"
     `)
 }
+
+function askPrompt(currentVersion, message) {
+    return (`
+    You are a cooking and recipe assistant.
+
+    You only discuss topics related to food, cooking, ingredients, kitchen techniques, nutrition, and recipes.
+
+    If the user asks about anything unrelated to cooking or recipes (for example: technology, current events, movies, math, philosophy, etc.), politely refuse and say:
+    "I'm here to help only with cooking and recipe questions."
+
+    Here is the current recipe you and the user are discussing:
+    ${currentVersion ? JSON.stringify(currentVersion) : "{}"}
+
+    The user will now ask a question or make a comment about this recipe.
+    Your job is to respond naturally and helpfully, in plain text — not JSON.
+
+    Guidelines:
+    - Speak conversationally and clearly.
+    - Reference ingredients, steps, or quantities if relevant.
+    - Suggest modifications, substitutions, or cooking tips if the user asks for them.
+    - If the user asks for nutrition, servings, or time, use the data in the recipe.
+    - If the recipe data is incomplete, make reasonable assumptions but clearly indicate they are estimates.
+    - Never return JSON or code. Reply as plain text only.
+
+    User message: "${message}"
+    `)
+}
+
 export default router;

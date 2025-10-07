@@ -29,7 +29,7 @@ function Chat() {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [errors, setErrors] = useState([]);
   const [toast, setToast] = useState(null);
-
+  const [chatInputMode, setChatInputMode] = useState("Create");
   function showToast(message, type = "error") {
     setToast({ message, type });
 
@@ -43,9 +43,16 @@ function Chat() {
     fetchErrors(recipe.id);
   }, [recipe?.id]);
 
-  async function sendMessage() {
+  function handleSendMessage() {
     if (message.trim().length === 0) return;
-
+    if (chatInputMode === "Create") {
+      sendMessage();
+    }
+    if (chatInputMode === "Ask") {
+      sendAsk();
+    }
+  }
+  async function sendMessage() {
     try {
       setIsReplyLoading(true);
 
@@ -55,7 +62,6 @@ function Chat() {
         credentials: "include",
         body: JSON.stringify({
           message: message.trim(),
-          recipe: recipe,
           currentVersion: recipe?.versions?.[currentVersion] || null,
           recipeId: recipe?.id || null,
         }),
@@ -109,6 +115,39 @@ function Chat() {
     }
   }
 
+  async function sendAsk() {
+    try {
+      setIsReplyLoading(true);
+      const result = await fetch("http://localhost:8080/api/ai/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          message: message.trim(),
+          currentVersion: recipe?.versions?.[currentVersion] || null,
+          recipeId: recipe?.id || null,
+        }),
+      });
+
+      const data = await result.json();
+      setMessage("");
+
+      console.log(data);
+      // if (!result.ok || !data.reply) {
+      //   showToast("Recipe could not be generated from this input");
+      //   fetchErrors(recipe?.id);
+      //   return;
+      // }
+    } catch (error) {
+      showToast("Network error. Please try again.");
+      console.error("Network error:", error);
+      // if (recipe?.id) {
+      //   fetchErrors(recipe.id);
+      // }
+    } finally {
+      setIsReplyLoading(false);
+    }
+  }
   async function fetchErrors(recipeId) {
     try {
       const result = await fetch(
@@ -262,11 +301,13 @@ function Chat() {
       <ChatInput
         message={message}
         setMessage={setMessage}
-        sendMessage={sendMessage}
+        handleSendMessage={handleSendMessage}
         isReplyLoading={isReplyLoading}
         recipeVersions={recipe?.versions}
         currentVersion={currentVersion}
         setCurrentVersion={setCurrentVersion}
+        chatInputMode={chatInputMode}
+        setChatInputMode={setChatInputMode}
       />
     </div>
   );
