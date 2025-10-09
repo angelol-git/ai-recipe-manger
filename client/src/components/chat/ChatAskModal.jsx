@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import CloseSvg from "../icons/CloseSvg";
+import ChatAskInput from "./ChatAskInput";
 function ChatAskModal({ isAskModalOpen, setIsAskModalOpen, askMessages }) {
   const modalRef = useRef(null);
   useEffect(() => {
@@ -26,17 +27,19 @@ function ChatAskModal({ isAskModalOpen, setIsAskModalOpen, askMessages }) {
   if (!isAskModalOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 bg-black/30 flex justify-center  z-50 p-4 w-full ">
+    <div className="fixed inset-0 bg-black/40  flex justify-center  z-50 p-4 w-full ">
       <div
         ref={modalRef}
-        className="p-4 flex my-20 flex-col bg-crust rounded shadow-lg w-full overflow-y-auto"
+        className="p-4 flex flex-col gap-2 rounded shadow-lg w-full overflow-y-auto"
       >
-        <div className="flex justify-end">
-          <button onClick={() => setIsAskModalOpen(false)}>
+        <div className="flex">
+          <button
+            onClick={() => setIsAskModalOpen(false)}
+            className="bg-crust p-2 rounded-full"
+          >
             <CloseSvg />
           </button>
         </div>
-        <h2 className="font-bold pb-2">Ask History</h2>
         <div className="flex flex-col gap-2">
           {askMessages.map((item) => {
             return (
@@ -53,6 +56,7 @@ function ChatAskModal({ isAskModalOpen, setIsAskModalOpen, askMessages }) {
             );
           })}
         </div>
+        <ChatAskInput />
       </div>
     </div>,
     document.body
