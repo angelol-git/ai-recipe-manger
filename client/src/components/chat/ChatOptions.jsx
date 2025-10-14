@@ -3,7 +3,6 @@ import DeleteSvg from "../icons/DeleteSvg.jsx";
 import ShareSvg from "../icons/ShareSvg.jsx";
 import EditSvg from "../icons/EditSvg.jsx";
 import DotsSvg from "../icons/DotsSvg.jsx";
-import ErrorSvg from "../icons/ErrorSvg.jsx";
 import WarningSvg from "../icons/WarningSvg.jsx";
 
 function ChatOptions({
