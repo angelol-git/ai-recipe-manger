@@ -100,12 +100,13 @@ function validateAiResponse(response, recipeId, req, res) {
     }
 
     try {
-        if (!reply.title?.trim() &&
-            !reply.ingredients?.trim() &&
-            !reply.instructions?.trim() &&
-            reply.servings === 0 &&
-            reply.calories === 0 &&
-            reply.total_time === 0
+        if (
+            !reply.title?.trim() &&
+            (!reply.ingredients || reply.ingredients.length === 0) &&
+            (!reply.instructions || reply.instructions.length === 0) &&
+            (!reply.servings || reply.servings === 0) &&
+            (!reply.calories || reply.calories === 0) &&
+            (!reply.total_time || reply.total_time === 0)
         ) {
 
             reply = {
@@ -148,22 +149,45 @@ function validateAiResponse(response, recipeId, req, res) {
                 `).run(req.user.id, reply.title);
 
             const newRecipeId = recipeResult.lastInsertRowid;
-
             const versionResult = db.prepare(`
-                INSERT INTO recipe_versions (recipe_id, servings, total_time, calories, description, instructions, ingredients, source_prompt, ai_model, relation)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                `).run(newRecipeId, reply.servings, reply.total_time, reply.calories, reply.description, reply.instructions, reply.ingredients, reply.source_prompt, reply.ai_model, reply.relation);
-
+                INSERT INTO recipe_versions 
+                (recipe_id, servings, total_time, calories, description, instructions, ingredients, source_prompt, ai_model)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `).run(
+                newRecipeId,
+                reply.servings,
+                reply.total_time,
+                reply.calories,
+                reply.description,
+                JSON.stringify(Array.isArray(reply.instructions) ? reply.instructions : [reply.instructions]),
+                JSON.stringify(Array.isArray(reply.ingredients) ? reply.ingredients : [reply.ingredients]),
+                reply.source_prompt,
+                reply.ai_model
+            );
             reply.id = newRecipeId;
+            reply.ingredients = JSON.stringify(reply.ingredients);
+            reply.instructions = JSON.stringify(reply.instructions);
             reply.versionId = versionResult.lastInsertRowid;
         } else {
             // add new version to existing recipe 
             const versionResult = db.prepare(`
                 INSERT INTO recipe_versions (recipe_id, servings, total_time, calories, description, instructions, ingredients, source_prompt, ai_model, relation)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                `).run(recipeId, reply.servings, reply.total_time, reply.calories, reply.description, reply.instructions, reply.ingredients, reply.source_prompt, reply.ai_model, reply.relation);
-
+                `).run(
+                recipeId,
+                reply.servings,
+                reply.total_time,
+                reply.calories,
+                reply.description,
+                JSON.stringify(Array.isArray(reply.instructions) ? reply.instructions : [reply.instructions]),
+                JSON.stringify(Array.isArray(reply.ingredients) ? reply.ingredients : [reply.ingredients]),
+                reply.source_prompt,
+                reply.ai_model,
+                reply.relation
+            );
             reply.id = recipeId;
+            reply.ingredients = JSON.stringify(reply.instructions); reply.ingredients = JSON.stringify(reply.ingredients);
+            reply.instructions = JSON.stringify(reply.instructions);
             reply.versionId = versionResult.lastInsertRowid;
         }
         return res.json({ reply });
@@ -177,56 +201,65 @@ function validateAiResponse(response, recipeId, req, res) {
 
 function createPrompt(currentVersion, message) {
     return (`
-  You are a recipe extraction and transformation assistant.
+You are a recipe extraction and transformation assistant.
 
-  The user previously received this recipe from you: ${currentVersion ? JSON.stringify(currentVersion) : "{}"}
+The user previously received this recipe from you:
+${currentVersion ? JSON.stringify(currentVersion) : "{}"}
 
-  The user will send you a recipe request, modification, or a URL pointing to a recipe.
+The user will send you either:
+- A URL to a recipe webpage,
+- A block of recipe text,
+- Or a modification request about an existing recipe.
 
-  1. If the user's message is a URL, fetch the webpage content and extract the recipe information from that page.
-  2. If the user's message is plain text about a recipe, extract the recipe information from it.
-  3. If the user's message is NOT about a recipe and not a URL, respond with an "empty" JSON.
+Your task:
+1. If the message is a URL, fetch and extract the recipe.
+2. If the message contains recipe text, parse and structure it.
+3. If the message is unrelated to a recipe, return an empty JSON object: {}.
 
-  You must reply ONLY with raw valid JSON. 
-  Do not include markdown, backticks, or explanations.
-  The ENTIRE reply must be valid JSON only.
+You must reply **ONLY** with raw, valid JSON.
+- No markdown.
+- No backticks.
+- No explanations.
+- The entire response must be valid JSON.
 
-  For these fields, return numbers only (integers):
-  - "servings": number of servings (e.g. 12, not "12 servings")
-  - "calories": calories PER SERVING (not total)
-  - "total_time": total preparation time in minutes
+Formatting Rules:
+- "ingredients" must **always** be an array of strings.
+  Example: ["1 cup flour", "2 eggs", "1 tsp salt"]
+- "instructions" must **always** be an array of numbered strings.
+  Example: ["1. Preheat oven...", "2. Mix flour and sugar..."]
+- Do not return ingredients or instructions as a single string or block of text.
+- For "servings", "calories", and "total_time", return **integers only**.
+  (Example: 12, not "12 servings")
+- If a value is unknown, make a reasonable numeric estimate.
 
-Scaling Rules
-  - If the user asks to double or halve the recipe:
-    - Adjust ingredient *quantities* proportionally.
-    - Adjust the **servings** count proportionally.
-    - Keep **calories per serving (calories)** the same — do NOT multiply or divide it.
-    - Example:
-      - Original: 6 servings, 200 calories each.
-      - “Half the recipe” → 3 servings, 200 calories each.
-      - “Double the recipe” → 12 servings, 200 calories each.
+Scaling Rules:
+- If the user asks to double or halve the recipe:
+  - Adjust ingredient **quantities** proportionally.
+  - Adjust **servings** proportionally.
+  - Keep **calories per serving (calories)** the same — do not multiply or divide it.
+  - Example:
+    - Original: 6 servings, 200 calories each.
+    - “Half the recipe” → 3 servings, 200 calories each.
+    - “Double the recipe” → 12 servings, 200 calories each.
 
-  Field rules
-  - The "ingredients" field must be a plain list of strings, one per ingredient, without dashes or bullets.
-  - The "instructions" field must always be a numbered list (1., 2., 3., ...).
-  - If no servings, calories, or total_time are provided, make a reasonable numeric estimate.
-
-  Example structure for valid JSON output:
-  {
-    "title": "...",
-    "description": "...",
-    "ingredients": "...",
-    "instructions": "...",
-    "servings": <integer>,
-    "calories": <integer>,
-    "total_time": <integer>,
-    "source_prompt": "<copy the user message here>",
-    "ai_model": "gemini-2.5-flash"
-  }
-
-  Here is the user message: "${message}"
-  `);
+Output format (strict JSON):
+{
+  "title": "string",
+  "description": "string",
+  "ingredients": ["string", "string", "..."],
+  "instructions": ["string", "string", "..."],
+  "servings": <integer>,
+  "calories": <integer>,
+  "total_time": <integer>,
+  "source_prompt": "<copy of user message>",
+  "ai_model": "gemini-2.5-flash"
 }
+
+Here is the user's message:
+"${message}"
+`);
+}
+
 
 function askPrompt(currentVersion, message) {
     return (`
