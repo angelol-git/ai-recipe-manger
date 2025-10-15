@@ -3,6 +3,7 @@ import DeleteSvg from "../icons/DeleteSvg.jsx";
 import ShareSvg from "../icons/ShareSvg.jsx";
 import EditSvg from "../icons/EditSvg.jsx";
 import DotsSvg from "../icons/DotsSvg.jsx";
+import CloneSvg from "../icons/CloneSvg.jsx";
 import WarningSvg from "../icons/WarningSvg.jsx";
 
 function ChatOptions({
@@ -55,6 +56,17 @@ function ChatOptions({
                 }}
                 className="flex z-100 w-full justify-between items-center"
               >
+                <CloneSvg />
+                <div>Clone</div>
+              </button>
+            </li>
+            <li className="border-b-1 border-black/40 py-2" role="menu-item">
+              <button
+                onClick={() => {
+                  setIsOptionsOpen((prev) => !prev);
+                }}
+                className="flex z-100 w-full justify-between items-center"
+              >
                 <ShareSvg />
                 <div>Share</div>
               </button>
@@ -68,7 +80,7 @@ function ChatOptions({
                 className="flex w-full justify-between items-center"
               >
                 <EditSvg />
-                <div>Rename</div>
+                <div>Edit</div>
               </button>
             </li>
             <li className="text-rose py-2 border-black/40 border-b-1">
@@ -88,7 +100,7 @@ function ChatOptions({
               </button>
             </li>
 
-            <li className="text-rose py-2 font-bold">
+            <li className="text-rose py-2">
               <button
                 onClick={() => {
                   setIsOptionsOpen((prev) => !prev);

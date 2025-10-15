@@ -177,69 +177,55 @@ function validateAiResponse(response, recipeId, req, res) {
 
 function createPrompt(currentVersion, message) {
     return (`
-    You are a recipe extraction assistant.
+  You are a recipe extraction and transformation assistant.
 
-    The user previously received this recipe from you: ${currentVersion ? JSON.stringify(currentVersion) : "{}"}
+  The user previously received this recipe from you: ${currentVersion ? JSON.stringify(currentVersion) : "{}"}
 
-    The user will send you a recipe request, modification, or a URL pointing to a recipe.
-        
-    1. If the user's message is a URL, fetch the webpage content and extract the recipe information from that page.
-    2. If the user's message is plain text about a recipe, extract the recipe information from it.
-    3. If the user's message is NOT about a recipe and not a URL, respond with an "empty" JSON.
+  The user will send you a recipe request, modification, or a URL pointing to a recipe.
 
-    You must reply ONLY with raw valid JSON. 
-    Do not include markdown. 
-    Do not include backticks. 
-    Do not include any explanation. 
-    Do not include markdown fences like \`\`\`json or \`\`\`.
-    The ENTIRE reply must be valid JSON only.
+  1. If the user's message is a URL, fetch the webpage content and extract the recipe information from that page.
+  2. If the user's message is plain text about a recipe, extract the recipe information from it.
+  3. If the user's message is NOT about a recipe and not a URL, respond with an "empty" JSON.
 
-    For these fields, return numbers only (integers):
-    - "servings": number of servings (e.g. 12, not "12 servings")
-    - "calories": total calories per serving (e.g. 250, not "250 kcal")
-    - "total_time": minutes only as an integer (e.g. 45, not "45 minutes")
- 
-    If the user's message is NOT about a recipe, return:
-    {
-    "title": "",
-    "description": "",
-    "ingredients": "",
-    "instructions": "",
-    "servings": 0,
-    "calories": 0,
-    "total_time: 0,
-    "source_prompt": "<copy the user message here>",
-    "ai_model": "gemini-2.5-flash"
-    }
+  You must reply ONLY with raw valid JSON. 
+  Do not include markdown, backticks, or explanations.
+  The ENTIRE reply must be valid JSON only.
 
-    Otherwise, return a properly extracted recipe in this format:
-    {
+  For these fields, return numbers only (integers):
+  - "servings": number of servings (e.g. 12, not "12 servings")
+  - "calories": calories PER SERVING (not total)
+  - "total_time": total preparation time in minutes
+
+Scaling Rules
+  - If the user asks to double or halve the recipe:
+    - Adjust ingredient *quantities* proportionally.
+    - Adjust the **servings** count proportionally.
+    - Keep **calories per serving (calories)** the same — do NOT multiply or divide it.
+    - Example:
+      - Original: 6 servings, 200 calories each.
+      - “Half the recipe” → 3 servings, 200 calories each.
+      - “Double the recipe” → 12 servings, 200 calories each.
+
+  Field rules
+  - The "ingredients" field must be a plain list of strings, one per ingredient, without dashes or bullets.
+  - The "instructions" field must always be a numbered list (1., 2., 3., ...).
+  - If no servings, calories, or total_time are provided, make a reasonable numeric estimate.
+
+  Example structure for valid JSON output:
+  {
     "title": "...",
     "description": "...",
     "ingredients": "...",
     "instructions": "...",
     "servings": <integer>,
     "calories": <integer>,
-    "total_time: <integer>,
+    "total_time": <integer>,
     "source_prompt": "<copy the user message here>",
     "ai_model": "gemini-2.5-flash"
-    }
+  }
 
-    Rules:
-    - If no servings, calories, or total_time are available from the source, give an approximate numeric estimate.
-    - The instructions field must always be a numbered list (1., 2., 3. ...).
-    - The ingredients field must always be a plain list of strings, one ingredient per item, without dashes or bullets. 
-    - The ingredients field must always be a plain list of strings, one ingredient per item, without dashes or bullets. 
-    - If an ingredient lists a volume or count (e.g. "1/2 cup flour", "1 onion") but does NOT include grams, 
-    then add the approximate grams in parentheses (e.g. "1/2 cup flour (60g)").
-    - If an ingredient lists grams but no cups/volume, add the approximate cup/tablespoon equivalent in parentheses 
-    (e.g. "200g sugar (1 cup)").
-    - If both are present in the source, keep them as-is without duplication.
-    - If an ingredient uses teaspoons (tsp) or tablespoons (tbsp), do NOT add grams.
-    - Only add grams for larger volume-based measurements like cups, pints, or quarts.
-
-    Here is the user message: "${message}"
-    `)
+  Here is the user message: "${message}"
+  `);
 }
 
 function askPrompt(currentVersion, message) {

@@ -30,15 +30,20 @@ body,
   --color-crust: #EAE2DC;
   --color-modal: #E8E3DD;
 
+
+  --color-test1: #EDE6DE;
+  --color-test2: #E2D7CC;
+  /* light warm brown surface */
+  --color-test3: #D6C7B9;
   /* Text */
-  --color-primary: #2C3039;
-  --color-secondary: #55595E;
-  --color-accent: #74B7C4;
+  --color-icon: #5A4634;
+  --color-icon-muted: #8C7A68;
+  --color-icon-accent: #A67856;
+  --color-icon-disabled: #CBB8A6;
 
-
-  --color-text-primary: #2C3039;
-  --color-text-secondary: #55595E;
-  --color-text-accent: #74B7C4;
+  --color-primary: #4B3B2A;
+  --color-secondary: #7C6A58;
+  --color-accent: #A67856;
 
   /* Accents */
   --color-accent: #74B7C4;

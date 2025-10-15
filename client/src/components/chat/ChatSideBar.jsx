@@ -23,7 +23,7 @@ function ChatSideBar({ recipes, isSideBarOpen, setIsSideBarOpen }) {
           <h2>Home</h2>
         </Link>
         <div>
-          <h2 className="text-text-secondary/70 pb-3">Recipes</h2>
+          <h2 className="text-secondary/70 pb-3">Recipes</h2>
           <div className="flex flex-col gap-2">
             {recipes?.map((item) => {
               return (

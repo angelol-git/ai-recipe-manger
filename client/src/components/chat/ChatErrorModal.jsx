@@ -83,7 +83,7 @@ function ChatErrorModal({
                     key={item.id}
                   >
                     <WarningSvg />
-                    <div className="flex flex-col">
+                    <div className="flex flex-col w-full">
                       <div className="flex justify-between items-center">
                         <h3 className="font-bold text-rose-900 text-large">
                           {item.error}

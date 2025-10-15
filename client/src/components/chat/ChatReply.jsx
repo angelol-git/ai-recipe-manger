@@ -23,8 +23,8 @@ function ChatReply({
 
   if (!versions) return null;
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex gap-4">
+    <div className="flex flex-col gap-3 py-2">
+      <div className="flex gap-5">
         <div className="flex gap-1 items-center">
           <FireSvg />
           <div>{calories}</div>
@@ -45,7 +45,7 @@ function ChatReply({
       {ingredients && (
         <div>
           <h3 className="font-bold">Ingredients</h3>
-          <ul className="list-disc pl-4">
+          <ul className="list-disc pl-4 py-1">
             {ingredients.split("\n").map((item, index) => (
               <li key={index}>{item}</li>
             ))}
@@ -55,7 +55,7 @@ function ChatReply({
       {instructions && (
         <div>
           <h3 className="font-bold">Instructions</h3>
-          <ul className="list-disc">
+          <ul className="list-disc flex flex-col gap-2 py-1">
             {instructions.split("\n").map((item, index) => (
               <li key={index} className="list-none">
                 {item}
@@ -65,8 +65,8 @@ function ChatReply({
         </div>
       )}
       {source_prompt && !isReplyLoading && (
-        <div className="flex justify-between text-text-secondary/80 text-sm">
-          <div className="flex gap-2">
+        <div className="flex justify-between text-secondary/80 text-sm">
+          <div className="flex gap-2 py-2">
             <button
               onClick={() => setIsPromptModalOpen(true)}
               className="underline cursor-pointer"
@@ -82,7 +82,7 @@ function ChatReply({
               </button>
             ) : null}
           </div>
-          <p className="text-text-secondary/80">
+          <p className="text-secondary/80">
             {currentVersion + 1} of {totalVersion}
           </p>
         </div>

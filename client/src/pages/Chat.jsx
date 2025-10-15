@@ -12,7 +12,8 @@ import ChatErrorModal from "../components/chat/ChatErrorModal.jsx";
 import ChatAskModal from "../components/chat/ChatAskModal.jsx";
 import Toast from "../components/Toast.jsx";
 import MenuSvg from "../components/icons/MenuSvg.jsx";
-import ForkSvg from "../components/icons/ForkSvg.jsx";
+import ForkSvg from "../components/icons/CloneSvg.jsx";
+import ChatTags from "../components/chat/ChatTags.jsx";
 
 function Chat() {
   const { id } = useParams();
@@ -64,7 +65,7 @@ function Chat() {
   }
 
   return (
-    <div className="relative bg-base flex flex-col h-screen text-text-primary py-5 px-4 w-full">
+    <div className="relative bg-base flex flex-col h-screen text-primary py-5 px-4 w-full">
       <ChatSideBar
         recipes={recipes}
         isSideBarOpen={isSideBarOpen}
@@ -92,12 +93,12 @@ function Chat() {
           />
         </div>
         <div className="flex gap-2">
-          <button
+          {/* <button
             onClick={handleFork}
             className="px-2 py-1 bg-yellow flex font-semibold gap-2 rounded-md items-center"
           >
             <ForkSvg />
-          </button>
+          </button> */}
           <ChatOptions
             recipe={recipe}
             isEditing={isEditing}
@@ -108,6 +109,7 @@ function Chat() {
         </div>
       </div>
       <div className="relative flex-1 py-3 overflow-y-auto">
+        <ChatTags />
         {recipe?.id ? (
           <ChatReply
             versions={recipe.versions}
