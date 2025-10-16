@@ -20,7 +20,7 @@ router.get("/", authMiddleware, async (req, res) => {
                 rv.instructions,
                 rv.ingredients,
                 rv.source_prompt,
-              GROUP_CONCAT(DISTINCT t.name) AS tags
+                GROUP_CONCAT(DISTINCT t.name) AS tags
             FROM recipes r
             LEFT JOIN recipe_versions rv ON rv.recipe_id = r.id 
             LEFT JOIN recipe_tags rt ON rt.recipe_id = r.id
@@ -39,7 +39,7 @@ router.get("/", authMiddleware, async (req, res) => {
                     id: row.recipe_id,
                     title: row.title,
                     created_at: row.created_at,
-                    tags: row.tags,
+                    tags: row.tags ? row.tags.split(",").map((t) => t.trim()) : [],
                     versions: [],
                 }
             }
@@ -47,8 +47,8 @@ router.get("/", authMiddleware, async (req, res) => {
             recipes[row.recipe_id].versions.push({
                 id: row.version_id,
                 description: row.description,
-                instructions: row.instructions,
-                ingredients: row.ingredients,
+                instructions: safeParse(row.instructions),
+                ingredients: safeParse(row.ingredients),
                 source_prompt: row.source_prompt,
                 calories: row.calories,
                 servings: row.servings,
@@ -327,5 +327,13 @@ router.post("/:id/tag", authMiddleware, async (req, res) => {
     }
 });
 
+function safeParse(jsonString) {
+    try {
+        return JSON.parse(jsonString);
+    }
+    catch {
+        return [];
+    }
+}
 export default router;
 

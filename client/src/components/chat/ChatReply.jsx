@@ -23,7 +23,7 @@ function ChatReply({
 
   if (!versions) return null;
   return (
-    <div className="flex flex-col gap-3 py-2">
+    <div className="flex flex-col gap-3 py-4">
       <div className="flex gap-5">
         <div className="flex gap-1 items-center">
           <FireSvg />
@@ -46,7 +46,7 @@ function ChatReply({
         <div>
           <h3 className="font-bold">Ingredients</h3>
           <ul className="list-disc pl-4 py-1">
-            {ingredients.split("\n").map((item, index) => (
+            {ingredients.map((item, index) => (
               <li key={index}>{item}</li>
             ))}
           </ul>
@@ -56,7 +56,7 @@ function ChatReply({
         <div>
           <h3 className="font-bold">Instructions</h3>
           <ul className="list-disc flex flex-col gap-2 py-1">
-            {instructions.split("\n").map((item, index) => (
+            {instructions.map((item, index) => (
               <li key={index} className="list-none">
                 {item}
               </li>

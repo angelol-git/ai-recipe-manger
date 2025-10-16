@@ -165,8 +165,6 @@ function validateAiResponse(response, recipeId, req, res) {
                 reply.ai_model
             );
             reply.id = newRecipeId;
-            reply.ingredients = JSON.stringify(reply.ingredients);
-            reply.instructions = JSON.stringify(reply.instructions);
             reply.versionId = versionResult.lastInsertRowid;
         } else {
             // add new version to existing recipe 
@@ -186,10 +184,9 @@ function validateAiResponse(response, recipeId, req, res) {
                 reply.relation
             );
             reply.id = recipeId;
-            reply.ingredients = JSON.stringify(reply.instructions); reply.ingredients = JSON.stringify(reply.ingredients);
-            reply.instructions = JSON.stringify(reply.instructions);
             reply.versionId = versionResult.lastInsertRowid;
         }
+        reply.tags = [];
         return res.json({ reply });
     }
 

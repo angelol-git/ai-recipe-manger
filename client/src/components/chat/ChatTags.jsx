@@ -4,25 +4,9 @@ import CheckSvg from "../icons/CheckSvg";
 function ChatTags({ recipe, handleAddTag }) {
   const [isAddingTag, setIsAddingTag] = useState(false);
   const [tag, setTag] = useState("");
-  const tags = recipe?.tags.split(",");
+  const tags = recipe?.tags;
   return (
     <div className="flex gap-2">
-      {/* <button
-        className="bg-test1 inline-flex gap-2 items-center px-2 py-0.5 text-sm
-  text-[#5C5046] border border-mantle rounded-full cursor-pointer"
-      >
-        <div className="w-4 h-4 bg-peach rounded-full"></div>
-        Baking
-      </button>
-
-      <button
-        className="inline-flex justify-center items-center px-2 py-0.5 text-sm
-    text-gray-500 border border-gray-300 rounded-full
-    cursor-pointer hover:bg-gray-100 hover:text-gray-700
-    transition-colors"
-      >
-        +
-      </button> */}
       {!isAddingTag &&
         tags?.length > 0 &&
         tags.map((item) => {
@@ -73,7 +57,7 @@ function ChatTags({ recipe, handleAddTag }) {
           </button>
         </div>
       )}
-      {!isAddingTag && tags?.length === 0 && (
+      {!isAddingTag && tags.length === 0 && (
         <button
           onClick={() => {
             setIsAddingTag((prev) => !prev);
@@ -86,7 +70,7 @@ function ChatTags({ recipe, handleAddTag }) {
           + Add Tag
         </button>
       )}
-      {!isAddingTag && tags?.length > 0 && (
+      {!isAddingTag && tags.length > 0 && (
         <button
           onClick={() => {
             setIsAddingTag((prev) => !prev);

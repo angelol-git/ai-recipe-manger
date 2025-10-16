@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import authRoutes from "./routes/auth.js";
 import aiRoutes from "./routes/ai.js";
-import recipeRoutes from "./routes/recipe.js";
+import recipeRoutes from "./routes/recipes.js";
 import cookieParser from "cookie-parser";
 
 dotenv.config();

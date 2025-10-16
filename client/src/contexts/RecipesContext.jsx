@@ -29,10 +29,10 @@ export function RecipesProvider({ children }) {
         const tagsRes = await fetch("http://localhost:8080/api/recipes/tags", {
           credentials: "include",
         });
-        const tagsData = await tagsRes.json();
-        setTags(tagsData);
 
-        console.log(tagsData);
+        const tagsData = await tagsRes.json();
+        console.log(recipesData);
+        setTags(tagsData);
       } catch (error) {
         console.error(error);
       } finally {

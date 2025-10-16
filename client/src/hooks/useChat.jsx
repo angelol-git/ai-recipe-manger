@@ -12,7 +12,6 @@ export function useChat(recipe, currentVersion, setCurrentVersion, showToast) {
   const [isReplyLoading, setIsReplyLoading] = useState(false);
   const [errors, setErrors] = useState([]);
   const [askMessages, setAskMessages] = useState([]);
-  const [tags, setTags] = useState([]);
 
   useEffect(() => {
     if (!recipe?.id) return;
@@ -71,6 +70,7 @@ export function useChat(recipe, currentVersion, setCurrentVersion, showToast) {
       };
 
       if (!recipe?.id) {
+        console.log(data);
         const newRecipe = { id: data.reply.id, title: data.reply.title };
         addRecipe(newRecipe, newVersion);
         navigate(`/chat/${newRecipe.id}`);
