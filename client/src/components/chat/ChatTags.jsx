@@ -23,10 +23,13 @@ function ChatTags({ recipe }) {
             <div
               className="bg-tag inline-flex gap-2 items-center px-2 py-0.5 text-sm
   text-[#5C5046] border border-mantle rounded-full cursor-pointer"
-              key={item}
+              key={item.name}
             >
-              <div className="w-4 h-4 bg-peach rounded-full"></div>
-              {item}
+              <div
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: item.color }}
+              ></div>
+              {item.name}
             </div>
           );
         })}

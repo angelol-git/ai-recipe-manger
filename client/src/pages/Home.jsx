@@ -4,10 +4,11 @@ import { useRecipes } from "../contexts/RecipesContext";
 import DotsSvg from "../components/icons/DotsSvg";
 import UserOptions from "../components/UserOptions";
 import TagSettings from "../components/home/TagSettings";
+import CloseSvg from "../components/icons/CloseSvg";
 
 function Home() {
   const { user, recipes } = useRecipes();
-  const [isTagSettingsOpen, setIsTagSettingsOpen] = useState(false);
+  const [isEditTags, setIsEditTags] = useState(false);
   const tags = Array.from(
     new Set(
       Array.isArray(recipes)
@@ -33,7 +34,9 @@ function Home() {
     if (!user?.id) return;
     try {
       const stored = localStorage.getItem(`tagsSelected_${user.id}`);
-      if (stored) setTagsSelected(JSON.parse(stored));
+      if (stored) {
+        setTagsSelected(JSON.parse(stored));
+      }
     } catch (err) {
       console.log("Failed to parse saved tags: ", err);
     }
@@ -48,21 +51,23 @@ function Home() {
   }, [tagsSelected, user?.id]);
 
   const filteredRecipes = recipes?.filter((recipe) => {
-    if (tagsSelected.length > 0) {
-      if (recipe.tags.some((tag) => tagsSelected.includes(tag))) {
-        return recipe;
-      }
-    } else {
-      return recipe;
-    }
+    if (tagsSelected.length === 0) return true;
+
+    return recipe.tags.some((recipeTag) => {
+      return tagsSelected.some(
+        (selectedTag) => selectedTag.name === recipeTag.name
+      );
+    });
   });
 
   function handleTagClick(tag) {
     setTagsSelected((prev) => {
-      if (prev.includes(tag)) {
-        return prev.filter((t) => t !== tag);
+      const exists = prev.some((t) => t.name === tag.name);
+      if (exists) {
+        return prev.filter((t) => t.name !== tag.name);
+      } else {
+        return [...prev, tag];
       }
-      return [...prev, tag];
     });
   }
 
@@ -71,6 +76,7 @@ function Home() {
     return new Date(dateString).toLocaleDateString(undefined, options);
   }
 
+  // console.log(tagsSelected);
   return (
     <div className="text-primary bg-base p-5 lg:p-15 flex flex-col min-h-screen gap-5">
       <div className="flex justify-between items-center">
@@ -79,44 +85,92 @@ function Home() {
           <UserOptions user={user} />
         </div>
       </div>
-      <div>
-        <div className="flex gap-2 items-center">
-          <h2 className="font-semibold">Tags</h2>
-          <button
-            onClick={() => {
-              setIsTagSettingsOpen(true);
-            }}
-          >
-            <DotsSvg height="14px" width="14px" fill="secondary" />
-          </button>
+      {!isEditTags ? (
+        <div>
+          <div className="flex justify-between items-end">
+            <h2 className="font-semibold">Tags</h2>
+            <button
+              onClick={() => {
+                setIsEditTags(true);
+              }}
+              className="text-sm text-secondary underline rounded-lg py-1 px-2"
+            >
+              Edit
+            </button>
+          </div>
+          <div className="flex gap-2 py-2 flex-wrap">
+            {tags.length > 0 ? (
+              tags.map((tag) => {
+                const isSelected = tagsSelected.some((selectedTag) => {
+                  return selectedTag.name === tag.name;
+                });
+                return (
+                  <button
+                    onClick={() => {
+                      handleTagClick(tag);
+                    }}
+                    className={`inline-flex gap-2 items-center px-2 py-0.5 text-sm border border-mantle rounded-full cursor-pointer ${
+                      isSelected
+                        ? "bg-tag-selected text-white"
+                        : "bg-tag text-primary"
+                    }`}
+                    key={tag.name}
+                  >
+                    <div
+                      className={`w-4 h-4 rounded-full`}
+                      style={{ backgroundColor: tag.color }}
+                    ></div>
+                    {tag.name}
+                  </button>
+                );
+              })
+            ) : (
+              <div className="text-secondary/70 text-sm italic">
+                No tags created yet.
+              </div>
+            )}
+          </div>
         </div>
-        <div className="flex gap-2 py-2 flex-wrap">
-          {tags.length > 0 ? (
-            tags.map((item) => {
-              return (
-                <button
-                  onClick={() => {
-                    handleTagClick(item);
-                  }}
-                  className={`inline-flex gap-2 items-center px-2 py-0.5 text-sm border border-mantle rounded-full cursor-pointer ${
-                    tagsSelected.includes(item)
-                      ? "bg-tag-selected text-white"
-                      : "bg-tag text-primary"
-                  }`}
-                  key={item}
-                >
-                  <div className="w-4 h-4 bg-peach rounded-full"></div>
-                  {item}
-                </button>
-              );
-            })
-          ) : (
-            <div className="text-secondary/70 text-sm italic">
-              No tags created yet.
-            </div>
-          )}
+      ) : (
+        <div>
+          <div className="flex justify-between items-end">
+            <h2 className="font-semibold">Edit Tags</h2>
+            <button
+              onClick={() => {
+                setIsEditTags(false);
+              }}
+              className="text-sm text-white bg-accent rounded-lg py-1 px-2"
+            >
+              Done
+            </button>
+          </div>
+          <div className="flex gap-4 py-2 flex-wrap">
+            {tags.length > 0 ? (
+              tags.map((tag) => {
+                return (
+                  <div className="gap-2 flex items-center">
+                    <div
+                      className={`inline-flex gap-2 items-center text-base px-3 py-1 border border-mantle rounded-full cursor-pointer bg-tag text-primary hover:scale-105 transition`}
+                      key={tag.name}
+                    >
+                      <div className="w-5 h-5 bg-peach rounded-full"></div>
+                      {tag.name}
+                    </div>
+                    <button>
+                      <CloseSvg />
+                    </button>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-secondary/70 text-sm italic">
+                No tags created yet.
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-4">
           <div className="font-semibold">Items({recipes?.length ?? "..."})</div>
@@ -149,11 +203,6 @@ function Home() {
           })}
         </div>
       </div>
-      <TagSettings
-        isTagSettingsOpen={isTagSettingsOpen}
-        setIsTagSettingsOpen={setIsTagSettingsOpen}
-        tags={tags}
-      />
     </div>
   );
 }

@@ -25,6 +25,8 @@ export function RecipesProvider({ children }) {
         });
 
         const recipesData = await recipesRes.json();
+
+        // console.log(recipesData);
         setRecipes(recipesData);
       } catch (error) {
         console.error(error);
@@ -164,25 +166,27 @@ export function RecipesProvider({ children }) {
     setRecipes((prev) => {
       return prev.map((recipe) => {
         if (recipe.id === id) {
-          if (recipe.tags.includes(tag)) {
+          const ifExists = recipe.tags.some((existingTag) => {
+            return existingTag.name === tag;
+          });
+
+          if (ifExists) {
             return recipe;
           }
+          const newTag = {
+            name: tag,
+            color: "#FFB86C",
+          };
           return {
             ...recipe,
-            tags: [...recipe.tags, tag],
+            tags: [...recipe.tags, newTag],
           };
         } else {
           return recipe;
         }
       });
     });
-    // setTags((prev) => {
-    //   if (prev.includes(tag)) {
-    //     return prev;
-    //   } else {
-    //     return [...prev, tag];
-    //   }
-    // });
+
     try {
       const result = await fetch(`${API_BASE}/recipes/${id}/tag`, {
         method: "POST",
