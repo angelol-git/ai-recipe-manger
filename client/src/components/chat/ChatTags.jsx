@@ -59,7 +59,6 @@ function ChatTags({ recipeId }) {
 
           <button
             onClick={() => {
-              console.log("Closing Tag");
               setNewTag({ id: "", name: "", color: "#FFB86C" });
               setIsAddingTag(false);
             }}

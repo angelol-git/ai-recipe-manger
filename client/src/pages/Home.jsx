@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { SketchPicker } from "react-color";
 import { useRecipes } from "../contexts/RecipesContext";
 import UserOptions from "../components/UserOptions";
 import CloseSvg from "../components/icons/CloseSvg";
 
 function Home() {
-  const { user, recipes, deleteRecipeTagAll } = useRecipes();
+  const { user, recipes, deleteRecipeTagAll, editRecipeTagColor } =
+    useRecipes();
   const [isEditTags, setIsEditTags] = useState(false);
+  const [editTagId, setEditTagId] = useState(null);
   const tags = Array.from(
     new Set(
       Array.isArray(recipes)
@@ -67,12 +70,16 @@ function Home() {
     });
   }
 
+  function handleTagColorChange(event, tag) {
+    const newColor = event.target.value;
+    editRecipeTagColor(newColor, tag);
+  }
+
   function formatDate(dateString) {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   }
 
-  console.log(recipes);
   return (
     <div className="text-primary bg-base p-5 lg:p-15 flex flex-col min-h-screen gap-5">
       <div className="flex justify-between items-center">
@@ -134,6 +141,7 @@ function Home() {
             <button
               onClick={() => {
                 setIsEditTags(false);
+                setEditTagId(null);
               }}
               className="text-sm text-white bg-accent rounded-lg py-1 px-2"
             >
@@ -146,13 +154,46 @@ function Home() {
                 return (
                   <div key={tag.id} className="gap-1 flex items-center ">
                     <div
-                      className={`inline-flex gap-2 items-center px-2 py-0.5 border border-mantle rounded-full cursor-pointer bg-tag text-primary text-sm`}
+                      className={`inline-flex gap-2 items-center px-2 py-0.5 border border-mantle rounded-full cursor-pointer bg-tag text-primary text-sm relative`}
                     >
-                      <div
-                        className="w-4 h-4 rounded-full"
+                      <button
+                        className="h-4 w-4"
                         style={{ backgroundColor: tag.color }}
-                      ></div>
-                      {tag.name}
+                        onClick={() => {
+                          setEditTagId(tag.id);
+                        }}
+                      ></button>
+                      {editTagId === tag.id && (
+                        <div className="absolute top-8">
+                          <SketchPicker
+                            color={tag.color}
+                            onChangeComplete={(color) =>
+                              editRecipeTagColor(color.hex, tag)
+                            }
+                            presetColors={[
+                              "#FFB86C",
+                              "#A94D54",
+                              "#E5C890",
+                              "#A6D189",
+                              "#89DCEB",
+                              "#739DF2",
+                              "#B4BEFE",
+                              "#F5C2E7",
+                            ]}
+                          />
+                        </div>
+                      )}
+                      {/* <input
+                          className="w-5 h-6 rounded-full"
+                          type="color"
+                          id={`${tag.id}-color`}
+                          defaultValue={tag.color}
+                          onChange={(event) => {
+                            handleTagColorChange(event, tag);
+                          }}
+                        /> */}
+                      {/* <div style={{ backgroundColor: tag.color }}></div> */}
+                      <div className="underline">{tag.name}</div>
                     </div>
                     <button
                       onClick={() => {

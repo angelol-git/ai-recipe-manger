@@ -1,6 +1,7 @@
 import express from "express";
 import db from "../db.js";
 import authMiddleware from "../middleware.js";
+import { auth } from "google-auth-library";
 
 const router = express.Router();
 
@@ -335,6 +336,27 @@ router.post("/:id/tag", authMiddleware, async (req, res) => {
         return res.status(500).json({ error: "Failed to add tag" });
     }
 });
+
+router.patch("/tag/:id", authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    const { tag } = req.body;
+    const userId = req.user.id;
+
+    try {
+        db.prepare(`
+            UPDATE tags
+            SET color = ?
+            WHERE id = ? AND user_id = ?
+            `).run(tag.color, id, userId);
+
+        res.json({ success: true });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Failed to edit tag color" });
+    }
+
+})
 
 router.delete("/tag/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;

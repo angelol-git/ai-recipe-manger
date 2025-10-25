@@ -194,7 +194,6 @@ export function RecipesProvider({ children }) {
       .slice(2, 8)}`;
     const tempTag = { ...newTag, id: tempId };
 
-    // Optimistically add temp tag
     setRecipes((prev) =>
       prev.map((recipe) => {
         if (recipe.id === id) {
@@ -244,80 +243,48 @@ export function RecipesProvider({ children }) {
     }
   }
 
-  // async function addRecipeTag(id, tag) {
-  //   const prevRecipes = recipes;
-  //   const tempId = `temp-${Date.now()}-${Math.random()
-  //     .toString(36)
-  //     .slice(2, 8)}`;
-  //   const tempTag = { ...tag, id: tempId };
+  async function editRecipeTagColor(newColor, editTag) {
+    const prevRecipes = recipes;
+    const newTag = { ...editTag, color: newColor };
 
-  //   setRecipes((prev) => {
-  //     return prev.map((recipe) => {
-  //       if (recipe.id === id) {
-  //         const ifExists = recipe.tags.some((existingTag) => {
-  //           return existingTag.name === tag.name;
-  //         });
+    setRecipes((prev) => {
+      return prev.map((recipe) => {
+        return {
+          ...recipe,
+          tags: (recipe.tags || []).map((tag) => {
+            if (tag.id === editTag.id) {
+              return newTag;
+            } else {
+              return tag;
+            }
+          }),
+        };
+      });
+    });
 
-  //         if (ifExists) {
-  //           return recipe;
-  //         }
+    try {
+      const result = await fetch(`${API_BASE}/recipes/tag/${editTag.id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tag: newTag }),
+      });
+      const data = await result.json();
+      if (!result.ok)
+        throw new Error(data?.error?.message || "Failed to edit tag color");
 
-  //         return {
-  //           ...recipe,
-  //           tags: [...recipe.tags, tempTag],
-  //         };
-  //       } else {
-  //         return recipe;
-  //       }
-  //     });
-  //   });
-
-  //   try {
-  //     const result = await fetch(`${API_BASE}/recipes/${id}/tag`, {
-  //       method: "POST",
-  //       credentials: "include",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ tag }),
-  //     });
-  //     const data = await result.json();
-
-  //     //Replace temp id with permanent
-  //     setRecipes((prev) => {
-  //       return prev.map((recipe) => {
-  //         if (recipe.id === id) {
-  //           return {
-  //             ...recipe,
-  //             tags: recipe.tags.map((tag) => {
-  //               if (tag.id === tempId) {
-  //                 return data.tag;
-  //               } else {
-  //                 return tag;
-  //               }
-  //             }),
-  //           };
-  //         } else {
-  //           return recipe;
-  //         }
-  //       });
-  //     });
-
-  //     if (!result.ok) {
-  //       console.error(data.error.message);
-  //       return null;
-  //     }
-  //     // setErrors(data.errors);
-  //   } catch (error) {
-  //     setRecipes(prevRecipes);
-  //     console.log("Network error", error);
-  //   }
-  // }
+      //Replace temp id with permanent
+    } catch (error) {
+      console.error("Network error", error);
+      setRecipes(prevRecipes);
+    }
+  }
 
   return (
     <RecipesContext.Provider
       value={{
         user,
         recipes,
-        // tags,
         isLoading,
         addRecipeVersion,
         updateRecipe,
@@ -325,6 +292,7 @@ export function RecipesProvider({ children }) {
         deleteRecipe,
         addRecipeTag,
         deleteRecipeTagAll,
+        editRecipeTagColor,
       }}
     >
       {children}
