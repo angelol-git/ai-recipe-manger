@@ -215,26 +215,7 @@ export function RecipesProvider({ children }) {
     }
   }
 
-  function editRecipeTagColorLocal(newColor, editTag) {
-    const newTag = { ...editTag, color: newColor };
-    const cleanTag = { ...newTag };
-    delete cleanTag.anchor;
-    setRecipes((prev) => {
-      return prev.map((recipe) => {
-        return {
-          ...recipe,
-          tags: (recipe.tags || []).map((tag) => {
-            if (tag.id === editTag.id) {
-              return newTag;
-            } else {
-              return tag;
-            }
-          }),
-        };
-      });
-    });
-  }
-  async function editRecipeTagColor(newColor, editTag) {
+  async function editRecipeTag(newColor, editTag) {
     const prevRecipes = recipes;
     const newTag = { ...editTag, color: newColor };
     const cleanTag = { ...newTag };
@@ -384,9 +365,10 @@ export function RecipesProvider({ children }) {
         deleteRecipeVersion,
         deleteRecipe,
         addRecipeTag,
+        editRecipeTag,
+        editRecipeTagAll,
         deleteRecipeTag,
         deleteRecipeTagAll,
-        editRecipeTagAll,
       }}
     >
       {children}

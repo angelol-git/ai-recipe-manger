@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useRecipes } from "../../contexts/RecipesContext";
+// import { useRecipes } from "../../contexts/RecipesContext";
 import CloseSvg from "../icons/CloseSvg";
 import ColorPickerPortal from "../home/ColorPickerPortal";
 function ChatEditModal({ isEditModalOpen, setIsEditModalOpen, recipe }) {
-  //   const { deleteRecipeTag, editRecipeTagColor } = useRecipes();
+  // const { deleteRecipeTag, } = useRecipes();
   const [draft, setDraft] = useState(() => (recipe ? { ...recipe } : null));
   const [editTagId, setEditTagId] = useState(null);
   //   console.log(recipe);
@@ -17,7 +17,27 @@ function ChatEditModal({ isEditModalOpen, setIsEditModalOpen, recipe }) {
     setDraft(recipe);
   }, [recipe, isEditModalOpen]);
 
-  function handleDraftEditTagColor(color, tag) {
+  function handleSave() {}
+  function editDraftTagName(event, tag) {
+    const newName = event.target.value;
+    setDraft((prev) => {
+      return {
+        ...prev,
+        tags: prev.tags.map((prevTag) => {
+          if (prevTag.id === tag.id) {
+            return {
+              ...prevTag,
+              name: newName,
+            };
+          } else {
+            return prevTag;
+          }
+        }),
+      };
+    });
+  }
+
+  function editDraftTagColor(color, tag) {
     setDraft((prev) => {
       return {
         ...prev,
@@ -35,12 +55,12 @@ function ChatEditModal({ isEditModalOpen, setIsEditModalOpen, recipe }) {
     });
   }
 
-  function handleDraftEditTagDelete(tag) {
+  function deleteDraftTag(tagId) {
     setDraft((prev) => {
       return {
         ...prev,
         tags: prev.tags.filter((prevTag) => {
-          return prevTag.name !== tag.name;
+          return prevTag.id !== tagId;
         }),
       };
     });
@@ -58,7 +78,7 @@ function ChatEditModal({ isEditModalOpen, setIsEditModalOpen, recipe }) {
             Cancel
           </button>
           <h2 className="font-bold pb-2">Edit Recipe</h2>
-          <button>Save</button>
+          <button onClick={handleSave}>Save</button>
         </div>
         <form className="flex flex-col gap-4">
           <div className="flex justify-between gap-4">
@@ -114,19 +134,28 @@ function ChatEditModal({ isEditModalOpen, setIsEditModalOpen, recipe }) {
                               anchorRef={{ current: tag.anchor }}
                               color={tag.color}
                               onChange={(color) => {
-                                handleDraftEditTagColor(color, tag);
+                                editDraftTagColor(color, tag);
                               }}
                               onClose={() => {
                                 setEditTagId(null);
                               }}
                             />
                           )}
-                          <div className="underline">{tag.name}</div>
+                          <input
+                            id={tag.id}
+                            type="text"
+                            className="underline bg-transparent outline-none text-sm px-0"
+                            value={tag.name}
+                            size={tag.name.length || 1}
+                            onChange={(event) => {
+                              editDraftTagName(event, tag);
+                            }}
+                          />
                         </div>
                         <button
                           type="button"
                           onClick={() => {
-                            handleDraftEditTagDelete(tag);
+                            deleteDraftTag(tag.id);
                           }}
                         >
                           <CloseSvg height="12px" width="12px" />
