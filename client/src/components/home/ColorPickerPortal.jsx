@@ -2,7 +2,8 @@ import { useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { SketchPicker } from "react-color";
 
-function ColorPickerPortal({ portalRef, anchorRef, color, onChange, onClose }) {
+function ColorPickerPortal({ anchorRef, color, onChange, onClose }) {
+  const portalRef = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
       if (

@@ -273,6 +273,45 @@ export function RecipesProvider({ children }) {
     }
   }
 
+  async function editRecipeTagAll(updatedTag) {
+    const prevRecipes = recipes;
+    const cleanTag = updatedTag;
+    delete cleanTag.anchor;
+
+    setRecipes((prev) => {
+      return prev.map((recipe) => {
+        return {
+          ...recipe,
+          tags: (recipe.tags || []).map((tag) => {
+            if (tag.id === cleanTag.id) {
+              return cleanTag;
+            } else {
+              return tag;
+            }
+          }),
+        };
+      });
+    });
+
+    try {
+      const result = await fetch(`${API_BASE}/recipes/tag/${cleanTag.id}`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tag: cleanTag }),
+      });
+
+      const data = await result.json();
+      if (!result.ok)
+        throw new Error(data?.error?.message || "Failed to edit tag color");
+
+      //Replace temp id with permanent
+    } catch (error) {
+      console.error("Network error", error);
+      setRecipes(prevRecipes);
+    }
+  }
+
   async function deleteRecipeTag(currentRecipe, deletedTag) {
     const prevRecipes = recipes;
     setRecipes((prev) => {
@@ -347,7 +386,7 @@ export function RecipesProvider({ children }) {
         addRecipeTag,
         deleteRecipeTag,
         deleteRecipeTagAll,
-        editRecipeTagColor,
+        editRecipeTagAll,
       }}
     >
       {children}

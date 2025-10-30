@@ -346,20 +346,38 @@ router.patch("/tag/:id", authMiddleware, async (req, res) => {
     const userId = req.user.id;
 
     try {
-        db.prepare(`
+        const fields = [];
+        const values = [];
+
+        if (tag.color !== undefined) {
+            fields.push("color = ?");
+            values.push(tag.color);
+        }
+
+        if (tag.name !== undefined) {
+            fields.push("name = ?");
+            values.push(tag.name);
+        }
+
+        if (fields.length === 0) {
+            return res.status(400).json({ error: "No valid fields to update." });
+        }
+        const statement = `
             UPDATE tags
-            SET color = ?
+            SET ${fields.join(", ")}
             WHERE id = ? AND user_id = ?
-            `).run(tag.color, id, userId);
+            `;
+        db.prepare(statement).run(...values, id, userId);
 
         res.json({ success: true });
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: "Failed to edit tag color" });
+        return res.status(500).json({ error: "Failed to update tag" });
     }
-
 })
+
+
 
 router.delete("/:id/tag/:tagId", authMiddleware, async (req, res) => {
     const { id, tagId } = req.params;

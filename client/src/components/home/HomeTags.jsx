@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import CloseSvg from "../icons/CloseSvg.jsx";
 import ColorPickerPortal from "./ColorPickerPortal.jsx";
 
@@ -6,16 +6,37 @@ function HomeTags({
   tags,
   tagsSelected,
   handleTagClick,
-  editRecipeTagColor,
+  editRecipeTagAll,
   deleteRecipeTagAll,
 }) {
   const [isEditTags, setIsEditTags] = useState(false);
-  const [editTagId, setEditTagId] = useState(null);
-  //   const anchorRef = useRef(null);
+  const [editTagId, setEditTagId] = useState({
+    id: null,
+    field: null,
+  });
+  const tagRefs = useRef({});
 
-  function handleColorPickerClose() {
-    setEditTagId(null);
+  const [draftTags, setDraftTags] = useState([]);
+  useEffect(() => {
+    if (isEditTags && tags) {
+      setDraftTags([...tags]);
+    }
+  }, [tags, isEditTags]);
+
+  function editDraftTagName(event, tagId) {
+    const newName = event.target.value;
+
+    setDraftTags((prevTag) => {
+      return prevTag.map((t) => {
+        if (t.id === tagId) {
+          return { ...t, name: newName };
+        } else {
+          return t;
+        }
+      });
+    });
   }
+
   return (
     <div>
       {!isEditTags ? (
@@ -53,7 +74,7 @@ function HomeTags({
                       className={`w-4 h-4 rounded-full`}
                       style={{ backgroundColor: tag.color }}
                     ></div>
-                    {tag.name}
+                    <div>{tag.name}</div>
                   </button>
                 );
               })
@@ -68,45 +89,74 @@ function HomeTags({
         <div>
           <div className="flex justify-between items-end">
             <h2 className="font-semibold">Edit Tags</h2>
-            <button
-              onClick={() => {
-                setIsEditTags(false);
-                setEditTagId(null);
-              }}
-              className="text-sm text-white bg-accent rounded-lg py-1 px-2"
-            >
-              Done
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setIsEditTags(false);
+                  setEditTagId({ id: null, field: null });
+                }}
+                className="text-sm text-white bg-accent rounded-lg py-1 px-2"
+              >
+                Done
+              </button>
+            </div>
           </div>
           <div className="flex gap-3 py-2 flex-wrap">
-            {tags.length > 0 ? (
-              tags.map((tag) => {
+            {draftTags.length > 0 ? (
+              draftTags.map((tag) => {
                 return (
-                  <div key={tag.id} className="gap-1 flex items-center ">
+                  <div key={tag.id} className="gap-1 flex items-center w-fit">
                     <div
-                      className={`inline-flex gap-2 items-center px-2 py-0.5 border border-mantle rounded-full cursor-pointer bg-tag text-primary text-sm`}
+                      className={`inline-flex w-fit gap-2 items-center px-2 py-0.5 border border-mantle rounded-full cursor-pointer bg-tag text-primary text-sm`}
                     >
                       <button
-                        ref={(el) => (tag.anchor = el)}
+                        ref={(el) => (tagRefs.current[tag.id] = el)}
                         className="h-4 w-4"
                         style={{ backgroundColor: tag.color }}
                         onClick={() => {
-                          setEditTagId(tag.id);
+                          setEditTagId({ id: tag.id, field: "Color" });
                         }}
                       ></button>
-                      {editTagId === tag.id && (
-                        <ColorPickerPortal
-                          anchorRef={{ current: tag.anchor }}
-                          color={tag.color}
-                          onChange={(color) => {
-                            editRecipeTagColor(color.hex, tag);
-                          }}
-                          onClose={() => {
-                            setEditTagId(null);
-                          }}
-                        />
-                      )}
-                      <div className="underline">{tag.name}</div>
+                      <input
+                        id={tag.id}
+                        type="text"
+                        className="underline bg-transparent outline-none text-sm px-0"
+                        value={tag.name}
+                        size={tag.name.length || 1}
+                        onChange={(event) => {
+                          editDraftTagName(event, tag.id);
+                        }}
+                        onBlur={(event) => {
+                          console.log("On blur triggered");
+                          const newName = event.target.value.trim();
+                          const originalTag = tags.find((t) => t.id === tag.id);
+                          if (newName && newName !== originalTag.name) {
+                            const newTag = { ...tag, name: newName };
+                            editRecipeTagAll(newTag);
+                          }
+                        }}
+                      />
+                      {editTagId.id === tag.id &&
+                        editTagId.field === "Color" && (
+                          <ColorPickerPortal
+                            anchorRef={{ current: tagRefs.current[tag.id] }}
+                            color={tag.color}
+                            onChange={(color) => {
+                              const newColor = color.hex;
+                              const originalTag = tags.find(
+                                (t) => t.id === tag.id
+                              );
+
+                              if (newColor && newColor !== originalTag.color) {
+                                const newTag = { ...tag, color: newColor };
+                                editRecipeTagAll(newTag);
+                              }
+                            }}
+                            onClose={() => {
+                              setEditTagId({ id: null, field: null });
+                            }}
+                          />
+                        )}
                     </div>
                     <button
                       onClick={() => {

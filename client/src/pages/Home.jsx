@@ -5,8 +5,7 @@ import HomeTags from "../components/home/HomeTags";
 import UserOptions from "../components/UserOptions";
 
 function Home() {
-  const { user, recipes, deleteRecipeTagAll, editRecipeTagColor } =
-    useRecipes();
+  const { user, recipes, deleteRecipeTagAll, editRecipeTagAll } = useRecipes();
 
   const tagMap = new Map();
   if (Array.isArray(recipes)) {
@@ -94,7 +93,7 @@ function Home() {
           tags={tags}
           tagsSelected={tagsSelected}
           handleTagClick={handleTagClick}
-          editRecipeTagColor={editRecipeTagColor}
+          editRecipeTagAll={editRecipeTagAll}
           deleteRecipeTagAll={deleteRecipeTagAll}
         />
       </div>
