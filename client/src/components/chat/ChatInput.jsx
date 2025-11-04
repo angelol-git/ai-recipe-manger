@@ -112,9 +112,9 @@ function ChatInput({
             }}
             className={`ml-2 ${
               chatInputMode === "Create"
-                ? "border-green bg-green"
+                ? "border-accent bg-accent"
                 : "bg-lavender border-lavender"
-            } text-white w-min px-2 border-1 rounded-xl text-s flex items-center gap-1`}
+            } text-white w-min px-2 py-0.5 border-1 rounded-xl text-s flex items-center gap-1`}
           >
             <option value="Create">Create</option>
             <option value="Ask">Ask</option>

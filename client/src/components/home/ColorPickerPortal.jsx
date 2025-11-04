@@ -39,14 +39,14 @@ function ColorPickerPortal({ anchorRef, color, onChange, onClose }) {
           color={color}
           onChangeComplete={onChange}
           presetColors={[
+            "#8B9F87",
             "#FFB86C",
             "#A94D54",
             "#E5C890",
-            "#A6D189",
-            "#89DCEB",
-            "#739DF2",
+            "#6C8FA5",
+            "#B6A7B2",
             "#B4BEFE",
-            "#F5C2E7",
+            "#E7DFD8",
           ]}
           disableAlpha={true}
         />

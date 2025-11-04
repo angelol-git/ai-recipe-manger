@@ -44,15 +44,13 @@ body,
   --color-accent: #A67856;
 
   /* Accents */
-  --color-accent: #74B7C4;
-  --color-rose: #A94D54;
+  --color-accent: #8B9F87;
   --color-peach: #FFB86C;
+  --color-rose: #B86A73;
   --color-yellow: #E5C890;
-  --color-green: #A6D189;
-  --color-sky: #89DCEB;
-  --color-blue: #739DF2;
-  --color-lavender: #B4BEFE;
-  --color-pink: #F5C2E7;
+  --color-blue: #6C8FA5;
+  --color-lavender: #B6A7B2;
+  --color-pink: #E7DFD8;
 
   /* Subtle neutrals */
   --color-overlay0: #DFD7D2;
