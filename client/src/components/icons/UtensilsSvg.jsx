@@ -16,7 +16,7 @@ function UtensilsSvg() {
       <g id="SVGRepo_iconCarrier">
         <path
           d="M8 21V3M15 21V3C17.2091 3 19 4.79086 19 7V9C19 11.2091 17.2091 13 15 13M11 3V8C11 9.65685 9.65685 11 8 11C6.34315 11 5 9.65685 5 8V3"
-          stroke="#000000"
+          className="stroke-secondary"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"

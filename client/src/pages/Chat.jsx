@@ -74,32 +74,22 @@ function Chat() {
           onClick={() => setIsSideBarOpen(false)}
         />
       )}
-      <div className="gap-2 flex w-full justify-between py-2 border-b-1 border-black/40 items-start">
-        <div className="flex gap-3 items-start">
-          <button
-            onClick={() => setIsSideBarOpen(!isSideBarOpen)}
-            className="cursor-pointer"
-          >
-            <MenuSvg />
-          </button>
-          <h1 className="text-xl font-bold font-lora w-full">
-            {recipe?.title}
-          </h1>
-        </div>
-        <div className="flex gap-2">
-          {/* <button
-            onClick={handleFork}
-            className="px-2 py-1 bg-yellow flex font-semibold gap-2 rounded-md items-center"
-          >
-            <ForkSvg />
-          </button> */}
-          <ChatOptions
-            recipe={recipe}
-            setIsEditModalOpen={setIsEditModalOpen}
-            // handleDeleteRecipeVersion={handleDeleteRecipeVersion}
-            handleDeleteRecipe={handleDeleteRecipe}
-          />
-        </div>
+      <div className="gap-3 flex w-full justify-between py-2 items-start">
+        <button
+          onClick={() => setIsSideBarOpen(!isSideBarOpen)}
+          className="cursor-pointer pt-1"
+        >
+          <MenuSvg />
+        </button>
+        <h1 className="text-2xl font-semibold font-lora w-full">
+          {recipe?.title}
+        </h1>
+        <ChatOptions
+          recipe={recipe}
+          setIsEditModalOpen={setIsEditModalOpen}
+          // handleDeleteRecipeVersion={handleDeleteRecipeVersion}
+          handleDeleteRecipe={handleDeleteRecipe}
+        />
       </div>
       <div className="relative flex-1 py-3 overflow-y-auto">
         <ChatTags recipeId={recipe?.id} />
@@ -121,6 +111,7 @@ function Chat() {
         isEditModalOpen={isEditModalOpen}
         setIsEditModalOpen={setIsEditModalOpen}
         recipe={recipe}
+        currentVersion={currentVersion}
       />
       <ChatModal
         isPromptModalOpen={isPromptModalOpen}

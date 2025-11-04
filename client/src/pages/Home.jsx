@@ -83,7 +83,7 @@ function Home() {
   return (
     <div className="text-primary bg-base p-5 lg:p-15 flex flex-col min-h-screen gap-5">
       <div className="flex justify-between items-center">
-        <h1 className="font-medium text-4xl font-serif">Recipes</h1>
+        <h1 className="text-4xl font-medium font-lora">Recipes</h1>
         <div>
           <UserOptions user={user} />
         </div>
@@ -117,7 +117,9 @@ function Home() {
                 className="justify-between border-primary/30 border-1 rounded-tr-xl rounded-br-xl rounded-tl-sm rounded-bl-sm p-3 flex flex-col gap-3 md:max-w-[250px] h-[250px] cursor-pointer"
               >
                 <div>
-                  <h3 className="font-bold font-lora text-xl">{item.title}</h3>
+                  <h3 className="font-medium font-lora text-xl">
+                    {item.title}
+                  </h3>
                   {/* <p className="text-text-secondary">
                     {formatDescription(item.versions[0].description)}
                   </p> */}

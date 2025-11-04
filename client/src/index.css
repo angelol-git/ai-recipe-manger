@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
 @import 'tailwindcss';
 
 :root {
@@ -22,7 +22,7 @@ body,
 }
 
 @theme {
-  --font-lora: "Lora,serif";
+  --font-lora: "Lora", serif;
 
   /* Base layers */
   --color-base: #F8F5F1;

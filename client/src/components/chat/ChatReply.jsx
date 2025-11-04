@@ -23,8 +23,8 @@ function ChatReply({
 
   if (!versions) return null;
   return (
-    <div className="flex flex-col gap-3 py-4">
-      <div className="flex gap-5">
+    <div className="flex flex-col gap-4 py-4 text-primary">
+      <div className="flex gap-5 text-secondary">
         <div className="flex gap-1 items-center">
           <FireSvg />
           <div>{calories}</div>
@@ -44,7 +44,7 @@ function ChatReply({
       <div>{description}</div>
       {ingredients && (
         <div>
-          <h3 className="font-bold">Ingredients</h3>
+          <h3 className="font-medium font-lora text-lg">Ingredients</h3>
           <ul className="list-disc pl-4 py-1">
             {ingredients.map((item, index) => (
               <li key={index}>{item}</li>
@@ -54,7 +54,7 @@ function ChatReply({
       )}
       {instructions && (
         <div>
-          <h3 className="font-bold">Instructions</h3>
+          <h3 className="font-lora font-medium text-lg">Instructions</h3>
           <ul className="list-disc flex flex-col gap-2 py-1">
             {instructions.map((item, index) => (
               <li key={index} className="list-none">

@@ -41,7 +41,7 @@ function Landing() {
 
   return (
     <div className="p-10 bg-crust h-screen flex flex-col gap-5 text-primary">
-      <h1 className="text-3xl font-serif text-bold flex gap-2 items-center">
+      <h1 className="text-3xl font-lora text-bold flex gap-2 items-center">
         <BookSvg />
         Recipes
       </h1>
