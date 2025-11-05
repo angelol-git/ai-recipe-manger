@@ -24,6 +24,7 @@ function Chat() {
   const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [isAskModalOpen, setIsAskModalOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [toast, setToast] = useState(null);
 
   const [message, setMessage] = useState("");
@@ -140,8 +141,9 @@ function Chat() {
           onClose={() => setToast(null)}
         />
       )}
-
       <ChatInput
+        isChatOpen={isChatOpen}
+        setIsChatOpen={setIsChatOpen}
         message={message}
         setMessage={setMessage}
         handleSendMessage={handleSendMessage}

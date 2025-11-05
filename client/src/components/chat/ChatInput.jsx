@@ -4,9 +4,12 @@ import LeftArrowSvg from "../icons/LeftArrowSvg";
 import RightArrowSvg from "../icons/RightArrowSvg";
 import SpinnerSvg from "../icons/SpinnerSvg";
 import HistorySvg from "../icons/HistorySvg";
-import DownArrowSvg from "../icons/DownArrowSvg";
+import ChatSvg from "../icons/ChatSvg";
+import MinimizeSvg from "../icons/MinimizeSvg";
 
 function ChatInput({
+  isChatOpen,
+  setIsChatOpen,
   message,
   setMessage,
   handleSendMessage,
@@ -65,19 +68,19 @@ function ChatInput({
     }
   }
 
-  return (
+  return isChatOpen ? (
     <div
       onClick={() => {
         setIsExpanded(true);
       }}
-      className="flex-col p-2 border rounded-2xl border-gray-300"
+      className="relative flex-col p-2 rounded-2xl bg-mantle"
     >
       <textarea
         rows={1}
         ref={textAreaRef}
-        className="w-full px-2 rounded-xl 
+        className="w-full px-2 rounded-xl bg-transparent text-primary
                  outline-none resize-none leading-6
-                 placeholder:text-gray-400"
+                 placeholder:text-icon-disabled"
         style={{
           minHeight: `${minHeight}px`,
           maxHeight: `${maxHeight}px`,
@@ -87,15 +90,18 @@ function ChatInput({
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Enter any recipe or changes..."
       />
+      <button
+        onClick={() => setIsChatOpen(false)}
+        className="absolute top-1 right-1 p-1 rounded-full hover:bg-overlay0"
+        aria-label="Minimize chat"
+      >
+        <MinimizeSvg />
+      </button>
+
       <div className={`flex bg-gap-3 items-center justify-between`}>
         <div className="flex gap-2">
           <div className="flex gap-3">
-            <button
-              onClick={handlePrevVersion}
-              className={`cursor-pointer ${
-                currentVersion === 0 ? "gray-300" : "black"
-              }`}
-            >
+            <button onClick={handlePrevVersion} className="cursor-pointer">
               <LeftArrowSvg currentVersion={currentVersion} />
             </button>
             <button onClick={handleNextVersion} className="cursor-pointer">
@@ -112,9 +118,9 @@ function ChatInput({
             }}
             className={`ml-2 ${
               chatInputMode === "Create"
-                ? "border-accent bg-accent"
-                : "bg-lavender border-lavender"
-            } text-white w-min px-2 py-0.5 border-1 rounded-xl text-s flex items-center gap-1`}
+                ? "bg-overlay0 text-secondary"
+                : "bg-icon-disabled text-white"
+            } w-min px-2 cursor-pointer py-1 rounded-2xl text-sm flex items-center gap-1`}
           >
             <option value="Create">Create</option>
             <option value="Ask">Ask</option>
@@ -124,7 +130,7 @@ function ChatInput({
               onClick={() => {
                 setIsAskModalOpen(!isAskModalOpen);
               }}
-              className="bg-lavender p-1 rounded-full cursor-pointer"
+              className="bg-icon-disabled p-1 rounded-full cursor-pointer"
             >
               <HistorySvg />
             </button>
@@ -137,6 +143,17 @@ function ChatInput({
           {isReplyLoading ? <SpinnerSvg /> : <UpArrowSvg />}
         </button>
       </div>
+    </div>
+  ) : (
+    <div className="absolute bottom-0 right-0 flex justify-end p-6">
+      <button
+        className="bg-accent rounded-full p-2"
+        onClick={() => {
+          setIsChatOpen(true);
+        }}
+      >
+        <ChatSvg />
+      </button>
     </div>
   );
 }
