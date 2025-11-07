@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
-// import { useRecipes } from "../../contexts/RecipesContext";
+import { useRecipes } from "../../contexts/RecipesContext";
+
 import CloseSvg from "../icons/CloseSvg";
 import ColorPickerPortal from "../home/ColorPickerPortal";
 function ChatEditModal({
@@ -9,10 +10,10 @@ function ChatEditModal({
   recipe,
   currentVersion,
 }) {
-  // const { deleteRecipeTag, } = useRecipes();
+  const { updateRecipe } = useRecipes();
+
   const [draft, setDraft] = useState(() => (recipe ? { ...recipe } : null));
   const [editTagId, setEditTagId] = useState(null);
-  //   console.log(recipe);
   const modalRef = useRef(null);
   const portalRef = useRef(null);
 
@@ -22,7 +23,52 @@ function ChatEditModal({
     setDraft(recipe);
   }, [recipe, isEditModalOpen]);
 
-  function handleSave() {}
+  function handleSave() {
+    setIsEditModalOpen(false);
+    updateRecipe(draft);
+  }
+
+  function editDraftVersion(versionId, field, value) {
+    setDraft((prev) => {
+      return {
+        ...prev,
+        versions: prev.versions.map((version) => {
+          if (version.id === versionId) {
+            return {
+              ...version,
+              [field]: value,
+            };
+          } else {
+            return version;
+          }
+        }),
+      };
+    });
+  }
+
+  function editDraftVersionArray(versionId, field, value, targetIndex) {
+    setDraft((prev) => {
+      return {
+        ...prev,
+        versions: prev.versions.map((version) => {
+          if (version.id === versionId) {
+            return {
+              ...version,
+              [field]: version[field].map((item, index) => {
+                if (index === targetIndex) {
+                  return value;
+                }
+                return item;
+              }),
+            };
+          } else {
+            return version;
+          }
+        }),
+      };
+    });
+  }
+
   function editDraftTagName(event, tag) {
     const newName = event.target.value;
     setDraft((prev) => {
@@ -71,15 +117,15 @@ function ChatEditModal({
     });
   }
 
-  function editDraftDescription(newDescription, currentVersion) {
+  function deleteDraftDescription(versionId) {
     setDraft((prev) => {
       return {
         ...prev,
-        versions: prev.versions.map((version, index) => {
-          if (index === currentVersion) {
+        versions: prev.versions.map((version) => {
+          if (version.id === versionId) {
             return {
               ...version,
-              description: newDescription,
+              description: "",
             };
           } else {
             return version;
@@ -89,15 +135,17 @@ function ChatEditModal({
     });
   }
 
-  function deleteDraftDescription(currentVersion) {
+  function deleteDraftArray(versionId, field, targetIndex) {
     setDraft((prev) => {
       return {
         ...prev,
-        versions: prev.versions.map((version, index) => {
-          if (index === currentVersion) {
+        versions: prev.versions.map((version) => {
+          if (version.id === versionId) {
             return {
               ...version,
-              description: "",
+              [field]: version[field].filter((item, index) => {
+                return index !== targetIndex;
+              }),
             };
           } else {
             return version;
@@ -152,7 +200,11 @@ function ChatEditModal({
               Information
             </h3>
             <div>
-              <Info draft={draft} currentVersion={currentVersion} />
+              <Information
+                draft={draft}
+                currentVersion={currentVersion}
+                editDraftVersion={editDraftVersion}
+              />
             </div>
           </section>
 
@@ -164,7 +216,7 @@ function ChatEditModal({
               <Description
                 draft={draft}
                 currentVersion={currentVersion}
-                editDraftDescription={editDraftDescription}
+                editDraftVersion={editDraftVersion}
                 deleteDraftDescription={deleteDraftDescription}
               />
             </div>
@@ -173,13 +225,23 @@ function ChatEditModal({
             <h3 className="font-medium font-lora text-secondary">
               Ingredients
             </h3>
-            <Ingredients draft={draft} currentVersion={currentVersion} />
+            <Ingredients
+              draft={draft}
+              currentVersion={currentVersion}
+              editDraftVersionArray={editDraftVersionArray}
+              deleteDraftArray={deleteDraftArray}
+            />
           </section>
           <section className="flex flex-col gap-2">
             <h3 className="font-medium font-lora text-secondary">
               Instructions
             </h3>
-            <Instructions draft={draft} currentVersion={currentVersion} />
+            <Instructions
+              draft={draft}
+              currentVersion={currentVersion}
+              editDraftVersionArray={editDraftVersionArray}
+              deleteDraftArray={deleteDraftArray}
+            />
           </section>
         </form>
       </div>
@@ -210,65 +272,6 @@ function Title({ setDraft, draft }) {
         }}
       >
         Clear
-      </div>
-    </div>
-  );
-}
-
-function Info({ draft, currentVersion }) {
-  const version = draft?.versions[currentVersion];
-
-  return (
-    <div className="bg-mantle/50 border border-crust rounded-xl p-4 flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-3">
-        <label
-          htmlFor="calories"
-          className="text-sm text-secondary/90 min-w-[80px]"
-        >
-          Calories
-        </label>
-        <input
-          id="calories"
-          name="calories"
-          type="text"
-          value={version?.calories || ""}
-          onChange={() => {}}
-          className="flex-1 bg-transparent border-b border-overlay0 text-primary text-sm focus:outline-none"
-        />
-      </div>
-
-      <div className="flex items-center justify-between gap-3">
-        <label
-          htmlFor="time"
-          className="text-sm text-secondary/90 min-w-[80px]"
-        >
-          Total Time
-        </label>
-        <input
-          id="time"
-          name="time"
-          type="text"
-          value={version?.total_time || ""}
-          onChange={() => {}}
-          className="flex-1 bg-transparent border-b border-overlay0 text-primary text-sm focus:outline-none"
-        />
-      </div>
-
-      <div className="flex items-center justify-between gap-3">
-        <label
-          htmlFor="servings"
-          className="text-sm text-secondary/90 min-w-[80px]"
-        >
-          Servings
-        </label>
-        <input
-          id="servings"
-          name="servings"
-          type="text"
-          value={version?.servings || ""}
-          onChange={() => {}}
-          className="flex-1 bg-transparent border-b border-overlay0 text-primary text-sm focus:outline-none"
-        />
       </div>
     </div>
   );
@@ -349,30 +352,96 @@ function Tags({
   );
 }
 
+function Information({ draft, currentVersion, editDraftVersion }) {
+  const version = draft?.versions[currentVersion];
+
+  return (
+    <div className="bg-mantle/50 border border-crust rounded-xl p-4 flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-3">
+        <label
+          htmlFor="calories"
+          className="text-sm text-secondary/90 min-w-[80px]"
+        >
+          Calories
+        </label>
+        <input
+          id="calories"
+          name="calories"
+          type="text"
+          value={version?.calories || ""}
+          onChange={(event) => {
+            editDraftVersion(version.id, event.target.id, event.target.value);
+          }}
+          className="flex-1 bg-transparent border-b border-overlay0 text-primary text-sm focus:outline-none"
+        />
+      </div>
+
+      <div className="flex items-center justify-between gap-3">
+        <label
+          htmlFor="total_time"
+          className="text-sm text-secondary/90 min-w-[80px]"
+        >
+          Total Time
+        </label>
+        <input
+          id="total_time"
+          name="total_time"
+          type="text"
+          value={version?.total_time || ""}
+          onChange={(event) => {
+            editDraftVersion(version.id, event.target.id, event.target.value);
+          }}
+          className="flex-1 bg-transparent border-b border-overlay0 text-primary text-sm focus:outline-none"
+        />
+      </div>
+
+      <div className="flex items-center justify-between gap-3">
+        <label
+          htmlFor="servings"
+          className="text-sm text-secondary/90 min-w-[80px]"
+        >
+          Servings
+        </label>
+        <input
+          id="servings"
+          name="servings"
+          type="text"
+          value={version?.servings || ""}
+          onChange={(event) => {
+            editDraftVersion(version.id, event.target.id, event.target.value);
+          }}
+          className="flex-1 bg-transparent border-b border-overlay0 text-primary text-sm focus:outline-none"
+        />
+      </div>
+    </div>
+  );
+}
+
 function Description({
   draft,
   currentVersion,
-  editDraftDescription,
+  editDraftVersion,
   deleteDraftDescription,
 }) {
+  const version = draft?.versions[currentVersion];
   return (
     <div className="flex flex-col gap-2 w-full">
       <textarea
         id="description"
         name="description"
         rows={5}
-        value={draft?.versions[currentVersion].description}
+        value={version?.description}
         onChange={(event) => {
-          editDraftDescription(event.target.value, currentVersion);
+          editDraftVersion(version.id, event.target.id, event.target.value);
         }}
-        className="text-primary text-sm"
+        className="text-primary text-sm border-b border-secondary/20"
       />
       <div className="flex justify-end">
         <button
           className="text-xs"
           type="button"
           onClick={() => {
-            deleteDraftDescription(currentVersion);
+            deleteDraftDescription(version.id);
           }}
         >
           Clear
@@ -382,23 +451,34 @@ function Description({
   );
 }
 
-function Ingredients({ draft, currentVersion }) {
+function Ingredients({
+  draft,
+  currentVersion,
+  editDraftVersionArray,
+  deleteDraftArray,
+}) {
+  const version = draft?.versions[currentVersion];
   return (
     <ul className="flex flex-col gap-2">
-      {draft?.versions[currentVersion].ingredients.map((ingredient, index) => (
+      {version?.ingredients.map((ingredient, index) => (
         <li
           key={index}
-          className="flex items-start gap-2 bg-mantle/70 border border-crust rounded-xl px-3 py-2 transition-all hover:shadow-sm"
+          className="flex items-center gap-2 bg-mantle/70 border border-crust rounded-xl px-3 py-2 transition-all hover:shadow-sm"
         >
           <textarea
-            className="w-full bg-transparent resize-none overflow-hidden outline-none text-primary text-sm leading-relaxed"
+            className="w-full  bg-transparent resize-none overflow-hidden outline-none text-primary text-sm leading-relaxed"
             value={ingredient}
             rows={1}
-            onChange={(e) => {
-              const el = e.target;
+            onChange={(event) => {
+              const el = event.target;
               el.style.height = "auto";
               el.style.height = `${el.scrollHeight}px`;
-              // handleIngredientChange(index, e.target.value)
+              editDraftVersionArray(
+                version.id,
+                "ingredients",
+                event.target.value,
+                index
+              );
             }}
             ref={(el) => {
               if (el) {
@@ -407,11 +487,14 @@ function Ingredients({ draft, currentVersion }) {
               }
             }}
           />
+
           <button
             type="button"
-            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-tag rounded-full"
+            onClick={() => {
+              deleteDraftArray(version.id, "ingredients", index);
+            }}
           >
-            <CloseSvg height="14px" width="14px" />
+            <CloseSvg height="14px" width="14px" fill="secondary" />
           </button>
         </li>
       ))}
@@ -419,23 +502,34 @@ function Ingredients({ draft, currentVersion }) {
   );
 }
 
-function Instructions({ draft, currentVersion }) {
+function Instructions({
+  draft,
+  currentVersion,
+  editDraftVersionArray,
+  deleteDraftArray,
+}) {
+  const version = draft?.versions[currentVersion];
   return (
     <ul className="flex flex-col gap-2">
-      {draft?.versions[currentVersion].instructions.map((ingredient, index) => (
+      {version?.instructions.map((ingredient, index) => (
         <li
           key={index}
-          className="flex items-start gap-2 bg-mantle/70 border border-crust rounded-xl px-3 py-2 transition-all hover:shadow-sm"
+          className="flex items-center gap-2 bg-mantle/70 border border-crust rounded-xl px-3 py-2 transition-all hover:shadow-sm"
         >
           <textarea
             className="w-full bg-transparent resize-none overflow-hidden outline-none text-primary text-sm leading-relaxed"
             value={ingredient}
             rows={1}
-            onChange={(e) => {
-              const el = e.target;
+            onChange={(event) => {
+              const el = event.target;
               el.style.height = "auto";
               el.style.height = `${el.scrollHeight}px`;
-              // handleIngredientChange(index, e.target.value)
+              editDraftVersionArray(
+                version.id,
+                "instructions",
+                event.target.value,
+                index
+              );
             }}
             ref={(el) => {
               if (el) {
@@ -446,9 +540,11 @@ function Instructions({ draft, currentVersion }) {
           />
           <button
             type="button"
-            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-tag rounded-full"
+            onClick={() => {
+              deleteDraftArray(version.id, "instructions", index);
+            }}
           >
-            <CloseSvg height="14px" width="14px" />
+            <CloseSvg height="14px" width="14px" fill="secondary" />
           </button>
         </li>
       ))}

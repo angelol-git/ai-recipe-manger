@@ -131,7 +131,6 @@ export function RecipesProvider({ children }) {
   }
 
   async function updateRecipe(updatedRecipe) {
-    const prevRecipe = recipes;
     setRecipes((prev) => {
       return prev.map((item) => {
         if (item.id === updatedRecipe.id) {
@@ -141,22 +140,22 @@ export function RecipesProvider({ children }) {
         }
       });
     });
-    try {
-      const result = await fetch(`${API_BASE}/recipes/${updatedRecipe.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(updatedRecipe),
-      });
-      if (!result.ok) {
-        throw new Error("Failed to update recipe");
-      }
-      // const data = await result.json();
-      // console.log(data);
-    } catch (error) {
-      console.error(error);
-      setRecipes(prevRecipe);
-    }
+    // try {
+    //   const result = await fetch(`${API_BASE}/recipes/${updatedRecipe.id}`, {
+    //     method: "PUT",
+    //     headers: { "Content-Type": "application/json" },
+    //     credentials: "include",
+    //     body: JSON.stringify(updatedRecipe),
+    //   });
+    //   if (!result.ok) {
+    //     throw new Error("Failed to update recipe");
+    //   }
+    //   // const data = await result.json();
+    //   // console.log(data);
+    // } catch (error) {
+    //   console.error(error);
+    //   setRecipes(prevRecipe);
+    // }
   }
 
   async function addRecipeTag(id, newTag) {

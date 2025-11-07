@@ -272,23 +272,50 @@ router.get("/:id/askMessages", authMiddleware, async (req, res) => {
         return res.status(500).json({ error: `DB error: ${error}` });
     }
 })
+
 //Currently only supports title
 router.put("/:id", authMiddleware, async (req, res) => {
 
     const { id } = req.params;
     const recipe = req.body;
 
-    try {
-        const result = db.prepare(`
+    const updateRecipeTransaction = db.transaction((recipe) => {
+        //1. Update recipe title 
+        const updateRecipe = db.prepare(`
             UPDATE recipes
             SET title = ?
             WHERE id = ?
         `).run(recipe.title, id);
 
-        if (result.changes === 0) {
+        if (updateRecipe.changes === 0) {
             return res.status(404).json({ error: "Recipe not found" });
         }
 
+        //2. Update or insert recipe version
+        const addRecipeVersion = db.prepare(`
+            INSERT INTO recipe_versions
+            (recipe_id, servings, total_time, calories, description, instructions, ingredients, source_prompt, ai_model)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(
+            id,
+            servings,
+            totalTime,
+            calories,
+            description,
+            instructions,
+            ingredients,
+            sourcePrompt,
+            aiModel,
+        );
+
+
+
+
+        //3. Handle Tags
+    })
+    try {
+
+        updateRecipeTransaction();
         return res.json({ success: true, updatedId: id });
     } catch (error) {
         console.error(error);
