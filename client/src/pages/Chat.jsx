@@ -43,7 +43,8 @@ function Chat() {
     setAskMessages,
     sendCreateMessage,
     handleDeleteError,
-    handleDeleteRecipe,
+    deleteRecipeVersion,
+    deleteRecipe,
   } = useChat(recipe, currentVersion, setCurrentVersion, showToast);
 
   function showToast(message, type = "error") {
@@ -92,9 +93,10 @@ function Chat() {
         </h1>
         <ChatOptions
           recipe={recipe}
+          currentVersion={currentVersion}
           setIsEditModalOpen={setIsEditModalOpen}
-          // handleDeleteRecipeVersion={handleDeleteRecipeVersion}
-          handleDeleteRecipe={handleDeleteRecipe}
+          deleteRecipeVersion={deleteRecipeVersion}
+          deleteRecipe={deleteRecipe}
         />
       </div>
       <div className="relative flex-1 py-3 overflow-y-auto">

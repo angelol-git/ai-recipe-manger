@@ -156,7 +156,7 @@ function ChatInput({
             <LoaderCircle
               size={20}
               strokeWidth={1.5}
-              className="stroke-white"
+              className="stroke-white animate-spin"
             />
           ) : (
             <ArrowUp size={20} strokeWidth={1.5} className="stroke-white" />

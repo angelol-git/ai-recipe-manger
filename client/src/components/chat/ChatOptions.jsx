@@ -3,9 +3,11 @@ import { CircleX, Share, Ellipsis, Trash2, SquarePen } from "lucide-react";
 
 function ChatOptions({
   recipe,
+  currentVersion,
   setIsEditModalOpen,
-  handleDeleteRecipeVersion,
-  handleDeleteRecipe,
+
+  deleteRecipeVersion,
+  deleteRecipe,
 }) {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const menuRef = useRef(null);
@@ -87,9 +89,13 @@ function ChatOptions({
                 onClick={() => {
                   setIsOptionsOpen(false);
                   if (recipe.versions?.length === 1) {
-                    handleDeleteRecipe();
+                    console.log(recipe.versions[currentVersion]);
+                    deleteRecipeVersion(
+                      recipe.id,
+                      recipe.versions[currentVersion].id
+                    );
                   } else {
-                    handleDeleteRecipeVersion();
+                    deleteRecipe(recipe.id);
                   }
                 }}
                 className="w-full flex justify-between items-center py-3 "
@@ -103,7 +109,7 @@ function ChatOptions({
               <button
                 onClick={() => {
                   setIsOptionsOpen(false);
-                  handleDeleteRecipe();
+                  deleteRecipe(recipe.id);
                 }}
                 className="w-full flex justify-between items-center py-3 text-rose"
               >
