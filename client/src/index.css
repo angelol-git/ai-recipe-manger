@@ -25,6 +25,10 @@ body,
   perspective: 500px;
 }
 
+.test {
+  column-fill: auto;
+}
+
 @theme {
   --font-lora: "Lora", serif;
 

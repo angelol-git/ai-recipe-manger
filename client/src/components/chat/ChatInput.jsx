@@ -74,7 +74,7 @@ function ChatInput({
       onClick={() => {
         setIsExpanded(true);
       }}
-      className="relative flex-col p-2 rounded-2xl bg-mantle"
+      className="absolute bottom-0 w-full flex-col mb-2 p-2 rounded-2xl bg-mantle"
     >
       <textarea
         rows={1}
@@ -165,7 +165,7 @@ function ChatInput({
       </div>
     </div>
   ) : (
-    <div className="absolute bottom-0 right-0 flex justify-end p-6">
+    <div className="fixed bottom-0 right-0 flex p-6">
       <button
         className="bg-accent rounded-full p-2"
         onClick={() => {

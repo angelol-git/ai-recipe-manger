@@ -59,7 +59,7 @@ function ChatOptions({
             <li>
               <button
                 onClick={() => setIsOptionsOpen(false)}
-                className="w-full flex justify-between items-center py-3"
+                className="w-full flex justify-between items-center py-3 cursor-pointer"
               >
                 <Share size={22} strokeWidth={1.25} className="stroke-icon" />
                 <div className="text-sm">Share</div>
@@ -72,7 +72,7 @@ function ChatOptions({
                   setIsOptionsOpen(false);
                   setIsEditModalOpen(true);
                 }}
-                className="w-full flex justify-between items-center py-3"
+                className="w-full flex justify-between items-center py-3 cursor-pointer"
               >
                 <SquarePen
                   size={22}
@@ -93,7 +93,7 @@ function ChatOptions({
                     handleDeleteRecipeVersion();
                   }
                 }}
-                className="w-full flex justify-between items-center py-3 "
+                className="w-full flex justify-between items-center py-3 cursor-pointer"
               >
                 <Trash2 size={22} strokeWidth={1.25} className="stroke-icon" />
                 <div className="text-sm">Delete Current</div>

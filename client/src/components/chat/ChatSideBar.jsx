@@ -1,15 +1,16 @@
 import { Link } from "react-router";
-import { X } from "lucide-react";
+import { X, PanelLeftClose } from "lucide-react";
 function ChatSideBar({
   recipes,
   currentRecipe,
   isSideBarOpen,
   setIsSideBarOpen,
+  isMobile,
 }) {
   return (
     <nav
-      className={`z-100 p-5 fixed top-0 left-0 h-full w-72 bg-base transition-transform duration-300 ease-in-out flex-col flex ${
-        isSideBarOpen ? "translate-x-0" : "-translate-x-full"
+      className={`z-100 lg:border-r-gray-300 lg:border-r-1 p-5 fixed top-0 left-0 h-full w-70 bg-mantle transition-transform duration-300 ease-in-out flex-col flex ${
+        isSideBarOpen ? "translate-x-0 lg:static" : "-translate-x-full "
       }`}
     >
       <div className="flex justify-between">
@@ -22,7 +23,15 @@ function ChatSideBar({
           }}
           className="cursor-pointer"
         >
-          <X size={20} strokeWidth={1.5} className="stroke-icon" />
+          {isMobile ? (
+            <X size={20} strokeWidth={1.5} className="stroke-icon" />
+          ) : (
+            <PanelLeftClose
+              size={24}
+              strokeWidth={1.5}
+              className="stroke-icon"
+            />
+          )}
         </button>
       </div>
       <div className="flex flex-col gap-1 pt-5">

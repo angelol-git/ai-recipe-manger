@@ -22,7 +22,7 @@ function ChatTags({ recipeId }) {
   }
 
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div className="flex gap-2 pt-2 flex-wrap">
       {tags?.length > 0 &&
         tags.map((tag) => {
           return (

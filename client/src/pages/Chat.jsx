@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useRecipes } from "../contexts/RecipesContext.jsx";
 import { useChat } from "../hooks/useChat.jsx";
+import ChatHeader from "../components/chat/ChatHeader.jsx";
 import ChatSideBar from "../components/chat/ChatSideBar.jsx";
-import ChatOptions from "../components/chat/ChatOptions.jsx";
 import ChatInput from "../components/chat/ChatInput.jsx";
 import ChatReply from "../components/chat/ChatReply.jsx";
 import ChatEditModal from "../components/chat/ChatEditModal.jsx";
 import ChatErrorModal from "../components/chat/ChatErrorModal.jsx";
 import ChatAskModal from "../components/chat/ChatAskModal.jsx";
 import Toast from "../components/Toast.jsx";
-import { PanelLeftOpen } from "lucide-react";
 import ChatTags from "../components/chat/ChatTags.jsx";
+import useIsMobile from "../hooks/useIsMobile.jsx";
 
 function Chat() {
   const { id } = useParams();
@@ -24,10 +24,10 @@ function Chat() {
   const [isAskModalOpen, setIsAskModalOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(true);
   const [toast, setToast] = useState(null);
-
   const [message, setMessage] = useState("");
   const [chatInputMode, setChatInputMode] = useState("Create");
 
+  const isMobile = useIsMobile();
   useEffect(() => {
     if (recipe) {
       setIsChatOpen(false);
@@ -70,97 +70,86 @@ function Chat() {
   }
 
   return (
-    <div className="relative bg-base flex flex-1 min-h-screen items-center flex-col  text-primary py-5 px-4 w-full">
-      <div className="max-w-screen-xl flex flex-col w-full h-full gap-2">
-        <ChatSideBar
-          recipes={recipes}
-          currentRecipe={recipe}
-          isSideBarOpen={isSideBarOpen}
-          setIsSideBarOpen={setIsSideBarOpen}
+    <div className="bg-base relative flex max-h-screen h-screen flex-col lg:flex-row  text-primary lg:p-0  w-full overflow-y-auto">
+      <ChatSideBar
+        recipes={recipes}
+        currentRecipe={recipe}
+        isSideBarOpen={isSideBarOpen}
+        setIsSideBarOpen={setIsSideBarOpen}
+        isMobile={isMobile}
+      />
+      {isMobile && isSideBarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-20"
+          onClick={() => setIsSideBarOpen(false)}
         />
-        {isSideBarOpen && (
-          <div
-            className="fixed inset-0 bg-black/10 z-20"
-            onClick={() => setIsSideBarOpen(false)}
-          />
-        )}
-        <div className="gap-3 flex w-full justify-between py-2 items-start">
-          <button
-            onClick={() => setIsSideBarOpen(!isSideBarOpen)}
-            className="cursor-pointer pt-1"
-          >
-            <PanelLeftOpen
-              size={24}
-              strokeWidth={1.5}
-              className="stroke-icon"
-            />
-          </button>
-          <h1 className="text-2xl font-semibold font-lora w-full">
-            {recipe?.title}
-          </h1>
-          <ChatOptions
-            recipe={recipe}
-            currentVersion={currentVersion}
-            setIsEditModalOpen={setIsEditModalOpen}
-            handleDeleteRecipeVersion={handleDeleteRecipeVersion}
-            handleDeleteRecipe={handleDeleteRecipe}
-          />
-        </div>
-        <ChatTags recipeId={recipe?.id} />
-        {recipe?.id ? (
-          <ChatReply
-            versions={recipe.versions}
-            errors={errors}
-            isReplyLoading={isReplyLoading}
-            setIsErrorModalOpen={setIsErrorModalOpen}
-            currentVersion={currentVersion}
-            totalVersion={recipe.versions.length}
-          />
-        ) : (
-          <div className="text-gray-400">No messages yet</div>
-        )}
-        <ChatEditModal
-          isEditModalOpen={isEditModalOpen}
-          setIsEditModalOpen={setIsEditModalOpen}
+      )}
+      <div className="w-full flex flex-col">
+        <ChatHeader
           recipe={recipe}
           currentVersion={currentVersion}
+          isSideBarOpen={isSideBarOpen}
+          setIsSideBarOpen={setIsSideBarOpen}
+          setIsEditModalOpen={setIsEditModalOpen}
+          handleDeleteRecipeVersion={handleDeleteRecipeVersion}
+          handleDeleteRecipe={handleDeleteRecipe}
+          isMobile={isMobile}
         />
-        <ChatErrorModal
-          isErrorModalOpen={isErrorModalOpen}
-          setIsErrorModalOpen={setIsErrorModalOpen}
-          errors={errors}
-          handleDeleteError={handleDeleteError}
-        />
-        <ChatAskModal
-          isAskModalOpen={isAskModalOpen}
-          setIsAskModalOpen={setIsAskModalOpen}
-          askMessages={askMessages}
-          setAskMessages={setAskMessages}
-          sendAskMessage={sendAskMessage}
-          isReplyLoading={isReplyLoading}
-        />
-        {toast && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
-          />
-        )}
-        <ChatInput
-          isChatOpen={isChatOpen}
-          setIsChatOpen={setIsChatOpen}
-          message={message}
-          setMessage={setMessage}
-          handleSendMessage={handleSendMessage}
-          isReplyLoading={isReplyLoading}
-          recipeVersions={recipe?.versions}
-          currentVersion={currentVersion}
-          setCurrentVersion={setCurrentVersion}
-          chatInputMode={chatInputMode}
-          setChatInputMode={setChatInputMode}
-          isAskModalOpen={isAskModalOpen}
-          setIsAskModalOpen={setIsAskModalOpen}
-        />
+        <div className="items-center flex flex-col justify-center flex-1 w-full">
+          <div className="max-w-screen-xl flex flex-col flex-1 py-2 px-4 w-full">
+            <ChatTags recipeId={recipe?.id} />
+            <ChatReply
+              recipe={recipe}
+              errors={errors}
+              isReplyLoading={isReplyLoading}
+              setIsErrorModalOpen={setIsErrorModalOpen}
+              currentVersion={currentVersion}
+              totalVersion={recipe?.versions.length}
+            />
+            <ChatEditModal
+              isEditModalOpen={isEditModalOpen}
+              setIsEditModalOpen={setIsEditModalOpen}
+              recipe={recipe}
+              currentVersion={currentVersion}
+            />
+            <ChatErrorModal
+              isErrorModalOpen={isErrorModalOpen}
+              setIsErrorModalOpen={setIsErrorModalOpen}
+              errors={errors}
+              handleDeleteError={handleDeleteError}
+            />
+            <ChatAskModal
+              isAskModalOpen={isAskModalOpen}
+              setIsAskModalOpen={setIsAskModalOpen}
+              askMessages={askMessages}
+              setAskMessages={setAskMessages}
+              sendAskMessage={sendAskMessage}
+              isReplyLoading={isReplyLoading}
+            />
+            {toast && (
+              <Toast
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast(null)}
+              />
+            )}
+            <ChatInput
+              isChatOpen={isChatOpen}
+              setIsChatOpen={setIsChatOpen}
+              message={message}
+              setMessage={setMessage}
+              handleSendMessage={handleSendMessage}
+              isReplyLoading={isReplyLoading}
+              recipeVersions={recipe?.versions}
+              currentVersion={currentVersion}
+              setCurrentVersion={setCurrentVersion}
+              chatInputMode={chatInputMode}
+              setChatInputMode={setChatInputMode}
+              isAskModalOpen={isAskModalOpen}
+              setIsAskModalOpen={setIsAskModalOpen}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
