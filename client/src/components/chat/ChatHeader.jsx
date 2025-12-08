@@ -12,7 +12,7 @@ function ChatHeader({
   handleDeleteRecipe,
 }) {
   return (
-    <div className="p-4 gap-3 top-0 bg-base  border-b-1  border-gray-300  sticky flex w-full justify-between py-2">
+    <div className="p-4 gap-3 top-0 bg-base  border-b-1  border-gray-300  z-10 sticky flex w-full justify-between py-2">
       <div className={`flex items-start ${isMobile ? "w-8" : ""}`}>
         {!isSideBarOpen && (
           // show icon only when sidebar is closed on ALL devices

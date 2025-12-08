@@ -74,98 +74,106 @@ function ChatInput({
       onClick={() => {
         setIsExpanded(true);
       }}
-      className="absolute bottom-0 w-full flex-col mb-2 p-2 rounded-2xl bg-mantle"
+      className="absolute bottom-0 w-full flex-col p-4 left-0"
     >
-      <textarea
-        rows={1}
-        ref={textAreaRef}
-        className="w-full px-2 rounded-xl text-primary
+      <div className="bg-mantle relative p-2 rounded-2xl">
+        <textarea
+          rows={1}
+          ref={textAreaRef}
+          className="w-full px-2 rounded-xl text-primary
                  outline-none resize-none leading-6
                  placeholder:text-icon-disabled"
-        style={{
-          minHeight: `${minHeight}px`,
-          maxHeight: `${maxHeight}px`,
-          overflowY: "auto",
-        }}
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Enter any recipe or changes..."
-      />
-      <button
-        onClick={() => setIsChatOpen(false)}
-        className="absolute top-1 right-1 p-1 rounded-full hover:bg-overlay0"
-        aria-label="Minimize chat"
-      >
-        <Minimize2 size={20} strokeWidth={1.5} className="stroke-icon-muted" />
-      </button>
-
-      <div className={`flex bg-gap-3 items-center justify-between`}>
-        <div className="flex gap-2">
-          <div className="flex gap-3">
-            <button onClick={handlePrevVersion} className="cursor-pointer">
-              <ArrowLeft
-                size={20}
-                strokeWidth={2}
-                className={
-                  currentVersion === 0 ? "stroke-icon-disabled" : "stroke-icon"
-                }
-              />
-            </button>
-            <button onClick={handleNextVersion} className="cursor-pointer">
-              <ArrowRight
-                size={20}
-                strokeWidth={2}
-                className={
-                  currentVersion === recipeVersions?.length - 1
-                    ? "stroke-icon-disabled"
-                    : "-icon"
-                }
-              />
-            </button>
-          </div>
-          <select
-            value={chatInputMode}
-            onChange={(event) => {
-              setChatInputMode(event.target.value);
-            }}
-            className={`ml-2 ${
-              chatInputMode === "Create"
-                ? "bg-overlay0 text-secondary"
-                : "bg-overlay2 text-white"
-            } w-min px-2 cursor-pointer py-1 rounded-2xl text-sm flex items-center gap-1`}
-          >
-            <option value="Create">Create</option>
-            <option value="Ask">Ask</option>
-          </select>
-          {chatInputMode === "Ask" ? (
-            <button
-              onClick={() => {
-                setIsAskModalOpen(!isAskModalOpen);
-              }}
-              className="bg-overlay2 p-1 rounded-full cursor-pointer"
-            >
-              <History size={20} strokeWidth={1.5} color={"white"} />
-            </button>
-          ) : null}
-        </div>
+          style={{
+            minHeight: `${minHeight}px`,
+            maxHeight: `${maxHeight}px`,
+            overflowY: "auto",
+          }}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Enter any recipe or changes..."
+        />
         <button
-          className="cursor-pointer flex items-center justify-center w-9 h-9 p-0 text-white bg-accent hover:bg-accent-dark rounded-full shrink-0"
-          onClick={handleSendMessage}
+          onClick={() => setIsChatOpen(false)}
+          className="absolute top-1 right-1 p-1 rounded-full hover:bg-overlay0"
+          aria-label="Minimize chat"
         >
-          {isReplyLoading ? (
-            <LoaderCircle
-              size={20}
-              strokeWidth={1.5}
-              className="stroke-white animate-spin"
-            />
-          ) : (
-            <ArrowUp size={20} strokeWidth={1.5} className="stroke-white" />
-          )}
+          <Minimize2
+            size={20}
+            strokeWidth={1.5}
+            className="stroke-icon-muted"
+          />
         </button>
+
+        <div className={`flex bg-gap-3 items-center justify-between`}>
+          <div className="flex gap-2">
+            <div className="flex gap-3">
+              <button onClick={handlePrevVersion} className="cursor-pointer">
+                <ArrowLeft
+                  size={20}
+                  strokeWidth={2}
+                  className={
+                    currentVersion === 0
+                      ? "stroke-icon-disabled"
+                      : "stroke-icon"
+                  }
+                />
+              </button>
+              <button onClick={handleNextVersion} className="cursor-pointer">
+                <ArrowRight
+                  size={20}
+                  strokeWidth={2}
+                  className={
+                    currentVersion === recipeVersions?.length - 1
+                      ? "stroke-icon-disabled"
+                      : "-icon"
+                  }
+                />
+              </button>
+            </div>
+            <select
+              value={chatInputMode}
+              onChange={(event) => {
+                setChatInputMode(event.target.value);
+              }}
+              className={`ml-2 ${
+                chatInputMode === "Create"
+                  ? "bg-overlay0 text-secondary"
+                  : "bg-overlay2 text-white"
+              } w-min px-2 cursor-pointer py-1 rounded-2xl text-sm flex items-center gap-1`}
+            >
+              <option value="Create">Create</option>
+              <option value="Ask">Ask</option>
+            </select>
+            {chatInputMode === "Ask" ? (
+              <button
+                onClick={() => {
+                  setIsAskModalOpen(!isAskModalOpen);
+                }}
+                className="bg-overlay2 p-1 rounded-full cursor-pointer"
+              >
+                <History size={20} strokeWidth={1.5} color={"white"} />
+              </button>
+            ) : null}
+          </div>
+          <button
+            className="cursor-pointer flex items-center justify-center w-9 h-9 p-0 text-white bg-accent hover:bg-accent-dark rounded-full shrink-0"
+            onClick={handleSendMessage}
+          >
+            {isReplyLoading ? (
+              <LoaderCircle
+                size={20}
+                strokeWidth={1.5}
+                className="stroke-white animate-spin"
+              />
+            ) : (
+              <ArrowUp size={20} strokeWidth={1.5} className="stroke-white" />
+            )}
+          </button>
+        </div>
       </div>
     </div>
   ) : (
-    <div className="fixed bottom-0 right-0 flex p-6">
+    <div className="absolute bottom-0 right-0 flex p-6">
       <button
         className="bg-accent rounded-full p-2"
         onClick={() => {
