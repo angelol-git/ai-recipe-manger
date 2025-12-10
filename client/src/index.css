@@ -25,7 +25,8 @@ body,
   perspective: 500px;
 }
 
-.test {
+.chat-reply-columns {
+  /* column-rule: 1px solid #D1D5DB; */
   column-fill: auto;
 }
 

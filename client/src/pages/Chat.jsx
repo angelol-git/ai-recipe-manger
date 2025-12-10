@@ -70,7 +70,7 @@ function Chat() {
   }
 
   return (
-    <div className="bg-base relative flex max-h-screen h-screen text-primary lg:p-0  w-full overflow-y-auto">
+    <div className="bg-base relative flex max-h-screen h-screen text-primary lg:p-0 w-full overflow-hidden">
       <ChatSideBar
         recipes={recipes}
         currentRecipe={recipe}
@@ -95,17 +95,19 @@ function Chat() {
           handleDeleteRecipe={handleDeleteRecipe}
           isMobile={isMobile}
         />
-        <div className="items-center flex flex-col justify-center flex-1 w-full">
-          <div className="relative max-w-screen-xl flex flex-col flex-1 py-2 px-4 w-full">
+        <div className="items-center flex flex-col justify-center flex-1 w-full min-h-0 overflow-hidden">
+          <div className="relative max-w-screen-xl flex flex-col flex-1 py-2 px-4 w-full h-full">
             <ChatTags recipeId={recipe?.id} />
-            <ChatReply
-              recipe={recipe}
-              errors={errors}
-              isReplyLoading={isReplyLoading}
-              setIsErrorModalOpen={setIsErrorModalOpen}
-              currentVersion={currentVersion}
-              totalVersion={recipe?.versions.length}
-            />
+            <div className="flex-1 min-h-0 w-full">
+              <ChatReply
+                recipe={recipe}
+                errors={errors}
+                isReplyLoading={isReplyLoading}
+                setIsErrorModalOpen={setIsErrorModalOpen}
+                currentVersion={currentVersion}
+                totalVersion={recipe?.versions.length}
+              />
+            </div>
             <ChatEditModal
               isEditModalOpen={isEditModalOpen}
               setIsEditModalOpen={setIsEditModalOpen}

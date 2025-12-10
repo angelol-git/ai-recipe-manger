@@ -51,8 +51,12 @@ function ChatReply({
     source_prompt,
   } = current;
   return (
-    <div className="py-2 pb-25">
-      <div role="log" aria-live="polite" className="columns-1 lg:columns-2">
+    <div className="py-2 pb-25  h-full w-full overflow-x-auto overflow-y-hidden">
+      <div
+        role="log"
+        aria-live="polite"
+        className="h-full columns-1 lg:columns-2 gap-8 chat-reply-columns pr-4"
+      >
         <div
           role="group"
           aria-label="Recipe details"
@@ -83,7 +87,7 @@ function ChatReply({
         {ingredients && (
           <section
             aria-labelledby="ingredients-heading"
-            className="w-full mb-4 h-full"
+            className="w-full mb-4"
           >
             <h3
               id="ingredients-heading"
@@ -102,7 +106,7 @@ function ChatReply({
         {instructions && (
           <section
             aria-labelledby="instructions-heading"
-            className="w-full h-full mb-4"
+            className="w-full mb-4"
           >
             <h3
               id="instructions-heading"
@@ -122,7 +126,7 @@ function ChatReply({
         )}
 
         {source_prompt && (
-          <div className="flex gap-4 justify-between text-secondary text-sm break-inside-avoid mt-4">
+          <div className="flex gap-4 justify-between text-secondary text-sm  mt-4">
             <div className="flex flex-col items-start gap-2 py-2">
               <button
                 aria-expanded={isPromptModalOpen}
