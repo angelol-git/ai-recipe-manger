@@ -51,11 +51,11 @@ function ChatReply({
     source_prompt,
   } = current;
   return (
-    <div className="py-2 pb-25  h-full w-full overflow-x-auto overflow-y-hidden">
+    <div className="py-2 pb-25  h-full w-full lg:overflow-x-auto lg:overflow-y-hidden">
       <div
         role="log"
         aria-live="polite"
-        className="h-full columns-1 lg:columns-2 gap-8 chat-reply-columns pr-4"
+        className="h-full columns-1 lg:columns-2 gap-8 lg:chat-reply-columns pr-4"
       >
         <div
           role="group"

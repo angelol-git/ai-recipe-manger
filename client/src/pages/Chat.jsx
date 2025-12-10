@@ -70,7 +70,7 @@ function Chat() {
   }
 
   return (
-    <div className="bg-base relative flex max-h-screen h-screen text-primary lg:p-0 w-full overflow-hidden">
+    <div className="bg-base relative flex min-h-screen lg:max-h-screen lg:h-screen text-primary lg:p-0 w-full lg:overflow-hidden">
       <ChatSideBar
         recipes={recipes}
         currentRecipe={recipe}
@@ -95,10 +95,10 @@ function Chat() {
           handleDeleteRecipe={handleDeleteRecipe}
           isMobile={isMobile}
         />
-        <div className="items-center flex flex-col justify-center flex-1 w-full min-h-0 overflow-hidden">
+        <div className="items-center flex flex-col justify-center flex-1 w-full lg:min-h-0 lg:overflow-hidden">
           <div className="relative max-w-screen-xl flex flex-col flex-1 py-2 px-4 w-full h-full">
             <ChatTags recipeId={recipe?.id} />
-            <div className="flex-1 min-h-0 w-full">
+            <div className="flex-1 lg:min-h-0 w-full">
               <ChatReply
                 recipe={recipe}
                 errors={errors}
