@@ -23,7 +23,7 @@ function ChatReply({
 
   if (!current) {
     return (
-      <div className="flex flex-1 flex-col gap-4 py-2 items-center justify-center pb-20 text-center">
+      <div className="flex flex-col gap-4 h-full py-2 items-center justify-center pb-50 text-center">
         <h2 className="text-primary text-2xl font-medium font-lora pb-5">
           What recipe can I help you with?
         </h2>

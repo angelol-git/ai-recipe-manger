@@ -177,15 +177,21 @@ function ChatInput({
       </div>
     </div>
   ) : (
-    <div className="absolute bottom-0 right-0 flex p-4 lg:py-8 px-4">
-      <button
-        className="bg-accent rounded-full flex items-center justify-center w-9 h-9  cursor-pointer"
-        onClick={() => {
-          setIsChatOpen(true);
-        }}
-      >
-        <MessageCircleMore size={24} strokeWidth={1.5} color={"white"} />
-      </button>
+    <div
+      className={`absolute bottom-0 right-0 lg:w-full flex p-4 lg:py-8  lg:px-7 ${
+        !recipe ? "lg:justify-center" : "lg:justify-start"
+      }`}
+    >
+      <div className="lg:w-1/2 flex justify-end">
+        <button
+          className="bg-accent rounded-full flex items-center justify-center w-9 h-9  cursor-pointer"
+          onClick={() => {
+            setIsChatOpen(true);
+          }}
+        >
+          <MessageCircleMore size={24} strokeWidth={1.5} color={"white"} />
+        </button>
+      </div>
     </div>
   );
 }
