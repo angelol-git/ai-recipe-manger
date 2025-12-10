@@ -55,7 +55,7 @@ function ChatReply({
       <div
         role="log"
         aria-live="polite"
-        className="h-full columns-1 lg:columns-2 gap-8 lg:chat-reply-columns pr-4"
+        className="h-full columns-1 lg:columns-2 gap-8 chat-reply-columns pr-4"
       >
         <div
           role="group"

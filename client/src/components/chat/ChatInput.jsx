@@ -179,7 +179,7 @@ function ChatInput({
   ) : (
     <div
       className={`absolute bottom-0 right-0 lg:w-full flex p-4 lg:py-8  lg:px-7 ${
-        !recipe ? "lg:justify-center" : "lg:justify-start"
+        !recipe ? "lg:justify-center" : "lg:justify-end"
       }`}
     >
       <div className="lg:w-1/2 flex justify-end">
