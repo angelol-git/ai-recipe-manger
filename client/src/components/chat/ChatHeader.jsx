@@ -13,16 +13,14 @@ function ChatHeader({
 }) {
   return (
     <div
-      className={`p-2 items-center gap-3 top-0 bg-base  border-b-1  border-gray-300  z-10 sticky flex w-full justify-between ${
-        isMobile ? "items-start" : "items-start"
-      }`}
+      className={`p-2 gap-3 top-0 bg-base  border-b-1 border-gray-300  z-10 sticky flex w-full justify-between`}
     >
-      <div className={`flex ${isMobile ? "items-start w-8 h-8" : ""}`}>
+      <div className={`flex  ${isMobile ? "items-center w-8 h-8" : ""}`}>
         {!isSideBarOpen && (
           // show icon only when sidebar is closed on ALL devices
           <button
             onClick={() => setIsSideBarOpen(true)}
-            className="cursor-pointer p-2 hover:bg-base-hover rounded-lg"
+            className="cursor-pointer p-2 hover:bg-mantle-hover rounded-lg"
           >
             <PanelLeftOpen
               size={`${isMobile ? "24" : "20"}`}

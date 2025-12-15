@@ -18,7 +18,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/chat" element={<ChatLayout />}>
             <Route index element={<NewChat />} />
-            <Route path="/chat/:id" element={<Chat />} />
+            <Route path=":id" element={<Chat />} />
           </Route>
         </Route>
       </Routes>
