@@ -1,9 +1,14 @@
-import { Outlet } from "react-router";
+import { Outlet, useParams } from "react-router";
+import { useRecipes } from "../../hooks/useRecipes";
 import { useChatSidebar } from "../../hooks/useChatSidebar";
-
+import useIsMobile from "../../hooks/useIsMobile";
 import ChatSideBar from "../../components/chat/ChatSideBar";
-const ChatLayout = ({ recipes, currentRecipe, isMobile }) => {
+const ChatLayout = () => {
+  const { id } = useParams();
+  const { data: recipes } = useRecipes();
+  const currentRecipe = recipes?.find((r) => r.id === id) || null;
   const { isSideBarOpen, setIsSideBarOpen } = useChatSidebar();
+  const { isMobile } = useIsMobile();
   return (
     <div className="bg-base relative flex min-h-screen lg:h-screen text-primary w-full">
       <ChatSideBar
@@ -21,7 +26,9 @@ const ChatLayout = ({ recipes, currentRecipe, isMobile }) => {
       )}
 
       <main className="w-full flex flex-col">
-        <Outlet context={[isSideBarOpen, setIsSideBarOpen]} />
+        <Outlet
+          context={[isSideBarOpen, setIsSideBarOpen, currentRecipe, isMobile]}
+        />
       </main>
     </div>
   );

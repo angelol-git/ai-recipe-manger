@@ -39,7 +39,6 @@ function NewChat() {
         setIsSideBarOpen={setIsSideBarOpen}
         isMobile={isMobile}
       />
-
       <div className="text-center relative gap-4 p-6 max-w-screen-xl flex flex-col w-full h-full justify-center pb-50">
         <h2 className="text-primary text-2xl font-medium font-lora pb-5">
           What recipe can I help you with?

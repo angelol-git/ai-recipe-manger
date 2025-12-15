@@ -1,11 +1,7 @@
 import { useState } from "react";
-import { useOutletContext, useParams } from "react-router";
-
-import { useUser } from "../../hooks/useUser.jsx";
-import { useRecipes } from "../../hooks/useRecipes.jsx";
+import { useOutletContext } from "react-router";
 import { useChat } from "../../hooks/useChat.jsx";
 import ChatHeader from "../../components/chat/ChatHeader.jsx";
-import ChatSideBar from "../../components/chat/ChatSideBar.jsx";
 import ChatInput from "../../components/chat/ChatInput.jsx";
 import ChatReply from "../../components/chat/ChatReply.jsx";
 import ChatEditModal from "../../components/chat/ChatEditModal.jsx";
@@ -13,15 +9,11 @@ import ChatErrorModal from "../../components/chat/ChatErrorModal.jsx";
 import ChatAskModal from "../../components/chat/ChatAskModal.jsx";
 import Toast from "../../components/Toast.jsx";
 import ChatTags from "../../components/chat/ChatTags.jsx";
-import useIsMobile from "../../hooks/useIsMobile.jsx";
 
 function Chat() {
-  const { id } = useParams();
-  const { data: user } = useUser();
-  const { data: recipes, onSuccess } = useRecipes();
-  const recipe = recipes?.find((r) => r.id === id) || null;
+  const [isSideBarOpen, setIsSideBarOpen, currentRecipe, isMobile] =
+    useOutletContext();
   const [currentVersion, setCurrentVersion] = useState(0);
-  const [isSideBarOpen, setIsSideBarOpen] = useOutletContext();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [isAskModalOpen, setIsAskModalOpen] = useState(false);
@@ -30,7 +22,6 @@ function Chat() {
   const [message, setMessage] = useState("");
   const [chatInputMode, setChatInputMode] = useState("Create");
 
-  const isMobile = useIsMobile();
   const {
     sendCreateMessage,
     // isReplyLoading,
@@ -42,7 +33,7 @@ function Chat() {
     // handleDeleteError,
     // handleDeleteRecipeVersion,
     // handleDeleteRecipe,
-  } = useChat(recipe, currentVersion, setCurrentVersion, showToast);
+  } = useChat(currentRecipe, currentVersion, setCurrentVersion, showToast);
 
   function showToast(message, type = "error") {
     setToast({ message, type });
@@ -55,7 +46,7 @@ function Chat() {
   function handleSendMessage() {
     if (message.trim().length === 0) return;
     if (chatInputMode === "Create") {
-      sendCreateMessage(message, currentVersion, recipe);
+      sendCreateMessage(message, currentVersion, currentRecipe);
     }
     if (chatInputMode === "Ask") {
       // sendAskMessage(message);
@@ -64,25 +55,12 @@ function Chat() {
     setMessage("");
   }
 
-  if (recipe) {
+  if (currentRecipe) {
     return (
       <div className="bg-base relative flex min-h-screen lg:max-h-screen lg:h-screen text-primary lg:p-0 w-full ">
-        <ChatSideBar
-          recipes={recipes}
-          currentRecipe={recipe}
-          isSideBarOpen={isSideBarOpen}
-          setIsSideBarOpen={setIsSideBarOpen}
-          isMobile={isMobile}
-        />
-        {isMobile && isSideBarOpen && (
-          <div
-            className="fixed inset-0 bg-black/30 z-20"
-            onClick={() => setIsSideBarOpen(false)}
-          />
-        )}
         <div className="w-full flex flex-col">
           <ChatHeader
-            recipe={recipe}
+            recipe={currentRecipe}
             currentVersion={currentVersion}
             isSideBarOpen={isSideBarOpen}
             setIsSideBarOpen={setIsSideBarOpen}
@@ -96,10 +74,10 @@ function Chat() {
               {/* <ChatTags recipeId={recipe?.id} /> */}
               <div className="flex-1 lg:min-h-0 w-full">
                 <ChatReply
-                  recipe={recipe}
+                  recipe={currentRecipe}
                   setIsErrorModalOpen={setIsErrorModalOpen}
                   currentVersion={currentVersion}
-                  totalVersion={recipe?.versions.length}
+                  totalVersion={currentRecipe?.versions.length}
                 />
               </div>
               {/* <ChatEditModal
@@ -130,13 +108,13 @@ function Chat() {
                 />
               )}
               <ChatInput
-                recipe={recipe}
+                recipe={currentRecipe}
                 isChatOpen={isChatOpen}
                 setIsChatOpen={setIsChatOpen}
                 message={message}
                 setMessage={setMessage}
                 handleSendMessage={handleSendMessage}
-                recipeVersions={recipe?.versions}
+                recipeVersions={currentRecipe?.versions}
                 currentVersion={currentVersion}
                 setCurrentVersion={setCurrentVersion}
                 chatInputMode={chatInputMode}

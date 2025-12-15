@@ -1,9 +1,8 @@
-import { PanelLeftOpen } from "lucide-react";
+import { PanelLeftOpen, PanelRightOpen } from "lucide-react";
 import ChatOptions from "./ChatOptions";
 
 function ChatHeader({
   recipe,
-  isMobile,
   currentVersion,
   isSideBarOpen,
   setIsSideBarOpen,
@@ -13,7 +12,7 @@ function ChatHeader({
 }) {
   return (
     <div className="p-4 gap-3 top-0 bg-base  border-b-1  border-gray-300  z-10 sticky flex w-full justify-between ">
-      <div className={`${isMobile ? "w-8" : ""}`}>
+      <div className="w-8 h-8">
         {!isSideBarOpen && (
           // show icon only when sidebar is closed on ALL devices
           <button
@@ -29,19 +28,21 @@ function ChatHeader({
         )}
 
         {/* mobile only: placeholder to prevent shift */}
-        {isSideBarOpen && isMobile && <div className="w-6" />}
+        {/* {isSideBarOpen && isMobile && <div className="h-8" />} */}
       </div>
 
-      <h1 className="text-2xl font-semibold  font-lora w-full">
+      <h1 className="text-2xl font-semibold max-w-screen-xl font-lora w-full">
         {recipe?.title}
       </h1>
-      <ChatOptions
-        recipe={recipe}
-        currentVersion={currentVersion}
-        setIsEditModalOpen={setIsEditModalOpen}
-        handleDeleteRecipeVersion={handleDeleteRecipeVersion}
-        handleDeleteRecipe={handleDeleteRecipe}
-      />
+      {recipe && (
+        <ChatOptions
+          recipe={recipe}
+          currentVersion={currentVersion}
+          setIsEditModalOpen={setIsEditModalOpen}
+          handleDeleteRecipeVersion={handleDeleteRecipeVersion}
+          handleDeleteRecipe={handleDeleteRecipe}
+        />
+      )}
     </div>
   );
 }
