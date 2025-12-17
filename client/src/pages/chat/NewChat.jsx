@@ -1,23 +1,18 @@
 import { useState } from "react";
-import { useUser } from "../../hooks/useUser.jsx";
 import { useChat } from "../../hooks/useChat.jsx";
 import ChatInput from "../../components/chat/ChatInput.jsx";
 import ChatHeader from "../../components/chat/ChatHeader.jsx";
 import ChatErrorModal from "../../components/chat/ChatErrorModal.jsx";
 import Toast from "../../components/Toast.jsx";
-import useIsMobile from "../../hooks/useIsMobile.jsx";
 import { useOutletContext } from "react-router";
 
 function NewChat() {
-  const { data: user } = useUser();
-  const [isSideBarOpen, setIsSideBarOpen] = useOutletContext();
+  const [isSideBarOpen, setIsSideBarOpen, isMobile] = useOutletContext();
   // const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(true);
   const [toast, setToast] = useState(null);
   const [message, setMessage] = useState("");
 
-  const isMobile = useIsMobile();
-  const { sendCreateMessage } = useChat(showToast);
+  const { sendCreateMessage, isPendingCreateMessage } = useChat(showToast);
 
   function showToast(message, type = "error") {
     setToast({ message, type });
@@ -29,7 +24,9 @@ function NewChat() {
 
   function handleSendMessage() {
     if (message.trim().length === 0) return;
-    sendCreateMessage(message);
+    sendCreateMessage({
+      message,
+    });
   }
 
   return (
@@ -68,11 +65,10 @@ function NewChat() {
           />
         )}
         <ChatInput
-          isChatOpen={isChatOpen}
-          setIsChatOpen={setIsChatOpen}
           message={message}
           setMessage={setMessage}
           handleSendMessage={handleSendMessage}
+          isPendingCreateMessage={isPendingCreateMessage}
         />
       </div>
     </div>

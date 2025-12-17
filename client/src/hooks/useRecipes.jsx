@@ -49,9 +49,9 @@ export function useRecipes() {
   });
 
   const deleteRecipeMutation = useMutation({
-    mutationFn: async ({ recipeId }) => deleteRecipe(recipeId),
+    mutationFn: async (recipeId) => deleteRecipe(recipeId),
 
-    onMutate: async ({ recipeId }) => {
+    onMutate: async (recipeId) => {
       await queryClient.cancelQueries(["recipes"]);
 
       const previousRecipes = queryClient.getQueryData(["recipes"]);
@@ -80,13 +80,13 @@ export function useRecipes() {
     onMutate: async ({ updatedRecipe }) => {
       await queryClient.cancelQueries(["recipes"]);
 
-      const previousRecipes = queryClient.getQueriesData(["recipes"]);
+      const previousRecipes = queryClient.getQueryData(["recipes"]);
       queryClient.setQueryData(["recipes"], (old) => {
         if (!old) return old;
 
         return old.map((recipe) => {
           if (recipe.id === updatedRecipe.id) {
-            return updateRecipe;
+            return updatedRecipe;
           } else {
             return recipe;
           }
@@ -108,8 +108,8 @@ export function useRecipes() {
 
   return {
     ...allRecipesQuery,
-    deleteRecipeVersion: deleteRecipeVersionMutation,
-    deleteRecipe: deleteRecipeMutation,
+    deleteRecipeVersion: deleteRecipeVersionMutation.mutate,
+    deleteRecipe: deleteRecipeMutation.mutate,
     updateRecipe: updateRecipeMutation,
   };
 }

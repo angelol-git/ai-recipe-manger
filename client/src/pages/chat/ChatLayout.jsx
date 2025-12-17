@@ -4,7 +4,7 @@ import { useRecipes } from "../../hooks/useRecipes";
 import { useChatSidebar } from "../../hooks/useChatSidebar";
 import useIsMobile from "../../hooks/useIsMobile";
 import ChatSideBar from "../../components/chat/ChatSideBar";
-import { Coins } from "lucide-react";
+
 const ChatLayout = () => {
   const { id } = useParams();
   const { data: user } = useUser();

@@ -10,9 +10,7 @@ const router = express.Router();
 const genAI = new GoogleGenAI(process.env.GOOGLE_API_KEY);
 
 router.post("/create", authMiddleware, async (req, res) => {
-    const { message, currentRecipeVersion } = req.body;
-    console.log(currentRecipeVersion);
-    const recipeId = currentRecipeVersion.id;
+    const { message, recipeId, recipeVersion } = req.body;
     try {
         console.log("Creating a recipe...");
         db.prepare(`
@@ -20,13 +18,13 @@ router.post("/create", authMiddleware, async (req, res) => {
             VALUES (?, ?, 'user', ?,'create')
         `).run(req.user.id, recipeId || null, message);
 
-        const prompt = createPrompt(currentRecipeVersion, message);
+        const prompt = createPrompt(message, recipeVersion || null);
+
         const response = await genAI.models.generateContent({
             model: "gemini-2.5-flash",
             contents: [{ type: "text", text: prompt }],
         });
-
-        validateAiResponse(response, recipeId, req, res);
+        validateAiResponse(response, recipeId || null, req, res);
     }
 
     catch (err) {
@@ -195,12 +193,12 @@ function saveAiError(userId, recipeId, error) {
     };
 }
 
-function createPrompt(currentVersion, message) {
+function createPrompt(message, recipeVersion = {}) {
     return (`
 You are a recipe extraction and transformation assistant.
 
 The user previously received this recipe from you:
-${currentVersion ? JSON.stringify(currentVersion) : "{}"}
+${JSON.stringify(recipeVersion)}
 
 The user will send you either:
 - A URL to a recipe webpage,

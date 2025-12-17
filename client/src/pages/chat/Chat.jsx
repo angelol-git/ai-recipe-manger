@@ -11,8 +11,14 @@ import Toast from "../../components/Toast.jsx";
 import ChatTags from "../../components/chat/ChatTags.jsx";
 
 function Chat() {
-  const [isSideBarOpen, setIsSideBarOpen, currentRecipe, isMobile] =
-    useOutletContext();
+  const [
+    isSideBarOpen,
+    setIsSideBarOpen,
+    currentRecipe,
+    isMobile,
+    deleteRecipe,
+    deleteRecipeVersion,
+  ] = useOutletContext();
   const [currentVersion, setCurrentVersion] = useState(0);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
@@ -28,11 +34,7 @@ function Chat() {
     // askMessages,
     // sendAskMessage,
     // setAskMessages,
-    // sendCreateMessage,
-    // handleDeleteError,
-    // handleDeleteRecipeVersion,
-    // handleDeleteRecipe,
-  } = useChat(currentRecipe, currentVersion, setCurrentVersion, showToast);
+  } = useChat(currentRecipe, showToast);
 
   function showToast(message, type = "error") {
     setToast({ message, type });
@@ -70,8 +72,6 @@ function Chat() {
             isSideBarOpen={isSideBarOpen}
             setIsSideBarOpen={setIsSideBarOpen}
             setIsEditModalOpen={setIsEditModalOpen}
-            // handleDeleteRecipeVersion={handleDeleteRecipeVersion}
-            // handleDeleteRecipe={handleDeleteRecipe}
             isMobile={isMobile}
           />
           <div className="items-center flex flex-col justify-center flex-1 w-full lg:min-h-0 ">
@@ -113,12 +113,13 @@ function Chat() {
                 />
               )}
               <ChatInput
-                isChatOpen={isChatOpen}
-                setIsChatOpen={setIsChatOpen}
                 message={message}
                 setMessage={setMessage}
                 handleSendMessage={handleSendMessage}
                 isPendingCreateMessage={isPendingCreateMessage}
+                //Optional
+                isChatOpen={isChatOpen}
+                setIsChatOpen={setIsChatOpen}
                 chatInputMode={chatInputMode}
                 setChatInputMode={setChatInputMode}
                 isAskModalOpen={isAskModalOpen}

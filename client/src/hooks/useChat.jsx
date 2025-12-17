@@ -5,26 +5,15 @@ import { useRecipes } from "../hooks/useRecipes";
 import { sendCreateMessage } from "../api/chat";
 const API_BASE = "http://localhost:8080/api";
 
-export function useChat(recipe, currentVersion, setCurrentVersion, showToast) {
+export function useChat(recipe, showToast) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { deleteRecipeVersion, deleteRecipe, updateRecipe } = useRecipes();
-  // const [errors, setErrors] = useState([]);
-  // const [askMessages, setAskMessages] = useState([]);
-
-  // useEffect(() => {
-  //   if (!recipe?.id) return;
-  //   fetchErrors(recipe.id);
-  //   fetchAskMessages(recipe.id);
-  // }, [recipe?.id]);
-
   const sendCreateMessageMutation = useMutation({
-    mutationFn: async ({ message, recipe, currentVersion }) =>
-      sendCreateMessage({
-        message,
-        currentRecipeVersion: recipe.versions[currentVersion] ?? {},
-      }),
+    mutationFn: async (payload) => {
+      return sendCreateMessage(payload);
+    },
 
     onError: (err, variables, context) => {
       showToast("Recipe could not be generated from this input");
@@ -46,21 +35,23 @@ export function useChat(recipe, currentVersion, setCurrentVersion, showToast) {
       // };
     },
 
-    onSuccess: (data) => {
-      const newRecipe = data.recipe;
+    onSuccess: (data, variables) => {
+      const newRecipe = data.reply;
+      const isNewRecipe = !variables.recipeId;
+
       //Creating a new recipe
-      if (!recipe?.id) {
-        queryClient.setQueryData(["recipes"], (old) => {
-          if (!old) return [newRecipe];
-          return [...old, newRecipe];
-        });
+      queryClient.setQueryData(["recipes"], (old) => {
+        if (!old) return [newRecipe];
+
+        return isNewRecipe
+          ? [...old, newRecipe]
+          : old.map((r) => (r.id === newRecipe.id ? newRecipe : r));
+      });
+
+      if (isNewRecipe) {
         navigate(`/chat/${newRecipe.id}`);
-      } else {
-        queryClient.setQueryData(["recipes"], (old) => {
-          if (!old) return [newRecipe];
-          return old.map((r) => (r.id === newRecipe.id ? newRecipe : r));
-        });
       }
+
       queryClient.invalidateQueries(["recipes"]);
     },
   });
@@ -181,15 +172,6 @@ export function useChat(recipe, currentVersion, setCurrentVersion, showToast) {
     }
   }
 
-  async function handleDeleteRecipe() {
-    if (!recipe.id) return;
-
-    const result = await deleteRecipe(recipe.id);
-    if (result.ok) {
-      navigate("/home");
-    }
-  }
-
   async function handleRename(newTitle) {
     const updatedRecipe = { ...recipe, title: newTitle };
     updateRecipe(updatedRecipe);
@@ -198,15 +180,10 @@ export function useChat(recipe, currentVersion, setCurrentVersion, showToast) {
   return {
     sendCreateMessage: sendCreateMessageMutation.mutate,
     isPendingCreateMessage: sendCreateMessageMutation.isPending,
-    // isReplyLoading,
     // errors,
     // askMessages,
     // sendAskMessage,
     // setAskMessages,
-    // sendCreateMessage,
-    // handleDeleteError,
-    // handleDeleteRecipe,
-    // handleRename,
     // add other methods like sendAsk, fetchErrors, etc.
   };
 }

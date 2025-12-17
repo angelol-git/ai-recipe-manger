@@ -1,15 +1,11 @@
 const backendUrl = "http://localhost:8080/api"
 
-export async function sendCreateMessage(message, currentRecipeVersion) {
-
+export async function sendCreateMessage(payload) {
     const res = await fetch(`${backendUrl}/ai/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-            message,
-            currentRecipeVersion,
-        }),
+        body: JSON.stringify(payload),
     });
 
     if (!res.ok) {

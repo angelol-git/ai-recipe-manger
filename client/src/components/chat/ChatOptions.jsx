@@ -1,19 +1,17 @@
+import { useNavigate } from "react-router";
 import { useEffect, useRef, useState } from "react";
 import { CircleX, Share, Ellipsis, Trash2, SquarePen } from "lucide-react";
+import { useRecipes } from "../../hooks/useRecipes";
 
-function ChatOptions({
-  recipe,
-  currentVersion,
-  setIsEditModalOpen,
-  handleDeleteRecipeVersion,
-  handleDeleteRecipe,
-}) {
+function ChatOptions({ recipe, setIsEditModalOpen }) {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const menuRef = useRef(null);
+  const navigate = useNavigate();
+
+  const { deleteRecipe, deleteRecipeVersion } = useRecipes();
 
   useEffect(() => {
     if (!isOptionsOpen) return;
-
     function handleClickOutside(e) {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setIsOptionsOpen(false);
@@ -88,10 +86,11 @@ function ChatOptions({
                 onClick={() => {
                   setIsOptionsOpen(false);
                   if (recipe.versions?.length === 1) {
-                    handleDeleteRecipe();
+                    deleteRecipe(recipe.id);
                   } else {
-                    handleDeleteRecipeVersion();
+                    deleteRecipeVersion(recipe.id);
                   }
+                  navigate("/home");
                 }}
                 className="w-full flex justify-between items-center py-3 cursor-pointer"
               >
@@ -103,8 +102,10 @@ function ChatOptions({
             <li>
               <button
                 onClick={() => {
+                  const recipeId = recipe.id;
                   setIsOptionsOpen(false);
-                  handleDeleteRecipe();
+                  deleteRecipe(recipeId);
+                  navigate("/home");
                 }}
                 className="w-full flex justify-between items-center py-3 text-rose"
               >

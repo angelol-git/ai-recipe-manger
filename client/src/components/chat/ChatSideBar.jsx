@@ -45,13 +45,21 @@ function ChatSideBar({
         </button>
       </div>
       <div>
-        <Link
-          to="/chat"
-          className="flex gap-2 p-1 pl-2  rounded-lg items-center hover:bg-mantle-hover"
+        <button
+          onClick={() => {
+            if (isMobile) {
+              setIsSideBarOpen(false);
+            }
+          }}
         >
-          <CirclePlus size={18} strokeWidth={1.5} className="stroke-icon" />
-          New Chat
-        </Link>
+          <Link
+            to="/chat"
+            className="flex gap-2 p-1 pl-2  rounded-lg items-center hover:bg-mantle-hover"
+          >
+            <CirclePlus size={18} strokeWidth={1.5} className="stroke-icon" />
+            New Chat
+          </Link>
+        </button>
       </div>
       <div className="flex flex-col gap-1">
         <h2 className="text-secondary">Recipes</h2>
