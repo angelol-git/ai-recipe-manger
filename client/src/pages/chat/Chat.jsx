@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useOutletContext } from "react-router";
 import { useChat } from "../../hooks/useChat.jsx";
 import ChatHeader from "../../components/chat/ChatHeader.jsx";
-import ChatInput from "../../components/chat/ChatInput.jsx";
 import ChatReply from "../../components/chat/ChatReply.jsx";
+import ChatNavigation from "../../components/chat/ChatNavigation.jsx";
+import ChatInput from "../../components/chat/ChatInput.jsx";
 import ChatEditModal from "../../components/chat/ChatEditModal.jsx";
 import ChatErrorModal from "../../components/chat/ChatErrorModal.jsx";
 import ChatAskModal from "../../components/chat/ChatAskModal.jsx";
@@ -11,14 +12,8 @@ import Toast from "../../components/Toast.jsx";
 import ChatTags from "../../components/chat/ChatTags.jsx";
 
 function Chat() {
-  const [
-    isSideBarOpen,
-    setIsSideBarOpen,
-    currentRecipe,
-    isMobile,
-    deleteRecipe,
-    deleteRecipeVersion,
-  ] = useOutletContext();
+  const [isSideBarOpen, setIsSideBarOpen, currentRecipe, isMobile] =
+    useOutletContext();
   const [currentVersion, setCurrentVersion] = useState(0);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
@@ -111,19 +106,30 @@ function Chat() {
                   onClose={() => setToast(null)}
                 />
               )}
-              <ChatInput
-                message={message}
-                setMessage={setMessage}
-                handleSendMessage={handleSendMessage}
-                isPendingCreateMessage={isPendingCreateMessage}
-                //Optional
-                isChatOpen={isChatOpen}
-                setIsChatOpen={setIsChatOpen}
-                chatInputMode={chatInputMode}
-                setChatInputMode={setChatInputMode}
-                isAskModalOpen={isAskModalOpen}
-                setIsAskModalOpen={setIsAskModalOpen}
-              />
+              <div className="fixed bottom-0 right-0 p-2 py-4 w-full flex lg:justify-center">
+                <div className="relative lg:max-w-screen-sm w-full flex justify-between ">
+                  <ChatNavigation
+                    recipe={currentRecipe}
+                    currentVersion={currentVersion}
+                    setCurrentVersion={setCurrentVersion}
+                    isChatOpen={isChatOpen}
+                  />
+                  <ChatInput
+                    message={message}
+                    setMessage={setMessage}
+                    handleSendMessage={handleSendMessage}
+                    isPendingCreateMessage={isPendingCreateMessage}
+                    //Optional
+                    hasRecipeNavigation={currentRecipe.versions.length > 1}
+                    isChatOpen={isChatOpen}
+                    setIsChatOpen={setIsChatOpen}
+                    chatInputMode={chatInputMode}
+                    setChatInputMode={setChatInputMode}
+                    isAskModalOpen={isAskModalOpen}
+                    setIsAskModalOpen={setIsAskModalOpen}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
