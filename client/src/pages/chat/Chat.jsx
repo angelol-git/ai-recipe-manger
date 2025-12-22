@@ -111,7 +111,7 @@ function Chat() {
             <div
               className={`${
                 isMobile ? "fixed" : "block"
-              } bottom-0 right-0 p-2 py-4 w-full flex lg:justify-center`}
+              } bottom-0 right-0 w-full flex lg:justify-center`}
             >
               <div
                 className={`relative lg:max-w-screen-sm w-full items-end flex ${

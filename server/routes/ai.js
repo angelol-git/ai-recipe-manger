@@ -44,7 +44,6 @@ router.post("/create", authMiddleware, async (req, res) => {
             message
         });
 
-        console.log(reply);
         return res.json({ reply });
     }
 

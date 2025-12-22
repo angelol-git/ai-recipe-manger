@@ -146,7 +146,7 @@ function ChatInput({
     </div>
   ) : (
     <button
-      className="bg-accent rounded-full flex items-center justify-center w-9 h-9 cursor-pointer h20"
+      className="m-4 bg-accent rounded-full flex items-center justify-center w-9 h-9 cursor-pointer h20"
       onClick={() => {
         setIsChatOpen(true);
       }}
