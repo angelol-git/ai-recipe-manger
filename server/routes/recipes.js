@@ -15,7 +15,7 @@ router.get("/", authMiddleware, async (req, res) => {
 
         const recipeIds = recipes.map(r => r.id);
         if (recipeIds.length === 0) {
-            return [];
+            return res.json([]);
         }
 
         const versions = db.prepare(`
@@ -33,35 +33,37 @@ router.get("/", authMiddleware, async (req, res) => {
             ORDER BY created_at ASC 
         `).all(...recipeIds);
 
-        const recipeArray = [];
-        for (let i = 0; i < recipes.length; i++) {
-            let versionsArray = [];
-            for (let j = 0; j < versions.length; j++) {
-                if (recipes[i].id === versions[j].recipe_id) {
-                    const versionsObject = {
-                        id: versions[j].id,
-                        description: versions[j].description,
-                        instructions: safeParse(versions[j].instructions),
-                        ingredients: safeParse(versions[j].ingredients),
-                        source_prompt: versions[j].source_prompt,
-                        calories: versions[j].calories,
-                        servings: versions[j].servings,
-                        total_time: versions[j].total_time
-                    }
-                    versionsArray.push(versionsObject);
-                }
+        const versionsMap = new Map();
+        for (let i = 0; i < versions.length; i++) {
+            if (!versionsMap.has(versions[i].recipe_id)) {
+                versionsMap.set(versions[i].recipe_id, []);
             }
-
-            let tagsArray = [];
-            for (let z = 0; z < tags.length; z++) {
-                if (recipes[i].id === tags[z].recipe_id) {
-                    tagsArray.push(tags[z]);
-                }
-            }
-            const recipeObject = { ...recipes[i], versions: versionsArray, tags: tagsArray };
-
-            recipeArray.push(recipeObject);
+            versionsMap.get(versions[i].recipe_id).push({
+                id: versions[i].id,
+                description: versions[i].description,
+                instructions: safeParse(versions[i].instructions),
+                ingredients: safeParse(versions[i].ingredients),
+                source_prompt: versions[i].source_prompt,
+                calories: versions[i].calories,
+                servings: versions[i].servings,
+                total_time: versions[i].total_time
+            })
         }
+
+        const tagsMap = new Map();
+        for (let i = 0; i < tags.length; i++) {
+            if (!tagsMap.has(tags[i].recipe_id)) {
+                tagsMap.set(tags[i].recipe_id, []);
+            }
+            tagsMap.get(tags[i].recipe_id).push(tags[i]);
+        }
+
+        const recipeArray = recipes.map(recipe => ({
+            ...recipe,
+            versions: versionsMap.get(recipe.id) || [],
+            tags: tagsMap.get(recipe.id) || []
+        }));
+
         return res.json(recipeArray);
     }
     catch (error) {

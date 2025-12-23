@@ -8,6 +8,7 @@ import { useEffect } from "react";
 function Home() {
   const { data: user, logout } = useUser();
   const { data: recipes } = useRecipes();
+  console.log(recipes);
   // console.log(isError);
   // const { recipes, deleteRecipeTagAll, editRecipeTagAll } = useRecipes();
   // const { tags, tagsSelected, setTagsSelected, handleTagClick } = useTags(

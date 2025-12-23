@@ -26,6 +26,8 @@ function UserOptions({ user, logout }) {
     return (
       <div ref={menuRef} className="relative">
         <button
+          id="profileMenuButton"
+          aria-haspopup="true"
           className={`rounded-full border-5  cursor-pointer ${
             isUserOptionsOpen ? " border-gray-400/30" : "border-base"
           }`}
@@ -41,7 +43,11 @@ function UserOptions({ user, logout }) {
         </button>
 
         {isUserOptionsOpen && (
-          <div className="absolute right-0 z-50 bg-crust  p-4 rounded-lg shadow-lg flex flex-col gap-3">
+          <div
+            role="menu"
+            aria-labelledby="profileMenuButton"
+            className="absolute right-0 z-50 bg-crust  p-4 rounded-lg shadow-lg flex flex-col gap-3"
+          >
             <div className="flex gap-5 justify-between items-center">
               <p>{user.email}</p>
             </div>
