@@ -53,6 +53,19 @@ export async function updateRecipe(updatedRecipe) {
     return true;
 }
 
+export async function addRecipeTag(recipeId, newTag) {
+    const res = await fetch(`${backendUrl}/recipes/${recipeId}/tag`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ newTag }),
+    });
+    if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Server returned ${res.status}: ${errorText}`);
+    }
+    return true;
+}
 
 
 

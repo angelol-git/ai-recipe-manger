@@ -73,7 +73,7 @@ function Chat() {
         />
         <div className="items-center flex flex-col justify-center flex-1 w-full lg:min-h-0 ">
           <div className="max-w-screen-xl flex flex-col flex-1 py-2 px-4  w-full h-full">
-            {/* <ChatTags recipeId={recipe?.id} /> */}
+            <ChatTags recipe={recipe} />
             <div className="flex-1 lg:min-h-0 w-full">
               <ChatReply
                 recipe={recipe}

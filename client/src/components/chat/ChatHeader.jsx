@@ -17,7 +17,7 @@ function ChatHeader({
           // show icon only when sidebar is closed on ALL devices
           <button
             onClick={() => setIsSideBarOpen(true)}
-            className="cursor-pointer p-2 hover:bg-mantle-hover rounded-lg"
+            className="cursor-pointer p-2 hover:bg-mantle-hover rounded-lg flex items-center justify-center"
           >
             <PanelLeftOpen
               size={`${isMobile ? "24" : "20"}`}

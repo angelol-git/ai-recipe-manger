@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { useRecipes } from "../../contexts/RecipesContext";
+import { useState, useRef, useEffect } from "react";
+import { useRecipes } from "../../hooks/useRecipes";
 import { X } from "lucide-react";
 import { Check } from "lucide-react";
-function ChatTags({ recipeId }) {
-  const { recipes, addRecipeTag } = useRecipes();
-  const recipe = recipes.find((r) => r.id === recipeId);
+function ChatTags({ recipe }) {
+  const newTagRef = useRef();
+  const { addRecipeTag } = useRecipes();
   const tags = recipe?.tags || [];
   const [isAddingTag, setIsAddingTag] = useState(false);
   const [newTag, setNewTag] = useState({
@@ -13,16 +13,25 @@ function ChatTags({ recipeId }) {
     color: "#FFB86C",
   });
 
+  useEffect(() => {
+    if (isAddingTag) {
+      newTagRef.current?.focus();
+    }
+  }, [isAddingTag]);
+
   function handleAddTag() {
     if (!newTag.name.trim()) return;
     if (!recipe) return;
-    addRecipeTag(recipe?.id, { ...newTag, name: newTag.name.trim() });
+    addRecipeTag({
+      recipeId: recipe.id,
+      newTag: { ...newTag, name: newTag.name.trim() },
+    });
     setNewTag({ id: "", name: "", color: "#FFB86C" });
     setIsAddingTag(false);
   }
 
   return (
-    <div className="flex gap-2 pt-2 flex-wrap">
+    <div className="flex gap-2 py-2 flex-wrap">
       {tags?.length > 0 &&
         tags.map((tag) => {
           return (
@@ -42,6 +51,7 @@ function ChatTags({ recipeId }) {
       {isAddingTag && (
         <div className="flex gap-2">
           <input
+            ref={newTagRef}
             onChange={(event) => {
               setNewTag((prev) => ({
                 ...prev,

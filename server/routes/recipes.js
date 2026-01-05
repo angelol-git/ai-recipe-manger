@@ -374,25 +374,22 @@ router.put("/:id", authMiddleware, async (req, res) => {
 router.post("/:id/tag", authMiddleware, async (req, res) => {
     const { id } = req.params;
     const userId = req.user.id;
-    const { tag } = req.body;
+    const { newTag } = req.body;
     try {
         let newTagRow = db.prepare(`
             SELECT * 
             FROM tags 
             WHERE user_id = ?
             AND name = ?
-        `).get(userId, tag.name);
+        `).get(userId, newTag.name);
 
         if (!newTagRow) {
             const result = db.prepare(`
                INSERT INTO tags (user_id,name,color) VALUES (?,?,?) 
-            `).run(userId, tag.name, tag.color);
-            newTagRow = { id: result.lastInsertRowid, name: tag.name, color: tag.color };
+            `).run(userId, newTag.name, newTag.color);
+            newTagRow = { id: result.lastInsertRowid, name: newTag.name, color: newTag.color };
         }
-        else {
-            newTagRow.color = tag.color;
-        }
-        newTagRow.id = newTagRow.id.toString();
+
         const recipeTag = db.prepare(`
             SELECT 1 
             FROM recipe_tags 
@@ -408,7 +405,7 @@ router.post("/:id/tag", authMiddleware, async (req, res) => {
             VALUES (?,?)
             `).run(id, newTagRow.id);
 
-        res.json({ success: true, tag: newTagRow });
+        res.json({ success: true });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Failed to add tag" });

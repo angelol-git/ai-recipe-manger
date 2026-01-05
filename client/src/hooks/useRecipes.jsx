@@ -4,6 +4,7 @@ import {
   deleteRecipeVersion,
   deleteRecipe,
   updateRecipe,
+  addRecipeTag,
 } from "../api/recipes.js";
 
 export function useRecipes() {
@@ -106,10 +107,24 @@ export function useRecipes() {
     },
   });
 
+  const addRecipeTagMutation = useMutation({
+    mutationFn: async ({ recipeId, newTag }) => addRecipeTag(recipeId, newTag),
+
+    // onError: (err, variables, context) => {
+    //   if (context?.previousRecipes) {
+    //     queryClient.setQueryData(["recipes"], context.previousRecipes);
+    //   }
+    // },
+
+    onSettled: () => {
+      queryClient.invalidateQueries(["recipes"]);
+    },
+  });
   return {
     ...allRecipesQuery,
     deleteRecipeVersion: deleteRecipeVersionMutation.mutate,
     deleteRecipe: deleteRecipeMutation.mutate,
     updateRecipe: updateRecipeMutation,
+    addRecipeTag: addRecipeTagMutation.mutate,
   };
 }
