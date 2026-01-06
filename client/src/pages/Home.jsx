@@ -1,20 +1,15 @@
 import { Link } from "react-router";
-import UserOptions from "../components/UserOptions";
 import { useUser } from "../hooks/useUser";
 import { useRecipes } from "../hooks/useRecipes";
+import { useTags } from "../hooks/useTags";
 import { useEffect } from "react";
-// import { useTags } from "../hooks/useTags";
-
+import HomeTags from "../components/home/HomeTags";
+import UserOptions from "../components/UserOptions";
 function Home() {
   const { data: user, logout } = useUser();
   const { data: recipes } = useRecipes();
+  const { uniqueTags } = useTags(user, recipes);
   // console.log(recipes);
-  // console.log(isError);
-  // const { recipes, deleteRecipeTagAll, editRecipeTagAll } = useRecipes();
-  // const { tags, tagsSelected, setTagsSelected, handleTagClick } = useTags(
-  //   user,
-  //   recipes
-  // );
 
   // const filteredRecipes = recipes?.filter((recipe) => {
   //   if (tagsSelected.length === 0) return true;
@@ -24,6 +19,7 @@ function Home() {
   //     );
   //   });
   // });
+
   useEffect(() => {
     document.title = `Recipes`;
   }, []);
@@ -41,14 +37,14 @@ function Home() {
           <UserOptions user={user} logout={logout} />
         </div>
         <div>
-          {/* <HomeTags
-            tags={tags}
-            tagsSelected={tagsSelected}
-            setTagsSelected={setTagsSelected}
-            handleTagClick={handleTagClick}
-            editRecipeTagAll={editRecipeTagAll}
-            deleteRecipeTagAll={deleteRecipeTagAll}
-          /> */}
+          <HomeTags
+            tags={uniqueTags}
+            // tagsSelected={tagsSelected}
+            // setTagsSelected={setTagsSelected}
+            // handleTagClick={handleTagClick}
+            // editRecipeTagAll={editRecipeTagAll}
+            // deleteRecipeTagAll={deleteRecipeTagAll}
+          />
         </div>
 
         <div className="flex flex-col gap-4">

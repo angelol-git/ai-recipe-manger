@@ -3,11 +3,11 @@ import ColorPickerPortal from "./ColorPickerPortal.jsx";
 import { X } from "lucide-react";
 function HomeTags({
   tags,
-  tagsSelected,
-  setTagsSelected,
-  handleTagClick,
-  editRecipeTagAll,
-  deleteRecipeTagAll,
+  // tagsSelected,
+  // setTagsSelected,
+  // handleTagClick,
+  // editRecipeTagAll,
+  // deleteRecipeTagAll,
 }) {
   const [isEditTags, setIsEditTags] = useState(false);
   const [editTagId, setEditTagId] = useState({
@@ -46,14 +46,14 @@ function HomeTags({
     });
   }
 
-  function handleTagDelete(tag) {
-    setTagsSelected((prev) => {
-      return prev.filter((t) => {
-        t.id !== tag.id;
-      });
-    });
-    deleteRecipeTagAll(tag);
-  }
+  // function handleTagDelete(tag) {
+  //   setTagsSelected((prev) => {
+  //     return prev.filter((t) => {
+  //       t.id !== tag.id;
+  //     });
+  //   });
+  //   deleteRecipeTagAll(tag);
+  // }
 
   return (
     <div>
@@ -74,17 +74,15 @@ function HomeTags({
             {tags.length > 0 ? (
               tags.map((tag) => {
                 const count = tagCount[tag.id] || 0;
-                const isSelected = tagsSelected.some((selectedTag) => {
-                  return selectedTag.name === tag.name;
-                });
+                // const isSelected = tagsSelected.some((selectedTag) => {
+                //   return selectedTag.name === tag.name;
+                // });
                 return (
                   <button
                     onClick={() => {
-                      handleTagClick(tag);
+                      // handleTagClick(tag);
                     }}
-                    className={`inline-flex gap-2 items-center px-2 py-0.5 text-sm border  border-mantle rounded-full cursor-pointer ${
-                      isSelected ? "bg-tag-selected" : "bg-tag text-primary"
-                    }`}
+                    className={`inline-flex gap-2 items-center px-2 py-0.5 text-sm border  bg-tag text-primary border-mantle rounded-full cursor-pointer`}
                     key={tag.name}
                   >
                     <div
@@ -123,7 +121,7 @@ function HomeTags({
               </button>
             </div>
           </div>
-          <div className="flex gap-3 py-2 flex-wrap">
+          {/* <div className="flex gap-3 py-2 flex-wrap">
             {draftTags.length > 0 ? (
               draftTags.map((tag) => {
                 return (
@@ -199,7 +197,7 @@ function HomeTags({
                 No tags created yet.
               </div>
             )}
-          </div>
+          </div> */}
         </div>
       )}
     </div>

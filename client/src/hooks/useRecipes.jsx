@@ -13,6 +13,9 @@ export function useRecipes() {
   const allRecipesQuery = useQuery({
     queryKey: ["recipes"],
     queryFn: fetchAllRecipes,
+    staleTime: 1000 * 60 * 5,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   const deleteRecipeVersionMutation = useMutation({
@@ -38,6 +41,7 @@ export function useRecipes() {
       });
       return { previousRecipes };
     },
+
     onError: (err, variables, context) => {
       if (context?.previousRecipes) {
         queryClient.setQueryData(["recipes"], context.previousRecipes);
