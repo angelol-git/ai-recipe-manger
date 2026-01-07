@@ -1,9 +1,34 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTagsAll, editTagsAll } from "../api/tags.js";
 
 export function useTags(user, recipes = []) {
   const queryClient = useQueryClient();
+  const [selectedTags, setSelectedTags] = useState([]);
+  useEffect(() => {
+    if (!user?.id) {
+      setSelectedTags([]);
+      return;
+    }
+
+    try {
+      const stored = localStorage.getItem(`selectedTags_${user.id}`);
+      if (stored) {
+        setSelectedTags(JSON.parse(stored));
+      }
+    } catch (err) {
+      console.log("Failed to parse saved tags: ", err);
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    localStorage.setItem(
+      `selectedTags_${user.id}`,
+      JSON.stringify(selectedTags)
+    );
+  }, [selectedTags, user?.id]);
+
   const uniqueTags = useMemo(() => {
     if (!recipes.length) return [];
 
@@ -17,6 +42,17 @@ export function useTags(user, recipes = []) {
     });
 
     return Array.from(map.values());
+  }, [recipes]);
+
+  const tagCounts = useMemo(() => {
+    if (!recipes.length) return {};
+
+    return recipes.reduce((acc, recipe) => {
+      recipe.tags.forEach((tag) => {
+        acc[tag.id] = (acc[tag.id] ?? 0) + 1;
+      });
+      return acc;
+    }, {});
   }, [recipes]);
 
   const deleteTagsAllMutation = useMutation({
@@ -79,55 +115,26 @@ export function useTags(user, recipes = []) {
       queryClient.invalidateQueries(["recipes"]);
     },
   });
-  // const [tagsSelected, setTagsSelected] = useState(() => {
-  //   if (!user?.id) return [];
-  //   //Initialize react state when using react router actions, otherwise it will be empty.
-  //   //useEffect below will not run because user.id is already mounted and does not change.
-  //   try {
-  //     const stored = localStorage.getItem(`tagsSelected_${user.id}`);
-  //     return stored ? JSON.parse(stored) : [];
-  //   } catch {
-  //     return [];
-  //   }
-  // });
 
-  // //Waits for user.id to be initialized on mount
-  // useEffect(() => {
-  //   if (!user?.id) return;
-  //   try {
-  //     const stored = localStorage.getItem(`tagsSelected_${user.id}`);
-  //     if (stored) {
-  //       setTagsSelected(JSON.parse(stored));
-  //     }
-  //   } catch (err) {
-  //     console.log("Failed to parse saved tags: ", err);
-  //   }
-  // }, [user?.id]);
-
-  // useEffect(() => {
-  //   if (!user?.id) return;
-  //   localStorage.setItem(
-  //     `tagsSelected_${user.id}`,
-  //     JSON.stringify(tagsSelected)
-  //   );
-  // }, [tagsSelected, user?.id]);
-
-  // function handleTagClick(tag) {
-  //   setTagsSelected((prev) => {
-  //     const exists = prev.some((t) => t.name === tag.name);
-  //     if (exists) {
-  //       return prev.filter((t) => t.name !== tag.name);
-  //     } else {
-  //       return [...prev, tag];
-  //     }
-  //   });
-  // }
+  function handleTagSelectedClick(tag) {
+    setSelectedTags((prev) => {
+      const exists = prev.some((t) => t.id === tag.id);
+      if (exists) {
+        return prev.filter((t) => t.id !== tag.id);
+      } else {
+        return [...prev, tag];
+      }
+    });
+  }
 
   return {
     uniqueTags,
+    selectedTags,
+    handleTagSelectedClick,
+    tagCounts,
     deleteTagsAll: deleteTagsAllMutation.mutate,
     isDeletingTags: deleteTagsAllMutation.isPending,
     editTagsAll: editTagsAllMutation.mutate,
-    isEditingTags: editTagsAllMutation.mutate,
+    isEditingTags: editTagsAllMutation.isPending,
   };
 }

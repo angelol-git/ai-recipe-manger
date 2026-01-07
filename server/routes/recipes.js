@@ -253,7 +253,6 @@ router.get("/:id/askMessages", authMiddleware, async (req, res) => {
 
 //Currently overrides the whole thing
 router.put("/:id", authMiddleware, async (req, res) => {
-
     const { id } = req.params;
     // const userId = req.user.id;
     const newRecipe = req.body.updatedRecipe;

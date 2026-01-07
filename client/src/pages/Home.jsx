@@ -8,24 +8,30 @@ import UserOptions from "../components/UserOptions";
 function Home() {
   const { data: user, logout } = useUser();
   const { data: recipes } = useRecipes();
-  const { uniqueTags, deleteTagsAll, isDeletingTags, editTagsAll } = useTags(
-    user,
-    recipes
-  );
+  const {
+    uniqueTags,
+    selectedTags,
+    handleTagSelectedClick,
+    tagCounts,
+    deleteTagsAll,
+    isDeletingTags,
+    editTagsAll,
+  } = useTags(user, recipes);
   // console.log(recipes);
-
-  // const filteredRecipes = recipes?.filter((recipe) => {
-  //   if (tagsSelected.length === 0) return true;
-  //   return recipe.tags.some((recipeTag) => {
-  //     return tagsSelected.some(
-  //       (selectedTag) => selectedTag.name === recipeTag.name
-  //     );
-  //   });
-  // });
 
   useEffect(() => {
     document.title = `Recipes`;
   }, []);
+
+  const filteredRecipes = recipes?.filter((recipe) => {
+    if (selectedTags.length === 0) return true;
+
+    return recipe.tags.some((recipeTag) => {
+      return selectedTags.some(
+        (selectedTag) => selectedTag.name === recipeTag.name
+      );
+    });
+  });
 
   function formatDate(dateString) {
     const options = { year: "numeric", month: "short", day: "numeric" };
@@ -42,8 +48,9 @@ function Home() {
         <div>
           <HomeTags
             tags={uniqueTags}
-            // tagsSelected={tagsSelected}
-            // setTagsSelected={setTagsSelected}
+            selectedTags={selectedTags}
+            handleTagSelectedClick={handleTagSelectedClick}
+            tagCounts={tagCounts}
             // handleTagClick={handleTagClick}
             // editRecipeTagAll={editRecipeTagAll}
             deleteTagsAll={deleteTagsAll}
@@ -65,7 +72,7 @@ function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-2 md:flex md:flex-wrap gap-4 lg:gap-6">
-            {recipes?.map((recipe) => {
+            {filteredRecipes?.map((recipe) => {
               return (
                 <Link
                   to={`/chat/${recipe.id}`}

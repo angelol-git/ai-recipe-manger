@@ -4,8 +4,9 @@ import ColorPickerPortal from "./ColorPickerPortal.jsx";
 import useDraftTags from "../../hooks/useDraftTags.jsx";
 function HomeTags({
   tags,
-  // tagsSelected,
-  // setTagsSelected,
+  selectedTags,
+  handleTagSelectedClick,
+  tagCounts,
   // handleTagClick,
   // editRecipeTagAll,
   deleteTagsAll,
@@ -24,14 +25,6 @@ function HomeTags({
     handleEditDraftTagName,
     handleEditDraftTagColor,
   } = useDraftTags({ tags, isEditTags, tagsToBeDeleted });
-  const tagCount = tags.reduce((acc, tag) => {
-    if (acc[tag.id]) {
-      acc[tag.id] += 1;
-    } else {
-      acc[tag.id] = 1;
-    }
-    return acc;
-  }, {});
 
   function handleTagDone() {
     const tagsToUpdate = draftTags.filter((tag) => {
@@ -59,6 +52,8 @@ function HomeTags({
   //   }
   // }, [isDeletingTags]);
 
+  // console.log(tags);
+  // console.log(tagCounts);
   return (
     <div>
       {!isEditTags ? (
@@ -77,16 +72,18 @@ function HomeTags({
           <div className="flex gap-2 py-2 flex-wrap">
             {tags.length > 0 ? (
               tags.map((tag) => {
-                const count = tagCount[tag.id] || 0;
-                // const isSelected = tagsSelected.some((selectedTag) => {
-                //   return selectedTag.name === tag.name;
-                // });
+                const count = tagCounts[tag.id] || 0;
+                const isSelected = selectedTags.some((selectedTag) => {
+                  return selectedTag.name === tag.name;
+                });
                 return (
                   <button
                     onClick={() => {
-                      // handleTagClick(tag);
+                      handleTagSelectedClick(tag);
                     }}
-                    className={`inline-flex gap-2 items-center px-2 py-0.5 text-sm border  bg-tag text-primary border-mantle rounded-full cursor-pointer`}
+                    className={`inline-flex gap-2 items-center px-2 py-0.5 text-sm border  bg-tag text-primary border-mantle rounded-full cursor-pointer ${
+                      isSelected && "bg-tag-selected"
+                    }`}
                     key={tag.id}
                   >
                     <div
