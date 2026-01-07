@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { X } from "lucide-react";
 import ColorPickerPortal from "./ColorPickerPortal.jsx";
 import useDraftTags from "../../hooks/useDraftTags.jsx";
-import { editTagsAll } from "../../api/tags.js";
 function HomeTags({
   tags,
   // tagsSelected,
