@@ -12,8 +12,8 @@ function ChatSideBar({
   }
   return (
     <nav
-      className={`z-100 gap-4 text-sm lg:border-r-gray-300 lg:border-r-1 p-2 fixed top-0 left-0 h-full w-70 lg:w-75 bg-mantle flex-col flex ${
-        isSideBarOpen ? "translate-x-0 lg:static" : "-translate-x-full "
+      className={`fixed top-0 left-0 duration-200 transform transition-transform z-100 gap-4 text-sm lg:border-r-gray-300 lg:border-r-1 p-2 h-full w-70 lg:w-75 bg-mantle flex-col flex ${
+        isSideBarOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
       <div className="flex justify-between items-center">
