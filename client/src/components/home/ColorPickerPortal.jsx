@@ -1,10 +1,15 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { SketchPicker } from "react-color";
 
-function ColorPickerPortal({ anchorRef, color, onChange, onClose, tagName }) {
+function ColorPickerPortal({ color, tagName, anchorRef, onChange, onClose }) {
   const portalRef = useRef(null);
   const [position, setPosition] = useState({ top: -9999, left: -9999 });
+
+  const handleClose = useCallback(() => {
+    onClose();
+    anchorRef.current?.focus();
+  }, [onClose, anchorRef]);
 
   useEffect(() => {
     if (!portalRef.current || !anchorRef.current) return;
@@ -14,7 +19,7 @@ function ColorPickerPortal({ anchorRef, color, onChange, onClose, tagName }) {
 
     const safe = getSafePosition(anchorRect, portalRect);
     setPosition(safe);
-  }, []);
+  }, [anchorRef]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -29,7 +34,7 @@ function ColorPickerPortal({ anchorRef, color, onChange, onClose, tagName }) {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose, anchorRef]);
+  }, [anchorRef, handleClose]);
 
   useEffect(() => {
     function handleKeyDown(e) {
@@ -37,7 +42,7 @@ function ColorPickerPortal({ anchorRef, color, onChange, onClose, tagName }) {
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+  }, [handleClose, onClose]);
 
   useEffect(() => {
     if (!portalRef.current) return;
@@ -51,13 +56,6 @@ function ColorPickerPortal({ anchorRef, color, onChange, onClose, tagName }) {
     }
   }, []);
 
-  function handleClose() {
-    onClose();
-
-    if (anchorRef.current) {
-      anchorRef.current.focus();
-    }
-  }
   function getSafePosition(anchorRect, portalRect, margin = 4) {
     const vw = window.innerWidth;
 
@@ -73,6 +71,7 @@ function ColorPickerPortal({ anchorRef, color, onChange, onClose, tagName }) {
     }
     return { top, left };
   }
+
   return createPortal(
     <div
       ref={portalRef}

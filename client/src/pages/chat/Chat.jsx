@@ -5,7 +5,7 @@ import ChatHeader from "../../components/chat/ChatHeader.jsx";
 import ChatReply from "../../components/chat/ChatReply.jsx";
 import ChatNavigation from "../../components/chat/ChatNavigation.jsx";
 import ChatInput from "../../components/chat/ChatInput.jsx";
-import ChatEditModal from "../../components/chat/ChatEditModal.jsx";
+import ChatEditModal from "../../components/chat/ChatEditModal/ChatEditModal.jsx";
 import ChatErrorModal from "../../components/chat/ChatErrorModal.jsx";
 import ChatAskModal from "../../components/chat/ChatAskModal.jsx";
 import Toast from "../../components/Toast.jsx";
@@ -76,16 +76,16 @@ function Chat() {
             <ChatTags recipe={recipe} />
             <ChatReply
               recipe={recipe}
-              setIsErrorModalOpen={setIsErrorModalOpen}
               recipeVersion={recipeVersion}
+              // setIsErrorModalOpen={setIsErrorModalOpen}
             />
           </div>
-          {/* <ChatEditModal
-                isEditModalOpen={isEditModalOpen}
-                setIsEditModalOpen={setIsEditModalOpen}
-                recipe={recipe}
-                recipeVersion={recipeVersion}
-              /> */}
+          <ChatEditModal
+            recipe={recipe}
+            recipeVersion={recipeVersion}
+            isEditModalOpen={isEditModalOpen}
+            setIsEditModalOpen={setIsEditModalOpen}
+          />
           {/* <ChatErrorModal
                 isErrorModalOpen={isErrorModalOpen}
                 setIsErrorModalOpen={setIsErrorModalOpen}

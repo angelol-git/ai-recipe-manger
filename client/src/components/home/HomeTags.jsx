@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
-import { X } from "lucide-react";
-import ColorPickerPortal from "./ColorPickerPortal.jsx";
+import EditTagItem from "../tags/editTagItem.jsx";
 import useDraftTags from "../../hooks/useDraftTags.jsx";
 function HomeTags({
   tags,
@@ -14,11 +13,8 @@ function HomeTags({
 }) {
   const tagsToBeDeleted = useRef([]);
   const tagRefs = useRef({});
+
   const [isEditTags, setIsEditTags] = useState(false);
-  const [editTagId, setEditTagId] = useState({
-    id: null,
-    field: null,
-  });
   const {
     draftTags,
     handleDraftTagDelete,
@@ -42,7 +38,6 @@ function HomeTags({
     }
 
     setIsEditTags(false);
-    setEditTagId({ id: null, field: null });
     tagsToBeDeleted.current = [];
   }
 
@@ -121,64 +116,14 @@ function HomeTags({
             {draftTags.length > 0 ? (
               draftTags.map((tag) => {
                 return (
-                  <div key={tag.id} className="gap-1 flex items-center w-fit">
-                    <div
-                      className={`inline-flex w-fit gap-2 items-center px-2 py-0.5 border border-mantle  rounded-full cursor-pointer bg-tag text-primary text-sm`}
-                    >
-                      <button
-                        ref={(el) => (tagRefs.current[tag.id] = el)}
-                        className="h-4 w-4"
-                        style={{ backgroundColor: tag.color }}
-                        onClick={() => {
-                          setEditTagId({ id: tag.id, field: "Color" });
-                        }}
-                      ></button>
-                      <input
-                        id={tag.id}
-                        type="text"
-                        className="underline bg-transparent outline-none text-sm px-0"
-                        value={tag.name}
-                        size={tag.name.length || 1}
-                        onChange={(event) => {
-                          handleEditDraftTagName(event, tag.id);
-                        }}
-                        // onBlur={(event) => {
-                        //   const newName = event.target.value.trim();
-                        //   const originalTag = tags.find((t) => t.id === tag.id);
-                        //   if (newName && newName !== originalTag.name) {
-                        //     const newTag = { ...tag, name: newName };
-                        //     editRecipeTagAll(newTag);
-                        //   }
-                        // }}
-                      />
-                      {editTagId.id === tag.id &&
-                        editTagId.field === "Color" && (
-                          <ColorPickerPortal
-                            anchorRef={{ current: tagRefs.current[tag.id] }}
-                            color={tag.color}
-                            tagName={tag.name}
-                            onChange={(color) => {
-                              handleEditDraftTagColor(color, tag);
-                            }}
-                            onClose={() => {
-                              setEditTagId({ id: null, field: null });
-                            }}
-                          />
-                        )}
-                    </div>
-                    <button
-                      onClick={() => {
-                        handleDraftTagDelete(tag);
-                      }}
-                      className="cursor-pointer"
-                    >
-                      <X
-                        size={12}
-                        strokeWidth={1.5}
-                        className="stroke-icon-muted"
-                      />
-                    </button>
-                  </div>
+                  <EditTagItem
+                    key={tag.id}
+                    tag={tag}
+                    handleNameChange={handleEditDraftTagName}
+                    handleColorChange={handleEditDraftTagColor}
+                    handleDelete={handleDraftTagDelete}
+                    anchorRef={tagRefs}
+                  />
                 );
               })
             ) : (

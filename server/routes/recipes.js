@@ -40,13 +40,16 @@ router.get("/", authMiddleware, async (req, res) => {
             }
             versionsMap.get(versions[i].recipe_id).push({
                 id: versions[i].id,
+                recipeDetails: {
+                    calories: versions[i].calories,
+                    servings: versions[i].servings,
+                    total_time: versions[i].total_time,
+                },
                 description: versions[i].description,
                 instructions: safeParse(versions[i].instructions),
                 ingredients: safeParse(versions[i].ingredients),
                 source_prompt: versions[i].source_prompt,
-                calories: versions[i].calories,
-                servings: versions[i].servings,
-                total_time: versions[i].total_time
+
             })
         }
 

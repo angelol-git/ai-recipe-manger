@@ -1,14 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { Flame, Clock, Utensils } from "lucide-react";
 
-function ChatReply({ recipe, setIsErrorModalOpen, recipeVersion }) {
+function ChatReply({ recipe, recipeVersion }) {
   const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
   const sourcePromptRef = useRef(null);
   const current = recipe?.versions?.[recipeVersion];
   const {
-    calories,
-    total_time,
-    servings,
+    recipeDetails,
     description,
     ingredients,
     instructions,
@@ -32,12 +30,12 @@ function ChatReply({ recipe, setIsErrorModalOpen, recipeVersion }) {
         >
           <div className="flex gap-1 items-center">
             <Flame size={"20"} strokeWidth={1.5} className="stroke-secondary" />
-            <div>{calories}</div>
+            <div>{recipeDetails.calories}</div>
             kcal
           </div>
           <div className="flex gap-1 items-center">
             <Clock size={"20"} strokeWidth={1.5} className="stroke-secondary" />
-            <div>{total_time}</div>
+            <div>{recipeDetails.total_time}</div>
             mins
           </div>
           <div className="flex gap-1 items-center">
@@ -46,7 +44,7 @@ function ChatReply({ recipe, setIsErrorModalOpen, recipeVersion }) {
               strokeWidth={1.5}
               className="stroke-secondary"
             />
-            <div>{servings}</div>
+            <div>{recipeDetails.servings}</div>
             servings
           </div>
         </div>
