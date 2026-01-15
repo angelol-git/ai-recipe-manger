@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { X } from "lucide-react";
 import ColorPickerPortal from "../home/ColorPickerPortal";
 function EditTagItem({
@@ -6,20 +6,21 @@ function EditTagItem({
   handleNameChange,
   handleColorChange,
   handleDelete,
-  anchorRef,
 }) {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
-
+  const buttonRef = useRef(null);
   return (
     <div key={tag.id} className="gap-1 flex items-center w-fit">
       <div
         className={`inline-flex w-fit gap-2 items-center px-2 py-0.5 border border-mantle  rounded-full cursor-pointer bg-tag text-primary text-sm`}
       >
         <button
-          ref={(el) => (anchorRef.current[tag.id] = el)}
+          type="button"
+          ref={buttonRef}
           className="h-4 w-4"
           style={{ backgroundColor: tag.color }}
-          onClick={() => {
+          onClick={(event) => {
+            event.stopPropagation();
             setIsPickerOpen(true);
           }}
         ></button>
@@ -30,14 +31,14 @@ function EditTagItem({
           value={tag.name}
           size={tag.name.length || 1}
           onChange={(event) => {
-            handleNameChange(event, tag.id);
+            handleNameChange(event.target.value, tag.id);
           }}
         />
         {isPickerOpen && (
           <ColorPickerPortal
             color={tag.color}
             tagName={tag.name}
-            anchorRef={{ current: anchorRef.current[tag.id] }}
+            buttonRef={buttonRef}
             onChange={(color) => handleColorChange(color, tag)}
             onClose={() => setIsPickerOpen(false)}
           />

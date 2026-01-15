@@ -12,8 +12,6 @@ function HomeTags({
   editTagsAll,
 }) {
   const tagsToBeDeleted = useRef([]);
-  const tagRefs = useRef({});
-
   const [isEditTags, setIsEditTags] = useState(false);
   const {
     draftTags,
@@ -122,7 +120,6 @@ function HomeTags({
                     handleNameChange={handleEditDraftTagName}
                     handleColorChange={handleEditDraftTagColor}
                     handleDelete={handleDraftTagDelete}
-                    anchorRef={tagRefs}
                   />
                 );
               })

@@ -2,39 +2,40 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { SketchPicker } from "react-color";
 
-function ColorPickerPortal({ color, tagName, anchorRef, onChange, onClose }) {
+function ColorPickerPortal({ color, tagName, buttonRef, onChange, onClose }) {
   const portalRef = useRef(null);
   const [position, setPosition] = useState({ top: -9999, left: -9999 });
 
   const handleClose = useCallback(() => {
     onClose();
-    anchorRef.current?.focus();
-  }, [onClose, anchorRef]);
+    buttonRef.current?.focus();
+  }, [onClose]);
 
   useEffect(() => {
-    if (!portalRef.current || !anchorRef.current) return;
+    if (!portalRef.current || !buttonRef.current) return;
 
-    const anchorRect = anchorRef.current.getBoundingClientRect();
+    const anchorRect = buttonRef.current.getBoundingClientRect();
     const portalRect = portalRef.current.getBoundingClientRect();
 
     const safe = getSafePosition(anchorRect, portalRect);
     setPosition(safe);
-  }, [anchorRef]);
+  }, [buttonRef]);
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (
         portalRef.current &&
         !portalRef.current.contains(event.target) &&
-        !anchorRef.current.contains(event.target)
+        !buttonRef.current.contains(event.target)
       ) {
         handleClose();
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [anchorRef, handleClose]);
+    document.addEventListener("pointerdown", handleClickOutside);
+    return () =>
+      document.removeEventListener("pointerdown", handleClickOutside);
+  }, [buttonRef, handleClose]);
 
   useEffect(() => {
     function handleKeyDown(e) {

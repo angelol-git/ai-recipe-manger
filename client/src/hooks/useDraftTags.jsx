@@ -9,8 +9,7 @@ function useDraftTags({ tags, isEditTags, tagsToBeDeleted }) {
     }
   }, [tags, isEditTags]);
 
-  function handleEditDraftTagName(event, tagId) {
-    const newName = event.target.value;
+  function handleEditDraftTagName(newName, tagId) {
     setDraftTags((prev) => {
       return prev.map((t) => {
         if (t.id === tagId) {

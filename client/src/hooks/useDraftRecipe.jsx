@@ -35,19 +35,18 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     }));
   }
 
-  function handleDraftTagName(event, tag) {
-    const newName = event.target.value;
+  function handleDraftTagName(newName, tagId) {
     setDraft((prev) => {
       return {
         ...prev,
-        tags: prev.tags.map((prevTag) => {
-          if (prevTag.id === tag.id) {
+        tags: prev.tags.map((tag) => {
+          if (tag.id === tagId) {
             return {
-              ...prevTag,
+              ...tag,
               name: newName,
             };
           } else {
-            return prevTag;
+            return tag;
           }
         }),
       };
@@ -74,7 +73,6 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
 
   function handleDraftTagDelete(tagId) {
     setDraft((prev) => {
-      console.log("Here");
       return {
         ...prev,
         tags: prev.tags.filter((prevTag) => {

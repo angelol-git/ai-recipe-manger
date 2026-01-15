@@ -5,7 +5,6 @@ function EditTags({
   handleDraftTagName,
   handleDraftTagColor,
   handleDraftTagDelete,
-  tagRefs,
 }) {
   return (
     <section className="flex flex-col gap-2">
@@ -24,7 +23,6 @@ function EditTags({
                     handleNameChange={handleDraftTagName}
                     handleColorChange={handleDraftTagColor}
                     handleDelete={handleDraftTagDelete}
-                    anchorRef={tagRefs}
                   />
                 );
               })
