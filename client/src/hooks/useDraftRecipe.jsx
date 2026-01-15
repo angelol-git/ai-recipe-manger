@@ -6,8 +6,9 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     if (!recipe || !isEditModalOpen) return;
 
     const currentVersion = recipe.versions[recipeVersion];
+
     let draftRecipe = {
-      id: recipe.id,
+      recipe_id: recipe.id,
       title: recipe.title,
       created_at: recipe.created_at,
       tags: recipe.tags,
@@ -82,25 +83,31 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     });
   }
 
-  // function deleteDraftArray(versionId, field, targetIndex) {
-  //   setDraft((prev) => {
-  //     return {
-  //       ...prev,
-  //       versions: prev.versions.map((version) => {
-  //         if (version.id === versionId) {
-  //           return {
-  //             ...version,
-  //             [field]: version[field].filter((item, index) => {
-  //               return index !== targetIndex;
-  //             }),
-  //           };
-  //         } else {
-  //           return version;
-  //         }
-  //       }),
-  //     };
-  //   });
-  // }
+  function handleDraftArrayUpdate(field, value, targetIndex) {
+    setDraft((prev) => {
+      return {
+        ...prev,
+        [field]: prev[field].map((item, index) => {
+          if (targetIndex === index) {
+            return value;
+          } else {
+            return item;
+          }
+        }),
+      };
+    });
+  }
+
+  function handleDraftArrayDelete(field, targetIndex) {
+    setDraft((prev) => {
+      return {
+        ...prev,
+        [field]: prev[field].filter((item, index) => {
+          return index !== targetIndex;
+        }),
+      };
+    });
+  }
   return {
     draft,
     handleDraftString,
@@ -108,5 +115,7 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     handleDraftTagName,
     handleDraftTagColor,
     handleDraftTagDelete,
+    handleDraftArrayUpdate,
+    handleDraftArrayDelete,
   };
 }

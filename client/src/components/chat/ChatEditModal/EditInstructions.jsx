@@ -1,13 +1,15 @@
+import { X } from "lucide-react";
+
 function EditInstructions({
-  version,
-  editDraftVersionArray,
-  deleteDraftArray,
+  draft,
+  handleDraftArrayUpdate,
+  handleDraftArrayDelete,
 }) {
   return (
     <section className="flex flex-col gap-2">
       <h3 className="font-medium font-lora text-secondary">Instructions</h3>
       <ol className="list-decimal space-y-2">
-        {version?.instructions.map((ingredient, index) => (
+        {draft?.instructions.map((ingredient, index) => (
           <li
             key={index}
             className="flex items-center gap-2 bg-mantle/70 border border-crust rounded-xl px-3 py-2 transition-all hover:shadow-sm"
@@ -22,8 +24,7 @@ function EditInstructions({
                   const el = event.target;
                   el.style.height = "auto";
                   el.style.height = `${el.scrollHeight}px`;
-                  editDraftVersionArray(
-                    version.id,
+                  handleDraftArrayUpdate(
                     "instructions",
                     event.target.value,
                     index
@@ -40,7 +41,7 @@ function EditInstructions({
             <button
               type="button"
               onClick={() => {
-                deleteDraftArray(version.id, "instructions", index);
+                handleDraftArrayDelete("instructions", index);
               }}
             >
               <X size={14} color={"#8C7A68"} strokeWidth={1.5} />

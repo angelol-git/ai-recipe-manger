@@ -5,6 +5,8 @@ import EditTitle from "./EditTitle";
 import EditTags from "./EditTags";
 import EditRecipeDetails from "./EditRecipeDetails";
 import EditDescription from "./EditDescription";
+import EditIngredients from "./EditIngredients";
+import EditInstructions from "./EditInstructions";
 
 function ChatEditModal({
   recipe,
@@ -20,6 +22,8 @@ function ChatEditModal({
     handleDraftTagName,
     handleDraftTagColor,
     handleDraftTagDelete,
+    handleDraftArrayUpdate,
+    handleDraftArrayDelete,
   } = useDraftRecipe({
     recipe,
     recipeVersion,
@@ -61,6 +65,16 @@ function ChatEditModal({
           <EditDescription
             draft={draft}
             handleDraftString={handleDraftString}
+          />
+          <EditIngredients
+            draft={draft}
+            handleDraftArrayUpdate={handleDraftArrayUpdate}
+            handleDraftArrayDelete={handleDraftArrayDelete}
+          />
+          <EditInstructions
+            draft={draft}
+            handleDraftArrayUpdate={handleDraftArrayUpdate}
+            handleDraftArrayDelete={handleDraftArrayDelete}
           />
         </form>
       </div>
