@@ -62,7 +62,7 @@ function Home() {
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
             <div className="font-semibold">
-              Items({recipes?.length ?? "..."})
+              Items({filteredRecipes?.length})
             </div>
             <Link
               to="/chat"
