@@ -19,7 +19,7 @@ function ChatSideBar({
         p-2 gap-4 text-sm lg:border-r-gray-300 lg:border-r-1 
         ${
           isSideBarOpen
-            ? "translate-x-0 w-70 lg:w-75"
+            ? "translate-x-0 w-70"
             : "-translate-x-full lg:translate-x-0 lg:w-0 lg:p-0 overflow-hidden"
         }
       `}

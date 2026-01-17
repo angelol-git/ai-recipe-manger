@@ -61,7 +61,7 @@ function Chat() {
   }
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full h-full overflow-y-auto">
       <ChatHeader
         recipe={recipe}
         recipeVersion={recipeVersion}
@@ -70,9 +70,9 @@ function Chat() {
         setIsEditModalOpen={setIsEditModalOpen}
         isMobile={isMobile}
       />
-      <div className="flex-1 items-center flex flex-col w-full">
-        <div className="flex-1 max-w-screen-md flex flex-col w-full">
-          <div className="flex-1 flex flex-col p-4">
+      <div className="flex-1 min-h-0 flex flex-col items-center w-full">
+        <div className="flex-1 flex flex-col w-full max-w-screen-md min-h-0">
+          <div className="flex-1 p-4">
             <ChatTags recipe={recipe} />
             <ChatReply
               recipe={recipe}
