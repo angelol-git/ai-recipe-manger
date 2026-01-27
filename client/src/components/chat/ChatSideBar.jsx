@@ -27,7 +27,7 @@ function ChatSideBar({
       <div className="flex justify-between items-center">
         <Link
           to={`/home`}
-          className="cursor-pointer w-min p-1 rounded-lg hover:bg-mantle-hover"
+          className="cursor-pointer w-min p-1 rounded-lg duration-150 hover:bg-mantle-hover"
         >
           <h2>Home</h2>
         </Link>
@@ -35,34 +35,34 @@ function ChatSideBar({
           onClick={() => {
             setIsSideBarOpen(false);
           }}
-          className="cursor-pointer rounded-lg p-2 hover:bg-mantle-hover"
+          className="cursor-pointer rounded-lg p-2 duration-150 hover:bg-mantle-hover"
         >
           {isMobile ? (
             <X
               size={20}
               strokeWidth={1.5}
-              className="stroke-icon hover:bg-mantle-hover"
+              className="stroke-icon duration-150 hover:bg-mantle-hover"
             />
           ) : (
             <PanelLeftClose
               size={20}
               strokeWidth={1.5}
-              className="stroke-icon hover:bg-mantle-hover"
+              className="stroke-icon duration-150 hover:bg-mantle-hover"
             />
           )}
         </button>
       </div>
       <button
-        className="w-full"
         onClick={() => {
           if (isMobile) {
             setIsSideBarOpen(false);
           }
         }}
+        className="w-full"
       >
         <Link
           to="/chat"
-          className="flex gap-2 p-1 pl-2 rounded-lg items-center hover:bg-mantle-hover"
+          className="flex gap-2 p-1 pl-2 rounded-lg duration-150 items-center hover:bg-mantle-hover"
         >
           <CirclePlus size={18} strokeWidth={1.5} className="stroke-icon" />
           New Chat
@@ -101,7 +101,7 @@ function SideBarItem({ recipe, currentRecipe, isMobile, setIsSideBarOpen }) {
           setIsSideBarOpen(false);
         }
       }}
-      className={`items-center px-2 py-1 flex justify-between cursor-pointer rounded-lg hover:bg-mantle-hover ${
+      className={`items-center px-2 py-1 flex justify-between duration-150 cursor-pointer rounded-lg hover:bg-mantle-hover ${
         currentRecipe?.id === recipe.id ? "bg-overlay0" : null
       }`}
     >

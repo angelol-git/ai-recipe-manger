@@ -40,7 +40,7 @@ function RecipeOptions({ recipe, isOptionsOpen, setIsOptionsOpen }) {
         aria-haspopup="true"
         aria-expanded={isOptionsOpen}
         aria-label="Chat options"
-        className={`cursor-pointer font-bold px-2 py-1 color-black hover:bg-mantle-hover rounded-md ${
+        className={`cursor-pointer font-bold px-2 py-1 color-black duration-150 hover:bg-mantle-hover rounded-md ${
           isOptionsOpen ? "bg-crust" : ""
         }`}
         ref={buttonRef}
@@ -70,7 +70,7 @@ function RecipeOptions({ recipe, isOptionsOpen, setIsOptionsOpen }) {
                     event.stopPropagation();
                     setIsOptionsOpen(false);
                   }}
-                  className="w-full px-3 py-3 flex justify-between items-center cursor-pointer rounded-lg hover:bg-mantle-hover transition-colors"
+                  className="w-full px-3 py-3 flex justify-between items-center cursor-pointer rounded-lg duration-150 hover:bg-mantle-hover transition-colors"
                 >
                   <div className="text-sm font-medium">Share</div>
                   <Share
@@ -91,7 +91,7 @@ function RecipeOptions({ recipe, isOptionsOpen, setIsOptionsOpen }) {
                     deleteRecipe(recipe.id);
                     setIsOptionsOpen(false);
                   }}
-                  className="w-full px-3 py-3 flex justify-between items-center cursor-pointer rounded-lg hover:bg-rose/10 text-rose transition-colors"
+                  className="w-full px-3 py-3 flex justify-between items-center cursor-pointer rounded-lg hover:bg-rose/10 duration-150 text-rose transition-colors"
                 >
                   <div className="text-sm font-medium">
                     Delete All ({recipe.versions.length})
@@ -105,7 +105,7 @@ function RecipeOptions({ recipe, isOptionsOpen, setIsOptionsOpen }) {
               </li>
             </ul>
           </div>,
-          document.body
+          document.body,
         )}
     </div>
   );
