@@ -26,7 +26,7 @@ function NewChat() {
   }
 
   return (
-    <div className="w-full items-center flex flex-col">
+    <div className="w-full items-center flex h-full flex-col">
       <ChatHeader
         isSideBarOpen={isSideBarOpen}
         setIsSideBarOpen={setIsSideBarOpen}

@@ -1,17 +1,17 @@
 import express from "express";
 import dotenv, { parse } from "dotenv";
-import db from "../db.js"
+import db from "../db.js";
 import authMiddleware from "../middleware.js";
 import { v7 as uuidv7 } from "uuid";
 import { GoogleGenAI } from "@google/genai";
-
-const model = "gemini-3-flash-preview"
+import { Impit } from "impit";
+const model = "gemini-3-flash-preview";
 class AiValidationError extends Error {
-    constructor(message, meta = {}) {
-        super(message);
-        this.name = "AiValidationError";
-        this.meta = meta;
-    }
+  constructor(message, meta = {}) {
+    super(message);
+    this.name = "AiValidationError";
+    this.meta = meta;
+  }
 }
 
 dotenv.config();
@@ -19,118 +19,140 @@ const router = express.Router();
 const genAI = new GoogleGenAI(process.env.GOOGLE_API_KEY);
 
 router.post("/create", authMiddleware, async (req, res) => {
-    const { message, recipeId, recipeVersion } = req.body;
-    if (!message?.trim()) return res.status(400).json({ error: "Message is required" });
-    try {
-        db.prepare(`
+  const { message, recipeId, recipeVersion } = req.body;
+  if (!message?.trim())
+    return res.status(400).json({ error: "Message is required" });
+  try {
+    db.prepare(
+      `
             INSERT INTO messages (user_id, recipe_id, role, content,status)
             VALUES (?, ?, 'user', ?,'create')
-        `).run(req.user.id, recipeId ?? null, message);
+        `,
+    ).run(req.user.id, recipeId ?? null, message);
 
-        const prompt = createPrompt(message, recipeVersion || null);
-        const aiResponse = await genAI.models.generateContent({
-            model: model,
-            contents: [{ type: "text", text: prompt }],
-            generationConfig: {
-                responseMimeType: "application/json",
-                temperature: 0.7
-                // responseSchema: recipeSchema,
-            }
-        });
+    //Check if message contains url
+    let htmlContent = checkMessageURL(message);
+    const prompt = createPrompt(
+      message,
+      recipeVersion || null,
+      htmlContent || null,
+    );
 
-        const reply = validateAiResponse({
-            response: aiResponse,
-            recipeId: recipeId ?? null,
-            userId: req.user.id,
-            message
-        });
+    const aiResponse = await genAI.models.generateContent({
+      model: model,
+      contents: [{ type: "text", text: prompt }],
+      generationConfig: {
+        responseMimeType: "application/json",
+        temperature: 0.7,
+        // responseSchema: recipeSchema,
+      },
+    });
 
-        return res.json({ reply });
+    const reply = validateAiResponse({
+      response: aiResponse,
+      recipeId: recipeId ?? null,
+      userId: req.user.id,
+      message,
+    });
+
+    // return res.json({ reply });
+  } catch (err) {
+    const now = new Date();
+    if (err instanceof AiValidationError) {
+      console.error(`[${now.toISOString()}] AI validation failed`, err.meta);
+      return res.status(400).json({ error: err.message });
     }
 
-    catch (err) {
-        const now = new Date();
-        if (err instanceof AiValidationError) {
-            console.error(`[${now.toISOString()}] AI validation failed`, err.meta);
-            return res.status(400).json({ error: err.message });
-        }
-
-        console.error(`[${now.toISOString()}] Create recipe failed`, err);
-        return res.status(500).json({ error: "Something went wrong" });
-    }
-})
-
+    console.error(`[${now.toISOString()}] Create recipe failed`, err);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+});
 
 function validateAiResponse({ response, recipeId, userId, message }) {
-    let rawResponse = response.candidates[0].content.parts[0].text.trim();
+  let rawResponse = response.candidates[0].content.parts[0].text.trim();
 
-    if (!rawResponse) {
-        saveAiError(userId, recipeId, {
-            type: "empty_response",
-            message: "AI return no content",
-            source_prompt: message,
-        });
+  if (!rawResponse) {
+    saveAiError(userId, recipeId, {
+      type: "empty_response",
+      message: "AI return no content",
+      source_prompt: message,
+    });
 
-        throw new AiValidationError("The AI returned an empty response,", { type: "empty_response" });
-    }
+    throw new AiValidationError("The AI returned an empty response,", {
+      type: "empty_response",
+    });
+  }
 
-    // Strip code fences if present
-    if (rawResponse.startsWith("```")) {
-        rawResponse = rawResponse.replace(/^```[a-zA-Z]*\n?/, "").replace(/```$/, "").trim();
-    }
+  // Strip code fences if present
+  if (rawResponse.startsWith("```")) {
+    rawResponse = rawResponse
+      .replace(/^```[a-zA-Z]*\n?/, "")
+      .replace(/```$/, "")
+      .trim();
+  }
 
-    let parsedRecipe;
-    try {
-        parsedRecipe = JSON.parse(rawResponse);
-    } catch (err) {
-        saveAiError(userId, recipeId, {
-            type: "invalid_json",
-            rawResponse,
-            source_prompt: message,
-            ai_model: model
-        })
-        throw new AiValidationError("Invalid JSON from AI", {
-            rawResponse,
-            message,
-        })
-    }
+  let parsedRecipe;
+  try {
+    parsedRecipe = JSON.parse(rawResponse);
+  } catch (err) {
+    saveAiError(userId, recipeId, {
+      type: "invalid_json",
+      rawResponse,
+      source_prompt: message,
+      ai_model: model,
+    });
+    throw new AiValidationError("Invalid JSON from AI", {
+      rawResponse,
+      message,
+    });
+  }
 
-    // Check for incomplete recipe
-    if (!parsedRecipe.title?.trim() ||
-        (!parsedRecipe.ingredients?.length) ||
-        (!parsedRecipe.instructions?.length)) {
-        saveAiError(userId, recipeId, {
-            type: "empty_recipe",
-            rawResponse,
-            source_prompt: message,
-        });
+  // Check for incomplete recipe
+  if (
+    !parsedRecipe.title?.trim() ||
+    !parsedRecipe.ingredients?.length ||
+    !parsedRecipe.instructions?.length
+  ) {
+    saveAiError(userId, recipeId, {
+      type: "empty_recipe",
+      rawResponse,
+      source_prompt: message,
+    });
 
-        throw new AiValidationError(
-            "Recipe could not be generated from this input.",
-            { type: "empty_recipe" }
-        );
-    }
+    throw new AiValidationError(
+      "Recipe could not be generated from this input.",
+      { type: "empty_recipe" },
+    );
+  }
 
-    const savedReply = db.transaction(() => {
-        let newRecipeId = recipeId ?? uuidv7();
-        let recipe = null;
+  const savedReply = db.transaction(() => {
+    let newRecipeId = recipeId ?? uuidv7();
+    let recipe = null;
 
-        if (!recipeId) {
-            recipe = db.prepare(`
+    if (!recipeId) {
+      recipe = db
+        .prepare(
+          `
                 INSERT INTO recipes (id,user_id, title)
                 VALUES (?,?,?)
                 RETURNING id, user_id, title, created_at
-            `).get(newRecipeId, userId, parsedRecipe.title);
+            `,
+        )
+        .get(newRecipeId, userId, parsedRecipe.title);
 
-            const insertedRecipe = db
-                .prepare(`SELECT id, user_id, title, created_at FROM recipes WHERE id = ?`)
-                .get(newRecipeId);
+      const insertedRecipe = db
+        .prepare(
+          `SELECT id, user_id, title, created_at FROM recipes WHERE id = ?`,
+        )
+        .get(newRecipeId);
 
-            parsedRecipe.created_at = insertedRecipe.created_at;
-            parsedRecipe.tags = [];
-        }
+      parsedRecipe.created_at = insertedRecipe.created_at;
+      parsedRecipe.tags = [];
+    }
 
-        const version = db.prepare(`
+    const version = db
+      .prepare(
+        `
             INSERT INTO recipe_versions (recipe_id, servings, total_time, calories, 
                 description, instructions, ingredients, 
                 source_prompt, ai_model, relation)
@@ -138,55 +160,67 @@ function validateAiResponse({ response, recipeId, userId, message }) {
             RETURNING id, recipe_id, servings, total_time, calories,
                     description, instructions, ingredients,
                     source_prompt, ai_model, relation, created_at
-        `).get(
-            newRecipeId,
-            parsedRecipe.servings,
-            parsedRecipe.total_time,
-            parsedRecipe.calories,
-            parsedRecipe.description,
-            JSON.stringify(Array.isArray(parsedRecipe.instructions) ? parsedRecipe.instructions : [parsedRecipe.instructions]),
-            JSON.stringify(Array.isArray(parsedRecipe.ingredients) ? parsedRecipe.ingredients : [parsedRecipe.ingredients]),
-            parsedRecipe.source_prompt,
-            parsedRecipe.ai_model,
-            parsedRecipe.relation
-        );
+        `,
+      )
+      .get(
+        newRecipeId,
+        parsedRecipe.servings,
+        parsedRecipe.total_time,
+        parsedRecipe.calories,
+        parsedRecipe.description,
+        JSON.stringify(
+          Array.isArray(parsedRecipe.instructions)
+            ? parsedRecipe.instructions
+            : [parsedRecipe.instructions],
+        ),
+        JSON.stringify(
+          Array.isArray(parsedRecipe.ingredients)
+            ? parsedRecipe.ingredients
+            : [parsedRecipe.ingredients],
+        ),
+        parsedRecipe.source_prompt,
+        parsedRecipe.ai_model,
+        parsedRecipe.relation,
+      );
 
-        db.prepare(`
+    db.prepare(
+      `
             INSERT INTO messages (user_id, recipe_id, role, content, status)
             VALUES (?, ?, 'assistant', ?, 'recipe')
-        `).run(userId, newRecipeId, JSON.stringify(parsedRecipe));
+        `,
+    ).run(userId, newRecipeId, JSON.stringify(parsedRecipe));
 
-        parsedRecipe.versionId = version.lastInsertRowid;
+    parsedRecipe.versionId = version.lastInsertRowid;
 
-        //Return the full object if a new recipe or partial if new recipe version
-        if (!recipeId) {
-            return {
-                id: recipe.id,
-                title: recipe.title,
-                created_at: recipe.created_at,
-                tags: [],
-                versions: [version]
-            }
-        }
+    //Return the full object if a new recipe or partial if new recipe version
+    if (!recipeId) {
+      return {
+        id: recipe.id,
+        title: recipe.title,
+        created_at: recipe.created_at,
+        tags: [],
+        versions: [version],
+      };
+    }
 
-        return version;
+    return version;
+  })();
 
-
-    })();
-
-    return savedReply;
+  return savedReply;
 }
 
 function saveAiError(userId, recipeId, error) {
-    db.prepare(`
+  db.prepare(
+    `
         INSERT INTO messages (user_id, recipe_id, role, content, status)
         VALUES (?, ?, 'assistant', ?, 'error')
-    `).run(userId, recipeId || null, JSON.stringify(error));
+    `,
+  ).run(userId, recipeId || null, JSON.stringify(error));
 }
 
 function createPrompt(message, recipeVersion = {}) {
-    //- Scaling: Adjust quantities/servings proportionally; keep calories per serving constant.
-    return (`
+  //- Scaling: Adjust quantities/servings proportionally; keep calories per serving constant.
+  return `
        Role: Expert Culinary Data Engineer.
         Goal: Parse the provided input into a structured JSON object with 100% fidelity to the source material.
 
@@ -225,11 +259,11 @@ function createPrompt(message, recipeVersion = {}) {
         Current State (if any): ${JSON.stringify(recipeVersion)}
         
         Return ONLY valid JSON.
-    `)
+    `;
 }
 
 function askPrompt(currentVersion, message) {
-    return (`
+  return `
     You are a cooking and recipe assistant.
 
     You only discuss topics related to food, cooking, ingredients, kitchen techniques, nutrition, and recipes.
@@ -252,39 +286,45 @@ function askPrompt(currentVersion, message) {
     - Never return JSON or code. Reply as plain text only.
 
     User message: "${message}"
-    `)
+    `;
 }
-
 
 export default router;
 
-const recipeSchema = {
-    type: "object",
-    properties: {
-        title: { type: "string" },
-        description: { type: "string" },
-        ingredients: {
-            type: "array",
-            items: { type: "string" },
-            description: "List of ingredients with quantities"
-        },
-        instructions: {
-            type: "array",
-            items: { type: "string" },
-            description: "Step-by-step cooking actions without numbers"
-        },
-        servings: { type: "integer" },
-        calories: { type: "integer" },
-        total_time: {
-            type: "integer",
-            description: "Total time in minutes"
-        },
-        source_prompt: { type: "string" },
-        ai_model: { type: "string" }
-    },
-    required: ["title", "ingredients", "instructions", "servings", "calories", "total_time"]
-};
+function checkMessageURL(message) {
+  const URL_REGEX = /(https?:\/\/[^\s]+)/i;
 
+  const containsUrl = URL_REGEX.test(message);
+  if (containsUrl) {
+  }
+}
+
+// const recipeSchema = {
+//     type: "object",
+//     properties: {
+//         title: { type: "string" },
+//         description: { type: "string" },
+//         ingredients: {
+//             type: "array",
+//             items: { type: "string" },
+//             description: "List of ingredients with quantities"
+//         },
+//         instructions: {
+//             type: "array",
+//             items: { type: "string" },
+//             description: "Step-by-step cooking actions without numbers"
+//         },
+//         servings: { type: "integer" },
+//         calories: { type: "integer" },
+//         total_time: {
+//             type: "integer",
+//             description: "Total time in minutes"
+//         },
+//         source_prompt: { type: "string" },
+//         ai_model: { type: "string" }
+//     },
+//     required: ["title", "ingredients", "instructions", "servings", "calories", "total_time"]
+// };
 
 // router.post("/ask", authMiddleware, async (req, res) => {
 //     const { message, currentVersion, recipeId } = req.body;
