@@ -183,20 +183,24 @@ function saveAiError(userId, recipeId, error) {
 export function createPrompt(message, recipeVersion = {}, urlContent = {}) {
   //- Scaling: Adjust quantities/servings proportionally; keep calories per serving constant.
   return `
-    TASK: Parse the following culinary input into a strict JSON object.
-    
-    RULES:
-    1. Accuracy: Maintain 100% fidelity to source measurements. Do not convert units.
-    2. Hierarchy: If a URL is provided, prioritize structured JSON-LD or Recipe Schema data.
-    3. Update Logic: If a Current State is provided, apply the User Message as a modification to that state.
-    4. Format: Return ONLY valid JSON. No markdown backticks. No conversational filler.
-  1. **Servings**: If missing, infer from ingredient volumes (e.g., a recipe using 2lbs of flour/meat usually serves 6-8). Fallback to 1 for drinks/single bowls.
+    Parse the following culinary input into a strict JSON object.
+
+    # Role: Expert Culinary Data Engineer and Nutritionist.
+    ## Goal: Parse the input into JSON. 
+ 
+    ### RULES:
+    1. **Accuracy**: Maintain 100% fidelity to source measurements. Do not convert units.
+    2. **Hierarchy**: If a URL is provided, prioritize structured JSON-LD or Recipe Schema data.
+    3. **Update Logic**: If a Current State is provided, apply the User Message as a modification to that state.
+    4. **Format**: Return ONLY valid JSON. No markdown backticks. No conversational filler.
+
+    ### MISSING DATA INFERENCE RULES:
+    1. **Servings**: If missing, infer from ingredient volumes (e.g., a recipe using 2lbs of flour/meat usually serves 6-8). Fallback to 1 for drinks/single bowls.
     2. **Total Time**: Sum all "active" and "passive" times mentioned in the steps (e.g., 10m prep + 30m bake = 40). If no times are mentioned, estimate based on industry standards for the dish type.
     3. **Calories (Inference Required)**: If calorie data is missing, calculate a conservative estimate per serving. 
-       - Aggregate the standard caloric values of the major ingredients (proteins, fats, carbs).
-       - Ensure the estimate is realistic for the dish type (e.g., a salad shouldn't be 1000kcal, a burger shouldn't be 100kcal).
        - **Constraint**: Provide a single integer representing calories per serving.
-    SCHEMA:
+
+    ### SCHEMA:
      {
       "title": "string",
       "description": "string",
@@ -208,7 +212,8 @@ export function createPrompt(message, recipeVersion = {}, urlContent = {}) {
       "source_prompt": "${message}",
       "ai_model": "${model}"
     }
-    CONTEXT:
+
+    ### CONTEXT:
     - User Message: "${message}"
     - Extracted Web Data: ${urlContent || "None"}
     - Current State: ${JSON.stringify(recipeVersion)}

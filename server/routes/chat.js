@@ -2,10 +2,9 @@ import express from "express";
 import db from "../db.js";
 import authMiddleware from "../middleware.js";
 import { Impit } from "impit";
-import { writeFile } from "fs/promises";
+// import { writeFile } from "fs/promises";
 import * as cheerio from "cheerio";
 import { generateResponse, validateAiResponse, createPrompt } from "./ai.js";
-import { url } from "inspector";
 
 const router = express.Router();
 router.post("/create", authMiddleware, async (req, res) => {
@@ -20,7 +19,6 @@ router.post("/create", authMiddleware, async (req, res) => {
 
     //Check if message contains url
     let urlContent = await checkMessageURL(message);
-
     const prompt = createPrompt(
       message,
       recipeVersion || null,
@@ -75,7 +73,6 @@ async function checkMessageURL(message) {
 
 function checkJsonLd(html) {
   const $ = cheerio.load(html);
-  // Select all <script type="application/ld+json"> tags
   const scripts = $('script[type="application/ld+json"]');
 
   let result = null;
