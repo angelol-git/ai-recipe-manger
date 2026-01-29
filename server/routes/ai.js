@@ -4,7 +4,6 @@ import db from "../db.js";
 import { v7 as uuidv7 } from "uuid";
 import { GoogleGenAI } from "@google/genai";
 
-const model = "gemini-3-flash-preview";
 class AiValidationError extends Error {
   constructor(message, meta = {}) {
     super(message);
@@ -16,6 +15,7 @@ class AiValidationError extends Error {
 dotenv.config();
 const router = express.Router();
 const genAI = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+const model = "gemini-3-flash-preview";
 
 export async function generateResponse(prompt) {
   const aiResponse = await genAI.models.generateContent({

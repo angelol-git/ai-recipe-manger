@@ -31,7 +31,7 @@ function ChatOptions({ recipe, setIsEditModalOpen }) {
         aria-haspopup="true"
         aria-expanded={isOptionsOpen}
         aria-label="Chat options"
-        className={`cursor-pointer font-bold px-2 py-1 color-black rounded-md ${
+        className={`cursor-pointer hover:bg-mantle-hover duration-150 font-bold px-2 py-1 color-black rounded-md ${
           isOptionsOpen ? "bg-crust" : ""
         }`}
       >
@@ -40,14 +40,14 @@ function ChatOptions({ recipe, setIsEditModalOpen }) {
 
       {isOptionsOpen && (
         <div
-          className="absolute right-0 z-50 bg-mantle w-42 p-2 rounded-lg shadow-xl border border-secondary/60"
+          className="absolute right-0 z-50 bg-mantle  w-42 p-2 rounded-lg shadow-xl border border-secondary/60"
           role="menu"
         >
           <ul className="flex flex-col text-primary">
             <li>
               <button
                 onClick={() => setIsOptionsOpen(false)}
-                className="w-full flex justify-between items-center py-3 cursor-pointer hover:bg-mantle-hover px-2 rounded-lg"
+                className="w-full flex justify-between items-center py-3 cursor-pointer hover:bg-mantle-hover duration-150 px-2 rounded-lg"
               >
                 <Share size={22} strokeWidth={1.25} className="stroke-icon" />
                 <div className="text-sm">Share</div>
@@ -60,7 +60,7 @@ function ChatOptions({ recipe, setIsEditModalOpen }) {
                   setIsOptionsOpen(false);
                   setIsEditModalOpen(true);
                 }}
-                className="w-full flex justify-between items-center py-3 cursor-pointer hover:bg-mantle-hover px-2 rounded-lg"
+                className="w-full flex justify-between items-center py-3 cursor-pointer hover:bg-mantle-hover duration-150 px-2 rounded-lg"
               >
                 <SquarePen
                   size={22}
@@ -84,7 +84,7 @@ function ChatOptions({ recipe, setIsEditModalOpen }) {
                   }
                   navigate("/home");
                 }}
-                className="w-full flex justify-between items-center py-3 cursor-pointer hover:bg-mantle-hover px-2 rounded-lg"
+                className="w-full flex justify-between items-center py-3 cursor-pointer hover:bg-mantle-hover duration-150 px-2 rounded-lg"
               >
                 <Trash2 size={22} strokeWidth={1.25} className="stroke-icon" />
                 <div className="text-sm">Delete Current</div>
@@ -100,7 +100,7 @@ function ChatOptions({ recipe, setIsEditModalOpen }) {
                   deleteRecipe(recipeId);
                   navigate("/home");
                 }}
-                className="w-full flex justify-between items-center py-3 text-rose cursor-pointer px-2 hover:bg-rose/10 rounded-lg"
+                className="w-full flex justify-between items-center py-3 text-rose cursor-pointer px-2 hover:bg-rose/10 duration-150 rounded-lg"
               >
                 <CircleX size={22} strokeWidth={1.5} className="stroke-rose" />
                 <div className="text-sm font-medium">

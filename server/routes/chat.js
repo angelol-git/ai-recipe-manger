@@ -74,6 +74,7 @@ async function checkMessageURL(message) {
   const response = await impit.fetch(url);
   const html = await response.text();
   const $ = cheerio.load(html);
+
   //#1: get information from application/db
   const jsonLd = checkJsonLd($);
   if (jsonLd) {
@@ -124,7 +125,7 @@ function checkHtml($) {
 const REMOVE_SELECTORS = `
   style, script, nav, footer, header, .drawer-nav, .site-header,
   .social-menu, .jump-button-group, .post-disclosure, .skip-link,
-  .screen-reader-text, blockquote, .faq-section, .savetherecipe,
+  .screen-reader-text, .faq-section, .savetherecipe,
   iframe, img, svg, picture, video, noscript, button, form, 
   aside, .ads, .sidebar, .nav-menu
 `;

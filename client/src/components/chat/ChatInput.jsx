@@ -50,7 +50,7 @@ function ChatInput({
       textAreaRef.current.style.height = "auto";
       textAreaRef.current.style.height = `${Math.min(
         Math.max(textAreaRef.current.scrollHeight, minHeight),
-        maxHeight
+        maxHeight,
       )}px`;
     }
   }, [message]);
@@ -76,7 +76,7 @@ function ChatInput({
       {!isNewChat && (
         <button
           onClick={() => setIsChatOpen(false)}
-          className="cursor-pointer absolute top-1 right-1 p-1 rounded-full hover:bg-overlay0"
+          className="cursor-pointer absolute top-1 right-1 p-1 rounded-full hover:bg-overlay0 duration-150"
           aria-label="Minimize chat"
         >
           <Minimize2
@@ -106,7 +106,7 @@ function ChatInput({
                 chatInputMode === "Create"
                   ? "bg-overlay0 text-secondary"
                   : "bg-overlay2 text-white"
-              } w-min px-2 cursor-pointer py-1 rounded-2xl text-sm flex items-center gap-1`}
+              } w-min px-2 cursor-pointer py-1 rounded-2xl hover:brightness-90 duration-150 transition-colors text-sm flex items-center gap-1`}
             >
               <option value="Create">Create</option>
               <option value="Ask">Ask</option>
@@ -116,7 +116,7 @@ function ChatInput({
                 onClick={() => {
                   setIsAskModalOpen(!isAskModalOpen);
                 }}
-                className="bg-overlay2 p-1 rounded-full cursor-pointer"
+                className="bg-overlay2 p-1 rounded-full hover:brightness-90 duration-150 cursor-pointer"
               >
                 <History size={20} strokeWidth={1.5} color={"white"} />
               </button>
@@ -126,7 +126,7 @@ function ChatInput({
 
         <button
           type="button"
-          className="cursor-pointer flex items-center justify-center w-9 h-9 p-0 text-white bg-accent hover:bg-accent-dark rounded-full shrink-0"
+          className="cursor-pointer flex items-center justify-center w-9 h-9 p-0 text-white bg-accent hover:bg-accent-hover duration-150 transition-colors rounded-full shrink-0"
           onClick={(event) => {
             event.stopPropagation();
             handleSendMessage();
@@ -146,7 +146,7 @@ function ChatInput({
     </div>
   ) : (
     <button
-      className="m-4 bg-accent rounded-full flex items-center justify-center w-9 h-9 cursor-pointer h20"
+      className="m-4 bg-accent hover:bg-accent-hover transition-colors duration-150 rounded-full flex items-center justify-center w-9 h-9 cursor-pointer h20"
       onClick={() => {
         setIsChatOpen(true);
       }}

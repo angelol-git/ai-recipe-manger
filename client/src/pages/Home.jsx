@@ -30,7 +30,7 @@ function Home() {
 
     return recipe.tags.some((recipeTag) => {
       return selectedTags.some(
-        (selectedTag) => selectedTag.name === recipeTag.name
+        (selectedTag) => selectedTag.name === recipeTag.name,
       );
     });
   });
@@ -68,7 +68,7 @@ function Home() {
               + Add
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:flex md:flex-wrap gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-wrap gap-4 lg:gap-6">
             {filteredRecipes?.map((recipe) => {
               return <HomeRecipeCard key={recipe.id} recipe={recipe} />;
             })}

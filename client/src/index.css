@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
-@import 'tailwindcss';
+@import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap");
+@import "tailwindcss";
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -34,40 +34,41 @@ body,
   --font-lora: "Lora", serif;
 
   /* Base layers */
-  --color-base: #F8F5F1;
-  --color-mantle: #F1EAE4;
-  --color-crust: #EAE2DC;
-  --color-modal: #E8E3DD;
+  --color-base: #f8f5f1;
+  --color-mantle: #f1eae4;
+  --color-crust: #eae2dc;
+  --color-modal: #e8e3dd;
 
-  --color-base-hover: #F1ECE5;
-  --color-mantle-hover: #E8DFD8;
+  --color-base-hover: #f1ece5;
+  --color-mantle-hover: #e8dfd8;
 
-  --color-tag: #EDE6DE;
-  --color-tag-selected: #D2C8BE;
-  --color-tag-hover: #E3D9CF;
+  --color-tag: #ede6de;
+  --color-tag-selected: #d2c8be;
+  --color-tag-hover: #e3d9cf;
 
   /* Text */
-  --color-icon: #5A4634;
-  --color-icon-muted: #8C7A68;
-  --color-icon-accent: #A67856;
-  --color-icon-disabled: #CBB8A6;
+  --color-icon: #5a4634;
+  --color-icon-muted: #8c7a68;
+  --color-icon-accent: #a67856;
+  --color-icon-disabled: #cbb8a6;
 
-  --color-primary: #4B3B2A;
-  --color-secondary: #7C6A58;
-  --color-accent: #A67856;
+  --color-primary: #4b3b2a;
+  --color-secondary: #7c6a58;
+  --color-accent: #a67856;
 
   /* Accents */
-  --color-accent: #8B9F87;
-  --color-peach: #FFB86C;
-  --color-rose: #B86A73;
-  --color-yellow: #E5C890;
-  --color-blue: #8CA0AE;
-  --color-lavender: #B6A7B2;
-  --color-pink: #E7DFD8;
-  --color-green: #B0B7A5;
+  --color-accent: #8b9f87;
+  --color-accent-hover: #5f6f5c;
+  --color-peach: #ffb86c;
+  --color-rose: #b86a73;
+  --color-yellow: #e5c890;
+  --color-blue: #8ca0ae;
+  --color-lavender: #b6a7b2;
+  --color-pink: #e7dfd8;
+  --color-green: #b0b7a5;
 
   /* Subtle neutrals */
-  --color-overlay0: #DFD7D2;
-  --color-overlay1: #CFC7C2;
-  --color-overlay2: #BFB7B2;
+  --color-overlay0: #dfd7d2;
+  --color-overlay1: #cfc7c2;
+  --color-overlay2: #bfb7b2;
 }

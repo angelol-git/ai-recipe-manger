@@ -70,7 +70,7 @@ function ChatSideBar({
       </button>
       <div className="flex flex-col gap-1">
         <h2 className="text-secondary">Recipes</h2>
-        <div className="flex w-full flex-col gap-2">
+        <div className="flex w-full flex-col">
           {recipes?.map((recipe) => {
             return (
               <SideBarItem
