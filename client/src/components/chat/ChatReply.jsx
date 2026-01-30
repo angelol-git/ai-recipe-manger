@@ -88,7 +88,7 @@ function ChatReply({ recipe, recipeVersion }) {
       )}
 
       {source_prompt && (
-        <div className="flex gap-4 justify-between text-secondary text-sm  mt-4">
+        <div className="flex gap-4 justify-between text-secondary text-sm mt-4">
           <div className="flex flex-col items-start gap-2 py-2">
             <button
               aria-expanded={isPromptModalOpen}
@@ -96,12 +96,12 @@ function ChatReply({ recipe, recipeVersion }) {
               onClick={() => {
                 setIsPromptModalOpen((prev) => !prev);
               }}
-              className="underline cursor-pointer"
+              className={`underline cursor-pointer p-1 rounded-lg hover:bg-mantle-hover duration-150 ${isPromptModalOpen && "bg-mantle-hover"}`}
             >
               {!isPromptModalOpen ? "View Prompt" : "Close Prompt"}
             </button>
             {isPromptModalOpen && (
-              <div id="source_prompt" ref={sourcePromptRef}>
+              <div id="source_prompt" ref={sourcePromptRef} className="p-1">
                 {source_prompt}
               </div>
             )}

@@ -15,12 +15,12 @@ function ChatSideBar({
       className={`
         fixed inset-y-0 left-0 z-100 
         lg:relative lg:z-0 
-        h-screen duration-200 ease-out transition-translate flex-col flex bg-mantle
-        p-2 gap-4 text-sm lg:border-r-gray-300 lg:border-r-1 
+        h-screen duration-200 ease-out transition-all flex-col flex bg-mantle
+        gap-4 text-sm lg:border-r-gray-300 lg:border-r-1 
         ${
           isSideBarOpen
-            ? "translate-x-0 w-70"
-            : "-translate-x-full lg:translate-x-0 lg:w-0 lg:p-0 overflow-hidden"
+            ? "translate-x-0 w-70 p-2"
+            : "-translate-x-full w-0 p-0 lg:translate-x-0 overflow-hidden"
         }
       `}
     >

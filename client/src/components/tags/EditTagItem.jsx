@@ -49,7 +49,7 @@ function EditTagItem({
         onClick={() => {
           handleDelete(tag);
         }}
-        className="cursor-pointer"
+        className="hover:bg-tag-hover p-1 duration-150 transition-colors rounded-full cursor-pointer"
       >
         <X size={12} strokeWidth={1.5} className="stroke-icon-muted" />
       </button>

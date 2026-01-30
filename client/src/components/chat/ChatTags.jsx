@@ -14,6 +14,11 @@ function ChatTags({ recipe }) {
   });
 
   useEffect(() => {
+    setIsAddingTag(false);
+    setNewTag({ id: "", name: "", color: "#FFB86C" });
+  }, [recipe?.id]);
+
+  useEffect(() => {
     if (isAddingTag) {
       newTagRef.current?.focus();
     }
@@ -37,7 +42,7 @@ function ChatTags({ recipe }) {
           return (
             <div
               className="bg-tag inline-flex gap-2 items-center px-2 py-0.5 text-sm
-  text-[#5C5046] border border-mantle rounded-full cursor-pointer"
+  text-[#5C5046] border border-mantle rounded-full"
               key={tag.id}
             >
               <div
@@ -63,7 +68,7 @@ function ChatTags({ recipe }) {
             className="inline-flex justify-center items-center px-2 py-0.5 text-sm
     text-gray-500 border border-gray-300 rounded-full
     cursor-pointer hover:bg-gray-100 hover:text-gray-700
-    transition-colors w-[100px]"
+    transition-colors duration-150 w-[100px]"
           />
 
           <button
@@ -71,13 +76,13 @@ function ChatTags({ recipe }) {
               setNewTag({ id: "", name: "", color: "#FFB86C" });
               setIsAddingTag(false);
             }}
-            className="rounded-full border border-gray-300 px-2 flex items-center justify-center cursor-pointer"
+            className="rounded-full border border-gray-300 hover:bg-gray-100 duration-150 transition-colors px-2 flex items-center justify-center cursor-pointer"
           >
             <X size={14} strokeWidth={1.5} className="stroke-icon-muted" />
           </button>
           <button
             onClick={handleAddTag}
-            className="rounded-full border border-gray-300 px-2 flex items-center justify-center cursor-pointer"
+            className="rounded-full border border-gray-300 px-2 hover:bg-gray-100 duration-150 transition-colors flex items-center justify-center cursor-pointer"
           >
             <Check
               size={"14"}

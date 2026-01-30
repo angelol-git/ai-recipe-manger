@@ -57,7 +57,7 @@ function HomeTags({
               onClick={() => {
                 setIsEditTags(true);
               }}
-              className="text-sm text-secondary cursor-pointer underline rounded-lg py-1 px-2"
+              className="text-sm text-secondary cursor-pointer underline hover:bg-mantle-hover duration-150 transition-colors rounded-lg py-1 px-2"
             >
               Edit
             </button>
@@ -104,7 +104,7 @@ function HomeTags({
             <div className="flex gap-2">
               <button
                 onClick={handleTagDone}
-                className="text-sm cursor-pointer text-white bg-accent rounded-lg py-1 px-2"
+                className="text-sm cursor-pointer text-white bg-accent hover:bg-accent-hover duration-150 transition-colors rounded-lg py-1 px-2"
               >
                 Done
               </button>

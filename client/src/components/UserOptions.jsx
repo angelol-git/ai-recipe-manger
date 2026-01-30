@@ -28,7 +28,7 @@ function UserOptions({ user, logout }) {
         <button
           id="profileMenuButton"
           aria-haspopup="true"
-          className={`rounded-full border-5  cursor-pointer  ${
+          className={`rounded-full hover:bg-mantle-hover duration-150 transition-colors border-5  cursor-pointer  ${
             isUserOptionsOpen ? " border-gray-400/30" : "border-base"
           }`}
           onClick={() => {
@@ -57,7 +57,7 @@ function UserOptions({ user, logout }) {
                 logout.mutate();
                 navigate("/");
               }}
-              className="rounded-md bg-accent text-white p-2 cursor-pointer"
+              className="rounded-md hover:bg-accent-hover duration-150 transition-colors bg-accent text-white p-2 cursor-pointer"
             >
               Logout
             </button>

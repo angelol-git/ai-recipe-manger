@@ -21,7 +21,7 @@ export function useChatSidebar(user) {
 
     localStorage.setItem(
       `isSideBarOpen_${user.id}`,
-      JSON.stringify(isSideBarOpen)
+      JSON.stringify(isSideBarOpen),
     );
   }, [isSideBarOpen, user?.id]);
 

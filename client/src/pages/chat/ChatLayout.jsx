@@ -16,6 +16,9 @@ const ChatLayout = () => {
   const [recipe, setRecipe] = useState(null);
   const [recipeVersion, setRecipeVersion] = useState(null);
   const isMobile = useIsMobile();
+  useEffect(() => {
+    setMessage("");
+  }, [recipe?.id]);
 
   function showToast(message, type = "error") {
     setToast({ message, type });
