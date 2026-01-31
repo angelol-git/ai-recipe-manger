@@ -56,13 +56,15 @@ function ChatInput({
   }, [message]);
 
   return isChatOpen ? (
-    <div className="relative bg-base p-2 border-crust border-8 rounded-2xl w-full ">
+    <div
+      className={`relative bg-base p-2 border-crust border-8 rounded-2xl w-full ${isPendingCreateMessage && "bg-gray-100"}`}
+    >
       <textarea
         rows={1}
         ref={textAreaRef}
-        className="w-full px-2 rounded-xl text-primary
+        className={`w-full px-2 rounded-xl
                  outline-none resize-none leading-6
-                 placeholder:text-icon-disabled"
+                 placeholder:text-icon-disabled ${isPendingCreateMessage ? "text-gray-400" : " text-primary"}`}
         style={{
           minHeight: `${minHeight}px`,
           maxHeight: `${maxHeight}px`,
@@ -71,6 +73,7 @@ function ChatInput({
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Enter any recipe or changes..."
+        disabled={isPendingCreateMessage}
       />
 
       {!isNewChat && (
@@ -131,6 +134,7 @@ function ChatInput({
             event.stopPropagation();
             handleSendMessage();
           }}
+          disabled={isPendingCreateMessage}
         >
           {isPendingCreateMessage ? (
             <LoaderCircle

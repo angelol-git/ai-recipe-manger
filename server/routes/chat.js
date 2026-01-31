@@ -45,11 +45,16 @@ router.post("/create", authMiddleware, async (req, res) => {
     //     return;
     //   }
     // }
-    let urlContent = await checkMessageURL(url);
-    const contextData =
-      typeof urlContent === "object"
-        ? JSON.stringify(urlContent, null, 2)
-        : urlContent;
+
+    let contextData = null;
+    if (url) {
+      let urlContent = await checkMessageURL(url);
+      contextData =
+        typeof urlContent === "object"
+          ? JSON.stringify(urlContent, null, 2)
+          : urlContent;
+    }
+
     const prompt = createPrompt(message, recipeVersion || null, contextData);
 
     const aiResponse = await generateResponse(prompt);

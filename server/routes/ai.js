@@ -200,6 +200,23 @@ export function createPrompt(message, recipeVersion = {}, urlContent = {}) {
     3. **Update Logic**: If a Current State is provided, apply the User Message as a modification to that state.
     4. **Format**: Return ONLY valid JSON. No markdown backticks. No conversational filler.
 
+    ### CONTENT RELEVANCY GUARDRAIL:
+    **CRITICAL**: Before parsing, evaluate if the User Message is actually related to recipes, cooking, food, ingredients, or culinary topics.
+    - If the message is gibberish (e.g., "test", "asdf", random characters) OR completely unrelated to food/cooking (e.g., "what's the weather", "tell me a joke"):
+      - Return this exact empty structure:
+      {
+        "title": "",
+        "description": "",
+        "ingredients": [],
+        "instructions": [],
+        "servings": null,
+        "calories": null,
+        "total_time": null,
+        "source_prompt": "${message}",
+        "ai_model": "${model}"
+      }
+    - Only proceed with normal parsing if the message contains recipe-related content, ingredients, dishes, or cooking instructions.
+
     ### MISSING DATA INFERENCE RULES:
     1. **Servings**: If missing, infer from ingredient volumes (e.g., a recipe using 2lbs of flour/meat usually serves 6-8). Fallback to 1 for drinks/single bowls.
     2. **Total Time**: Sum all "active" and "passive" times mentioned in the steps (e.g., 10m prep + 30m bake = 40). If no times are mentioned, estimate based on industry standards for the dish type.
