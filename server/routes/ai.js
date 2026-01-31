@@ -102,15 +102,15 @@ export function validateAiResponse({
         .prepare(
           `
                 INSERT INTO recipes (id,user_id, title, source_url)
-                VALUES (?,?,?)
+                VALUES (?,?,?,?)
                 RETURNING id, user_id, title, source_url, created_at
             `,
         )
-        .get(newRecipeId, userId, parsedRecipe.title);
+        .get(newRecipeId, userId, parsedRecipe.title, sourceUrl);
 
       const insertedRecipe = db
         .prepare(
-          `SELECT id, user_id, title, created_at FROM recipes WHERE id = ?`,
+          `SELECT id, user_id, title, source_url created_at FROM recipes WHERE id = ?`,
         )
         .get(newRecipeId);
 

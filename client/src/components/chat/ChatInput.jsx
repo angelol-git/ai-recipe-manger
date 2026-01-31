@@ -109,7 +109,7 @@ function ChatInput({
               } w-min px-2 cursor-pointer py-1 rounded-2xl hover:brightness-90 duration-150 transition-colors text-sm flex items-center gap-1`}
             >
               <option value="Create">Create</option>
-              <option value="Ask">Ask</option>
+              {/* <option value="Ask">Ask</option> */}
             </select>
             {chatInputMode === "Ask" ? (
               <button

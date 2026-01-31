@@ -40,6 +40,7 @@ function ChatEditModal({
     const recipeToSave = {
       ...draft,
       instructions: draft.instructions.map((item) => item.text),
+      ingredients: draft.ingredients.map((item) => item.text),
     };
     updateRecipe(recipeToSave);
     setIsEditModalOpen(false);
