@@ -47,7 +47,7 @@ function Chat() {
       sendCreateMessage({
         message,
         recipeId: recipe.id,
-        recipeVersion: recipe.versions[recipe],
+        recipeVersion: recipe.versions[recipeVersion],
       });
     }
 

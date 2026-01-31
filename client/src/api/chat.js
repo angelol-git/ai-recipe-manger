@@ -7,7 +7,6 @@ export async function sendCreateMessage(payload) {
     credentials: "include",
     body: JSON.stringify(payload),
   });
-
   if (!res.ok) {
     const data = await res.json();
     throw data;

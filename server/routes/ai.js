@@ -187,7 +187,6 @@ function saveAiError(userId, recipeId, error) {
 }
 
 export function createPrompt(message, recipeVersion = {}, urlContent = {}) {
-  //- Scaling: Adjust quantities/servings proportionally; keep calories per serving constant.
   return `
     Parse the following culinary input into a strict JSON object.
 
@@ -197,8 +196,42 @@ export function createPrompt(message, recipeVersion = {}, urlContent = {}) {
     ### RULES:
     1. **Accuracy**: Maintain 100% fidelity to source measurements. Do not convert units.
     2. **Hierarchy**: If a URL is provided, prioritize structured JSON-LD or Recipe Schema data.
-    3. **Update Logic**: If a Current State is provided, apply the User Message as a modification to that state.
+    3. **Modification Detection**: If a Current State is provided, analyze the User Message to determine if it requests a modification (scaling, substitution, dietary change, etc.) vs a new recipe. If modifying, apply changes to the Current State while preserving the original structure.
     4. **Format**: Return ONLY valid JSON. No markdown backticks. No conversational filler.
+
+    ### MODIFICATION HANDLING:
+    **CRITICAL**: When a Current State is provided, determine if the user is requesting a recipe modification:
+    
+    **Common Modification Types:**
+    1. **Scaling**: Requests like "Double this recipe", "Make half", "Serve 4 instead of 8", "Triple the ingredients"
+    2. **Substitutions**: "Make it vegan", "Use almond milk instead of regular", "Replace butter with oil"
+    3. **Dietary Restrictions**: "Make it gluten-free", "Keto version", "Low sodium"
+    4. **Flavor Adjustments**: "Add more spice", "Make it sweeter", "Less garlic"
+    5. **Time/Method Changes**: "Make it in a slow cooker", "30-minute version", "No-bake option"
+    
+    **Scaling Rules (PRIORITY):**
+    - When scaling servings up or down, adjust ALL ingredient quantities proportionally
+    - If original: 2 servings with 1 cup flour, and user says "Double it" → 4 servings with 2 cups flour
+    - Calculate scaling factor: New Servings ÷ Original Servings
+    - Apply factor to every ingredient quantity (including partial amounts like "½ tsp")
+    - **Calorie Rule**: Keep calories PER SERVING constant. Total calories = calories per serving × new number of servings
+    - Example: If original is 4 servings @ 300 cal each (1200 total), and doubled to 8 servings: still 300 cal per serving (2400 total)
+    
+    **Substitution Rules:**
+    - Replace specified ingredients while maintaining approximate quantities
+    - Adjust cooking times/methods if the substitution requires it (e.g., vegan baking may need different timing)
+    - Recalculate calories when substitutions significantly change nutritional content
+    
+    **Partial vs Complete Modifications:**
+    - Partial: User changes only specific aspects (e.g., "Double it but keep the sauce as is") → Scale only what they didn't exempt
+    - Complete: User gives broad instruction (e.g., "Make it vegan") → Apply changes to entire recipe
+    - Always preserve the original recipe's core identity unless explicitly asked to change it completely
+    
+    **Recipe Integrity:**
+    - Maintain the original flavor profile and cooking method unless specifically requested otherwise
+    - Keep ingredient ratios consistent when scaling (don't scale some ingredients differently unless specified)
+    - Update the title to reflect major modifications (e.g., "Vegan Chocolate Cake" or "Chocolate Cake (Doubled)")
+    - Add a note in the description about what was modified
 
     ### CONTENT RELEVANCY GUARDRAIL:
     **CRITICAL**: Before parsing, evaluate if the User Message is actually related to recipes, cooking, food, ingredients, or culinary topics.
