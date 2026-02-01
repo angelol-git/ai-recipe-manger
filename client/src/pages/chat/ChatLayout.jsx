@@ -5,6 +5,8 @@ import { useRecipes } from "../../hooks/useRecipes";
 import { useChatSidebar } from "../../hooks/useChatSidebar";
 import useIsMobile from "../../hooks/useIsMobile";
 import ChatSideBar from "../../components/chat/ChatSideBar";
+import { useDeleteRecipe } from "../../hooks/useDeleteRecipe.jsx";
+import DeleteRecipePortal from "../../components/delete/DeleteRecipePortal.jsx";
 
 const ChatLayout = () => {
   const { id } = useParams();
@@ -16,6 +18,7 @@ const ChatLayout = () => {
   const [recipe, setRecipe] = useState(null);
   const [recipeVersion, setRecipeVersion] = useState(null);
   const isMobile = useIsMobile();
+  const { deleteModal, openDeleteModal, closeDeleteModal, handleDelete } = useDeleteRecipe();
   useEffect(() => {
     setMessage("");
   }, [recipe?.id]);
@@ -51,6 +54,7 @@ const ChatLayout = () => {
         isSideBarOpen={isSideBarOpen}
         setIsSideBarOpen={setIsSideBarOpen}
         currentRecipe={recipe}
+        openDeleteModal={openDeleteModal}
       />
       {isMobile && isSideBarOpen && (
         <div
@@ -72,9 +76,18 @@ const ChatLayout = () => {
             toast,
             setToast,
             showToast,
+            openDeleteModal,
           }}
         />
       </main>
+      {deleteModal.isOpen && (
+        <DeleteRecipePortal
+          recipe={deleteModal.recipe}
+          type={deleteModal.type}
+          onClose={closeDeleteModal}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 };

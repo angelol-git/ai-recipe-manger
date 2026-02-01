@@ -9,6 +9,7 @@ function ChatSideBar({
   isSideBarOpen,
   setIsSideBarOpen,
   currentRecipe,
+  openDeleteModal,
 }) {
   return (
     <nav
@@ -79,6 +80,7 @@ function ChatSideBar({
                 currentRecipe={currentRecipe}
                 isMobile={isMobile}
                 setIsSideBarOpen={setIsSideBarOpen}
+                openDeleteModal={openDeleteModal}
               />
             );
           })}
@@ -90,7 +92,8 @@ function ChatSideBar({
 
 export default ChatSideBar;
 
-function SideBarItem({ recipe, currentRecipe, isMobile, setIsSideBarOpen }) {
+function SideBarItem({ recipe, currentRecipe, isMobile, setIsSideBarOpen,
+  openDeleteModal, }) {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   return (
     <Link
@@ -111,6 +114,7 @@ function SideBarItem({ recipe, currentRecipe, isMobile, setIsSideBarOpen }) {
         recipe={recipe}
         isOptionsOpen={isOptionsOpen}
         setIsOptionsOpen={setIsOptionsOpen}
+        openDeleteModal={openDeleteModal}
       />
     </Link>
   );

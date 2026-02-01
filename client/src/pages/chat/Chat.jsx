@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router";
 import { useChat } from "../../hooks/useChat.jsx";
-import { useDeleteRecipe } from "../../hooks/useDeleteRecipe.jsx";
 import ChatHeader from "../../components/chat/ChatHeader.jsx";
 import ChatReply from "../../components/chat/ChatReply.jsx";
 import ChatNavigation from "../../components/chat/ChatNavigation.jsx";
@@ -11,7 +10,6 @@ import ChatTags from "../../components/chat/ChatTags.jsx";
 import ChatErrorModal from "../../components/chat/ChatErrorModal.jsx";
 import ChatAskModal from "../../components/chat/ChatAskModal.jsx";
 import Toast from "../../components/Toast.jsx";
-import DeleteRecipePortal from "../../components/delete/DeleteRecipePortal.jsx";
 
 function Chat() {
   const {
@@ -26,9 +24,8 @@ function Chat() {
     toast,
     setToast,
     showToast,
+    openDeleteModal,
   } = useOutletContext();
-  const { deleteModal, openDeleteModal, closeDeleteModal, handleDelete } =
-    useDeleteRecipe();
   const {
     sendCreateMessage,
     isPendingCreateMessage,
@@ -139,14 +136,6 @@ function Chat() {
               setIsAskModalOpen={setIsAskModalOpen}
               variant="existing"
             />
-            {deleteModal.isOpen && (
-              <DeleteRecipePortal
-                recipe={deleteModal.recipe}
-                type={deleteModal.type}
-                onClose={closeDeleteModal}
-                onDelete={handleDelete}
-              />
-            )}
           </div>
         </div>
       </div>

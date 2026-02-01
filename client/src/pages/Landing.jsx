@@ -40,18 +40,19 @@ function Landing() {
   }
 
   return (
-    <div className="p-10 bg-crust h-screen flex flex-col gap-5 text-primary">
-      <h1 className="text-3xl font-lora text-bold flex gap-2 items-center">
-        <BookMarked size={24} />
-        Recipes
-      </h1>
-      <p className="text-lg font-medium">
-        For creating, organizing and reading recipes, with AI.
-      </p>
-      <div>
-        <GoogleLoginButton onSuccess={handleSuccess} />
+    <div className="p-10 bg-crust h-screen flex gap-5 text-primary justify-center">
+      <div className=" max-w-screen-lg flex flex-col gap-5">
+        <h1 className="flex text-4xl font-medium font-lora items-center gap-2">
+          <BookMarked size={24} />
+          Recipes
+        </h1>
+        <p className="text-lg font-medium">
+          For creating, modifying and organizing recipes, with AI.
+        </p>
+        <div>
+          <GoogleLoginButton onSuccess={handleSuccess} />
+        </div>
       </div>
-      <div>Add screenshots later</div>
     </div>
   );
 }

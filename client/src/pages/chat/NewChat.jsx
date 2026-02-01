@@ -33,8 +33,8 @@ function NewChat() {
         isMobile={isMobile}
       />
       <div className="relative max-w-screen-md flex flex-col w-full flex-1">
-        <div className="flex flex-col gap-4 flex-1 justify-center p-6 text-center">
-          <h2 className="text-primary text-2xl font-medium font-lora pb-5">
+        <div className="flex flex-col gap-4 flex-1 lg:text-center justify-center p-6 pb-50">
+          <h2 className="text-primary text-2xl font-medium font-lora">
             What recipe can I help you with?
           </h2>
           <div className="text-secondary">
@@ -42,7 +42,7 @@ function NewChat() {
             steps.
           </div>
           <div className="text-secondary">
-            Ask me to improve a recipe — healthier, quicker, or more flavorful.
+            Ask me to improve a recipe, healthier, quicker, or more flavorful.
           </div>
           <div className="text-secondary">
             Ask to double, halve, or scale the recipe for any number of

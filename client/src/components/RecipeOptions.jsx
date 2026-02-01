@@ -1,15 +1,11 @@
 import { createPortal } from "react-dom";
 import { useEffect, useRef } from "react";
 import { CircleX, Share, Ellipsis } from "lucide-react";
-import { useRecipes } from "../hooks/useRecipes";
-
-function RecipeOptions({ recipe, isOptionsOpen, setIsOptionsOpen }) {
+import DeleteRecipePortal from "./delete/DeleteRecipePortal.jsx";
+function RecipeOptions({ recipe, isOptionsOpen, setIsOptionsOpen, openDeleteModal }) {
   const buttonRef = useRef(null);
   const portalRef = useRef(null);
-
   //   console.log(buttonRef.current?.getBoundingClientRect());
-  const { deleteRecipe } = useRecipes();
-
   useEffect(() => {
     if (!isOptionsOpen) return;
     function handleClickOutside(event) {
@@ -65,7 +61,6 @@ function RecipeOptions({ recipe, isOptionsOpen, setIsOptionsOpen }) {
               <li className="w-full">
                 <button
                   onClick={(event) => {
-                    console.log("here");
                     event.preventDefault();
                     event.stopPropagation();
                     setIsOptionsOpen(false);
@@ -88,7 +83,7 @@ function RecipeOptions({ recipe, isOptionsOpen, setIsOptionsOpen }) {
                   onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    deleteRecipe(recipe.id);
+                    openDeleteModal(recipe, "all");
                     setIsOptionsOpen(false);
                   }}
                   className="w-full px-3 py-3 flex justify-between items-center cursor-pointer rounded-lg hover:bg-rose/10 duration-150 text-rose transition-colors"

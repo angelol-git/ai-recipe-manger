@@ -24,7 +24,7 @@ function DeletePortal({ recipe, type, onClose, onDelete }) {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
   return createPortal(
-    <div className="fixed inset-0 bg-black/30 z-20 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/30 z-150 flex justify-center items-center">
       <div
         ref={portalRef}
         role="dialog"
