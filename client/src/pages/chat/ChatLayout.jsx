@@ -12,12 +12,12 @@ const ChatLayout = () => {
   const { id } = useParams();
   const { data: user } = useUser();
   const { data: recipes } = useRecipes();
-  const { isSideBarOpen, setIsSideBarOpen } = useChatSidebar(user);
+  const isMobile = useIsMobile();
+  const { isSideBarOpen, setIsSideBarOpen } = useChatSidebar(user, isMobile);
   const [message, setMessage] = useState("");
   const [toast, setToast] = useState(null);
   const [recipe, setRecipe] = useState(null);
   const [recipeVersion, setRecipeVersion] = useState(null);
-  const isMobile = useIsMobile();
   const { deleteModal, openDeleteModal, closeDeleteModal, handleDelete } = useDeleteRecipe();
   useEffect(() => {
     setMessage("");

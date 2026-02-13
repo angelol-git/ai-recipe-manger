@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 
-export function useChatSidebar(user) {
+export function useChatSidebar(user, isMobile) {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id || isMobile) return;
 
     try {
       const stored = localStorage.getItem(`isSideBarOpen_${user.id}`);
@@ -14,16 +14,16 @@ export function useChatSidebar(user) {
     } catch (err) {
       console.error("Failed to parse isSideBarOpen:", err);
     }
-  }, [user?.id]);
+  }, [user?.id, isMobile]);
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id || isMobile) return;
 
     localStorage.setItem(
       `isSideBarOpen_${user.id}`,
       JSON.stringify(isSideBarOpen),
     );
-  }, [isSideBarOpen, user?.id]);
+  }, [isSideBarOpen, user?.id, isMobile]);
 
   return { isSideBarOpen, setIsSideBarOpen };
 }
