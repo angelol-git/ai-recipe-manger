@@ -1,4 +1,6 @@
-const backendUrl = "http://localhost:8080/api"
+import API_BASE_URL from "../config/api.js";
+
+const backendUrl = API_BASE_URL;
 
 export async function fetchAllRecipes() {
     console.log("Fetching all recipes");
@@ -66,4 +68,3 @@ export async function addRecipeTag(recipeId, newTag) {
     }
     return true;
 }
-

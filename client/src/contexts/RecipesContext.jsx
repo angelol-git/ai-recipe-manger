@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import API_BASE_URL from "../config/api.js";
 
 const RecipesContext = createContext();
-const API_BASE = "http://localhost:8080/api";
+const API_BASE = API_BASE_URL;
 
 export function RecipesProvider({ children }) {
   const [recipes, setRecipes] = useState([]);

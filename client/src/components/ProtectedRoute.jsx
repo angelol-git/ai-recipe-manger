@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router";
 import { useEffect, useState } from "react";
+import API_BASE_URL from "../config/api.js";
 
 function ProtectedRoute() {
   const [auth, setAuth] = useState(null);
@@ -8,7 +9,7 @@ function ProtectedRoute() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const res = await fetch("http://localhost:8080/api/auth/check", {
+        const res = await fetch(`${API_BASE_URL}/auth/check`, {
           credentials: "include",
         });
         setAuth(res.ok);

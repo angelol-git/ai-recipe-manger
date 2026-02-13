@@ -2,11 +2,13 @@ import { useEffect } from "react";
 import GoogleLoginButton from "../components/GoogleLoginButton";
 import { useNavigate } from "react-router";
 import { BookMarked } from "lucide-react";
+import API_BASE_URL from "../config/api.js";
+
 function Landing() {
   const navigate = useNavigate();
   useEffect(() => {
     async function redirect() {
-      const result = await fetch("http://localhost:8080/api/auth/check", {
+      const result = await fetch(`${API_BASE_URL}/auth/check`, {
         credentials: "include",
       });
 
@@ -19,7 +21,7 @@ function Landing() {
 
   async function handleSuccess(response) {
     try {
-      const result = await fetch("http://localhost:8080/api/auth/google", {
+      const result = await fetch(`${API_BASE_URL}/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ credential: response.credential }),

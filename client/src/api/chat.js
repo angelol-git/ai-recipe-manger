@@ -1,4 +1,6 @@
-const backendUrl = "http://localhost:8080/api/chat";
+import API_BASE_URL from "../config/api.js";
+
+const backendUrl = `${API_BASE_URL}/chat`;
 
 export async function sendCreateMessage(payload) {
   const res = await fetch(`${backendUrl}/create`, {

@@ -1,7 +1,9 @@
-const backendUrl = "http://localhost:8080"
+import API_BASE_URL from "../config/api.js";
+
+const backendUrl = API_BASE_URL;
 
 export async function fetchCurrentUser() {
-    const res = await fetch(`${backendUrl}/api/auth/me`, {
+    const res = await fetch(`${backendUrl}/auth/me`, {
         credentials: "include",
     });
 
@@ -13,7 +15,7 @@ export async function fetchCurrentUser() {
 }
 
 export async function logoutUser() {
-    const res = await fetch("http://localhost:8080/api/auth/logout", {
+    const res = await fetch(`${backendUrl}/auth/logout`, {
         method: "POST",
         credentials: "include",
     });

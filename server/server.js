@@ -12,8 +12,19 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 
 const app = express();
-const port = 8080;
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+const PORT = process.env.PORT || 8080;
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+const isProduction = process.env.NODE_ENV === "production";
+
+const log = (message) => {
+  if (isProduction) {
+    console.log(`[${new Date().toISOString()}] ${message}`);
+  } else {
+    console.log(message);
+  }
+};
+
+app.use(cors({ origin: CLIENT_URL, credentials: true }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 
@@ -23,6 +34,53 @@ app.use("/api/recipes", recipeRoutes);
 app.use("/api/tags", tagRoutes);
 app.use("/api/chat", chatRoutes);
 
-app.listen(port, () => {
-  console.log(`Server running on ${port}`);
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  log(`Error: ${err.message}`);
+  res.status(500).json({ error: "Internal server error" });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: "Not found" });
+});
+
+const server = app.listen(PORT, () => {
+  log(`Server running on port ${PORT}`);
+  log(`CORS origin: ${CLIENT_URL}`);
+  log(`Environment: ${process.env.NODE_ENV || "development"}`);
+});
+
+// Graceful shutdown
+const shutdown = (signal) => {
+  log(`${signal} received. Starting graceful shutdown...`);
+  server.close(() => {
+    log("Server closed. Exiting process.");
+    process.exit(0);
+  });
+
+  // Force exit after 30 seconds
+  setTimeout(() => {
+    log("Forced shutdown after timeout");
+    process.exit(1);
+  }, 30000);
+};
+
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
+
+// Handle uncaught exceptions
+process.on("uncaughtException", (err) => {
+  log(`Uncaught Exception: ${err.message}`);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  log(`Unhandled Rejection at: ${promise}, reason: ${reason}`);
+  process.exit(1);
 });
