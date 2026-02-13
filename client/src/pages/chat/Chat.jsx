@@ -31,7 +31,7 @@ function Chat() {
     showToast,
   );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  // const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [isAskModalOpen, setIsAskModalOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatInputMode, setChatInputMode] = useState("Create");

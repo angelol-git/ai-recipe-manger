@@ -52,7 +52,8 @@ function ChatEditModal({
     >
       <div
         ref={modalRef}
-        className={`w-full lg:max-w-screen-md max-h-[95vh] px-3 pt-6 pb-10 flex flex-col bg-base rounded-t-xl shadow-lg transform transition-transform ease-out duration-300 overflow-hidden ${isEditModalOpen ? "translate-y-0" : "translate-y-full"}`}
+        className={`w-full lg:max-w-screen-md max-h-[95vh] overflow-y-auto overscroll-contain px-3 pt-6 pb-10 flex flex-col bg-base rounded-t-xl shadow-lg transform transition-transform ease-out duration-300 ${isEditModalOpen ? "translate-y-0" : "translate-y-full"}`}
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
         <div className="flex justify-between items-center">
           <button
@@ -69,7 +70,7 @@ function ChatEditModal({
             Save
           </button>
         </div>
-        <form className="flex flex-col gap-5 py-5 overflow-y-auto px-2 flex-1">
+        <form className="flex flex-col gap-5 py-5 px-2">
           <EditTitle draft={draft} handleDraftString={handleDraftString} />
           <EditTags
             draft={draft}
