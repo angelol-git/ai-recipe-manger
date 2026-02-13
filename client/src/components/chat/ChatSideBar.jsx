@@ -8,16 +8,18 @@ function ChatSideBar({
   isMobile,
   isSideBarOpen,
   setIsSideBarOpen,
+  isInitialLoadComplete,
   currentRecipe,
   openDeleteModal,
 }) {
   return (
     <nav
-      className={`
+      className={`  
         fixed inset-y-0 left-0 z-100 
         lg:relative lg:z-0 
-        h-screen duration-200 ease-out transition-all flex-col flex bg-mantle
+        min-h-screen flex-col flex bg-mantle
         gap-4 text-sm lg:border-r-gray-300 lg:border-r-1 
+        ${isInitialLoadComplete ? "duration-200 ease-out transition-all" : ""}
         ${
           isSideBarOpen
             ? "translate-x-0 w-70 p-2"
@@ -92,8 +94,13 @@ function ChatSideBar({
 
 export default ChatSideBar;
 
-function SideBarItem({ recipe, currentRecipe, isMobile, setIsSideBarOpen,
-  openDeleteModal, }) {
+function SideBarItem({
+  recipe,
+  currentRecipe,
+  isMobile,
+  setIsSideBarOpen,
+  openDeleteModal,
+}) {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   return (
     <Link
