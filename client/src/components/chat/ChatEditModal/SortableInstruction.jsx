@@ -24,7 +24,6 @@ function SortableInstruction({
     opacity: isDragging ? 0.5 : 1,
     zIndex: isDragging ? 50 : "auto",
     position: "relative",
-    touchAction: "none",
   };
 
   return (
@@ -41,10 +40,11 @@ function SortableInstruction({
             type="button"
             {...attributes}
             {...listeners}
-            className={`cursor-grab active:cursor-grabbing p-1 rounded hover:bg-crust/50 transition-colors ${
+            className={`cursor-grab active:cursor-grabbing p-1 rounded hover:bg-crust/50 transition-colors touch-none ${
               isDragging ? "cursor-grabbing" : ""
             }`}
             aria-label={`Drag to reorder instruction ${index + 1}`}
+            style={{ touchAction: "none" }}
           >
             <GripVertical
               size={16}
@@ -56,7 +56,7 @@ function SortableInstruction({
           <span className="font-semibold font-lora">{index + 1}. </span>
         </div>
         <textarea
-          className="w-full bg-transparent resize-none overflow-hidden outline-none text-primary text-sm leading-relaxed touch-none"
+          className="w-full bg-transparent resize-none overflow-hidden outline-none text-primary leading-relaxed"
           value={instruction.text}
           rows={1}
           onChange={(event) => {

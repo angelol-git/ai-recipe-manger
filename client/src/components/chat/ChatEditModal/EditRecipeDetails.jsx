@@ -46,7 +46,7 @@ function DetailItem({ label, value, handleDraftDetail }) {
           }
           handleDraftDetail(formattedLabel, event.target.value);
         }}
-        className="flex-1 bg-transparent border-b border-overlay0 text-primary text-sm focus:outline-none"
+        className="flex-1 bg-transparent border-b border-overlay0 text-primary focus:outline-none"
       />
     </div>
   );

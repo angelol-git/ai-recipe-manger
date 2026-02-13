@@ -6,6 +6,7 @@ import {
   closestCenter,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -30,7 +31,13 @@ function EditIngredients({
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 15,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -119,7 +126,7 @@ function EditIngredients({
                 <div className="flex gap-2 w-full">
                   <textarea
                     ref={newTextAreaRef}
-                    className="w-full bg-transparent resize-none overflow-hidden outline-none text-primary text-sm leading-relaxed"
+                    className="w-full bg-transparent resize-none overflow-hidden outline-none text-primary leading-relaxed"
                     value={newIngredient}
                     rows={1}
                     placeholder="Enter new ingredient..."

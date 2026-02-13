@@ -14,7 +14,7 @@ function EditDescription({ draft, handleDraftString }) {
             onChange={(event) => {
               handleDraftString("description", event.target.value);
             }}
-            className="text-primary text-sm border-b border-secondary/20"
+            className="text-primary border-b border-secondary/20"
           />
           <div className="flex justify-end">
             <button

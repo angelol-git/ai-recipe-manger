@@ -24,7 +24,6 @@ function SortableIngredients({
     opacity: isDragging ? 0.5 : 1,
     zIndex: isDragging ? 50 : "auto",
     position: "relative",
-    touchAction: "none",
   };
 
   return (
@@ -39,10 +38,11 @@ function SortableIngredients({
         type="button"
         {...attributes}
         {...listeners}
-        className={`cursor-grab active:cursor-grabbing p-1 rounded hover:bg-crust/50 transition-colors ${
+        className={`cursor-grab active:cursor-grabbing p-1 rounded hover:bg-crust/50 transition-colors touch-none ${
           isDragging ? "cursor-grabbing" : ""
         }`}
         aria-label={`Drag to reorder ingredient ${index + 1}`}
+        style={{ touchAction: "none" }}
       >
         <GripVertical
           size={16}
@@ -52,7 +52,7 @@ function SortableIngredients({
         />
       </button>
       <textarea
-        className="w-full  bg-transparent resize-none overflow-hidden outline-none text-primary text-sm leading-relaxed"
+        className="w-full bg-transparent resize-none overflow-hidden outline-none text-primary  leading-relaxed"
         value={ingredient.text}
         rows={1}
         onChange={(event) => {
