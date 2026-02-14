@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, memo } from "react";
 import { useChat } from "../../hooks/useChat.jsx";
 import {
   ArrowUp,
@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import ChatNavigation from "./ChatNavigation";
 
-function ChatInput({
+const ChatInput = memo(({
   // Navigation props
   recipe,
   recipeVersion,
@@ -22,7 +22,7 @@ function ChatInput({
   setIsAskModalOpen,
   showToast,
   variant = "new-chat",
-}) {
+}) => {
   const [message, setMessage] = useState("");
   const [chatInputMode, setChatInputMode] = useState("Create");
   const [isExpanded, setIsExpanded] = useState(false);
@@ -32,14 +32,11 @@ function ChatInput({
   const maxHeight = 160;
   const isNewChat = variant === "new-chat";
 
-  const { sendCreateMessage, isPending, isSuccess } = useChat(
-    recipe,
-    showToast,
-  );
+  const { sendCreateMessage, isPending, isSuccess } = useChat(showToast);
 
   useEffect(() => {
     setMessage("");
-  }, [recipe.id]);
+  }, [recipe?.id]);
 
   useEffect(() => {
     if (!isExpanded) return;
@@ -71,7 +68,7 @@ function ChatInput({
     if (isSuccess) {
       setMessage("");
     }
-  }, [isSuccess, setMessage]);
+  }, [isSuccess]);
 
   function handleSendMessage() {
     if (!message.trim()) return;
@@ -79,8 +76,8 @@ function ChatInput({
     if (chatInputMode === "Create") {
       sendCreateMessage({
         message,
-        recipeId: recipe.id,
-        recipeVersion: recipe.versions[recipeVersion],
+        recipeId: recipe?.id,
+        recipeVersion: recipe?.versions?.[recipeVersion],
       });
     }
 
@@ -106,6 +103,12 @@ function ChatInput({
         }}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+          }
+        }}
         placeholder="Enter any recipe or changes..."
         disabled={isPending}
       />
@@ -149,18 +152,7 @@ function ChatInput({
               } w-min px-2 cursor-pointer py-1 rounded-2xl hover:brightness-90 duration-150 transition-colors text-sm flex items-center gap-1`}
             >
               <option value="Create">Create</option>
-              {/* <option value="Ask">Ask</option> */}
             </select>
-            {chatInputMode === "Ask" ? (
-              <button
-                onClick={() => {
-                  setIsAskModalOpen(!isAskModalOpen);
-                }}
-                className="bg-overlay2 p-1 rounded-full hover:brightness-90 duration-150 cursor-pointer"
-              >
-                <History size={20} strokeWidth={1.5} color={"white"} />
-              </button>
-            ) : null}
           </div>
         )}
 
@@ -195,6 +187,8 @@ function ChatInput({
       <MessageCircleMore size={24} strokeWidth={1.5} color={"white"} />
     </button>
   );
-}
+});
+
+ChatInput.displayName = "ChatInput";
 
 export default ChatInput;

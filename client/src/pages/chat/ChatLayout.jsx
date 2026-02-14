@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { Outlet, useParams } from "react-router";
 import { useUser } from "../../hooks/useUser";
 import { useRecipes } from "../../hooks/useRecipes";
@@ -17,16 +17,43 @@ const ChatLayout = () => {
   const [toast, setToast] = useState(null);
   const [recipe, setRecipe] = useState(null);
   const [recipeVersion, setRecipeVersion] = useState(null);
+
   const { deleteModal, openDeleteModal, closeDeleteModal, handleDelete } =
     useDeleteRecipe();
 
-  function showToast(message, type = "error") {
+  const showToast = useCallback((message, type = "error") => {
     setToast({ message, type });
-
     setTimeout(() => {
       setToast(null);
     }, 5000);
-  }
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      recipe,
+      recipeVersion,
+      setRecipeVersion,
+      isMobile,
+      isSideBarOpen,
+      setIsSideBarOpen,
+      toast,
+      setToast,
+      showToast,
+      openDeleteModal,
+    }),
+    [
+      recipe,
+      recipeVersion,
+      setRecipeVersion,
+      isMobile,
+      isSideBarOpen,
+      setIsSideBarOpen,
+      toast,
+      setToast,
+      showToast,
+      openDeleteModal,
+    ],
+  );
 
   useEffect(() => {
     if (!recipes) return;
@@ -60,20 +87,7 @@ const ChatLayout = () => {
         />
       )}
       <main className="relative flex flex-1 flex-col min-w-0">
-        <Outlet
-          context={{
-            recipe,
-            recipeVersion,
-            setRecipeVersion,
-            isMobile,
-            isSideBarOpen,
-            setIsSideBarOpen,
-            toast,
-            setToast,
-            showToast,
-            openDeleteModal,
-          }}
-        />
+        <Outlet context={contextValue} />
       </main>
       {deleteModal.isOpen && (
         <DeleteRecipePortal

@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Link } from "react-router";
 import { X, PanelLeftClose, CirclePlus } from "lucide-react";
 import RecipeOptions from "../RecipeOptions";
 
-function ChatSideBar({
+const ChatSideBar = memo(({
   recipes,
   isMobile,
   isSideBarOpen,
   setIsSideBarOpen,
   currentRecipe,
   openDeleteModal,
-}) {
+}) => {
   return (
     <nav
       className={`  
@@ -77,7 +77,7 @@ function ChatSideBar({
               <SideBarItem
                 key={recipe.id}
                 recipe={recipe}
-                currentRecipe={currentRecipe}
+                isActive={currentRecipe?.id === recipe.id}
                 isMobile={isMobile}
                 setIsSideBarOpen={setIsSideBarOpen}
                 openDeleteModal={openDeleteModal}
@@ -88,17 +88,17 @@ function ChatSideBar({
       </div>
     </nav>
   );
-}
+});
 
-export default ChatSideBar;
+ChatSideBar.displayName = "ChatSideBar";
 
-function SideBarItem({
+const SideBarItem = memo(({
   recipe,
-  currentRecipe,
+  isActive,
   isMobile,
   setIsSideBarOpen,
   openDeleteModal,
-}) {
+}) => {
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   return (
     <Link
@@ -110,7 +110,7 @@ function SideBarItem({
         }
       }}
       className={`items-center px-2 py-1 flex justify-between duration-150 cursor-pointer rounded-lg hover:bg-mantle-hover ${
-        currentRecipe?.id === recipe.id ? "bg-overlay0" : null
+        isActive ? "bg-overlay0" : ""
       }`}
     >
       <p className="truncate">{recipe.title}</p>
@@ -123,4 +123,8 @@ function SideBarItem({
       />
     </Link>
   );
-}
+});
+
+SideBarItem.displayName = "SideBarItem";
+
+export default ChatSideBar;

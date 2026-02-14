@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { useRecipes } from "./useRecipes";
 
@@ -12,13 +12,16 @@ export function useDeleteRecipe() {
     recipe: null,
     recipeVersion: null,
   });
-  const openDeleteModal = (recipe, type, recipeVersion = null) => {
+
+  const openDeleteModal = useCallback((recipe, type, recipeVersion = null) => {
     setDeleteModal({ isOpen: true, type, recipe, recipeVersion });
-  };
-  const closeDeleteModal = () => {
+  }, []);
+
+  const closeDeleteModal = useCallback(() => {
     setDeleteModal((prev) => ({ ...prev, isOpen: false }));
-  };
-  const handleDelete = () => {
+  }, []);
+
+  const handleDelete = useCallback(() => {
     const { type, recipe, recipeVersion } = deleteModal;
     if (type === "version") {
       if (recipe.versions?.length === 1) {
@@ -32,6 +35,7 @@ export function useDeleteRecipe() {
       navigate("/home");
     }
     closeDeleteModal();
-  };
+  }, [deleteModal, deleteRecipe, deleteRecipeVersion, navigate, closeDeleteModal]);
+
   return { deleteModal, openDeleteModal, closeDeleteModal, handleDelete };
 }

@@ -1,4 +1,3 @@
-import { useChat } from "../../hooks/useChat.jsx";
 import ChatInput from "../../components/chat/ChatInput.jsx";
 import ChatHeader from "../../components/chat/ChatHeader.jsx";
 import Toast from "../../components/Toast.jsx";
@@ -6,8 +5,6 @@ import { useOutletContext } from "react-router";
 
 function NewChat() {
   const {
-    message,
-    setMessage,
     isMobile,
     isSideBarOpen,
     setIsSideBarOpen,
@@ -15,15 +12,6 @@ function NewChat() {
     setToast,
     showToast,
   } = useOutletContext();
-
-  const { sendCreateMessage, isPendingCreateMessage } = useChat(showToast);
-
-  function handleSendMessage() {
-    if (message.trim().length === 0) return;
-    sendCreateMessage({
-      message,
-    });
-  }
 
   return (
     <div className="w-full items-center flex h-full flex-col">
@@ -56,12 +44,9 @@ function NewChat() {
             onClose={() => setToast(null)}
           />
         )}
-        <div className="bottom-0 absolute w-full">
+        <div className="bottom-0 absolute w-full px-4 pb-4">
           <ChatInput
-            message={message}
-            setMessage={setMessage}
-            handleSendMessage={handleSendMessage}
-            isPendingCreateMessage={isPendingCreateMessage}
+            showToast={showToast}
             variant="new-chat"
           />
         </div>

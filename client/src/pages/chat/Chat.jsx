@@ -57,13 +57,13 @@ function Chat() {
         setIsEditModalOpen={setIsEditModalOpen}
       />
 
-      {toast && (
+      {/* {toast && (
         <Toast
           message={toast.message}
           type={toast.type}
           onClose={() => setToast(null)}
         />
-      )}
+      )} */}
 
       <div className="sticky bottom-0 w-full max-w-screen-md mx-auto px-4 pb-4">
         <div className="flex justify-between items-center gap-3">

@@ -1,17 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, memo } from "react";
 import { Flame, Clock, Utensils, Copy } from "lucide-react";
 
-function ChatReply({ recipe, recipeVersion }) {
+const ChatReply = memo(({ recipe, recipeVersion }) => {
   const [isPromptOpen, setIsPromptOpen] = useState(false);
   const sourcePromptRef = useRef(null);
   const current = recipe?.versions?.[recipeVersion];
-  const {
-    recipeDetails,
-    description,
-    ingredients,
-    instructions,
-    source_prompt,
-  } = current;
+
   useEffect(() => {
     if (isPromptOpen && sourcePromptRef.current) {
       setTimeout(() => {
@@ -19,14 +13,27 @@ function ChatReply({ recipe, recipeVersion }) {
       }, 100);
     }
   }, [isPromptOpen]);
+  if (!current) return null;
+
+  const {
+    recipeDetails,
+    description,
+    ingredients,
+    instructions,
+    source_prompt,
+  } = current;
 
   async function setClipboard(text) {
     const type = "text/plain";
     const clipboardItemData = {
       [type]: text,
     };
-    const clipboardItem = new ClipboardItem(clipboardItemData);
-    await navigator.clipboard.write([clipboardItem]);
+    try {
+      const clipboardItem = new ClipboardItem(clipboardItemData);
+      await navigator.clipboard.write([clipboardItem]);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
   }
 
   return (
@@ -126,22 +133,12 @@ function ChatReply({ recipe, recipeVersion }) {
                 </button>
               </div>
             )}
-            {/* {errors?.length > 0 ? (
-                <button
-                  onClick={() => setIsErrorModalOpen(true)}
-                  className="underline text-rose cursor-pointer"
-                  aria-haspopup="dialog"
-                  aria-controls="error-modal"
-                >
-                  Errors {`(${errors.length})`}
-                </button>
-              ) : null} */}
           </div>
           {recipe.versions.length > 1 && (
             <p
               className="whitespace-nowrap"
               aria-label={`Version ${recipeVersion + 1} of ${
-                recipe.versions.length - 1
+                recipe.versions.length
               }`}
             >
               {recipeVersion + 1} of {recipe.versions.length}
@@ -151,6 +148,8 @@ function ChatReply({ recipe, recipeVersion }) {
       )}
     </div>
   );
-}
+});
+
+ChatReply.displayName = "ChatReply";
 
 export default ChatReply;

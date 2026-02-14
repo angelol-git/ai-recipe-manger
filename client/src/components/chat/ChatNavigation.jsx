@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 
-function ChatNavigation({ recipe, recipeVersion, setRecipeVersion }) {
+const ChatNavigation = memo(({ recipe, recipeVersion, setRecipeVersion }) => {
   function handleNext(event) {
     event.stopPropagation();
     if (recipe?.versions?.length > recipeVersion + 1) {
@@ -40,6 +41,8 @@ function ChatNavigation({ recipe, recipeVersion, setRecipeVersion }) {
       </button>
     </div>
   );
-}
+});
+
+ChatNavigation.displayName = "ChatNavigation";
 
 export default ChatNavigation;
