@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useOutletContext } from "react-router";
-import { useChat } from "../../hooks/useChat.jsx";
 import ChatHeader from "../../components/chat/ChatHeader.jsx";
 import ChatReply from "../../components/chat/ChatReply.jsx";
 import ChatNavigation from "../../components/chat/ChatNavigation.jsx";
@@ -16,8 +15,6 @@ function Chat() {
     recipe,
     recipeVersion,
     setRecipeVersion,
-    message,
-    setMessage,
     isMobile,
     isSideBarOpen,
     setIsSideBarOpen,
@@ -26,35 +23,11 @@ function Chat() {
     showToast,
     openDeleteModal,
   } = useOutletContext();
-  const { sendCreateMessage, isPending, isSuccess } = useChat(
-    recipe,
-    showToast,
-  );
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAskModalOpen, setIsAskModalOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatInputMode, setChatInputMode] = useState("Create");
   const hasRecipeNavigation = recipe?.versions?.length > 1;
-  useEffect(() => {
-    if (isSuccess) {
-      setMessage("");
-    }
-  }, [isSuccess, setMessage]);
-  function handleSendMessage() {
-    if (!message.trim()) return;
-
-    if (chatInputMode === "Create") {
-      sendCreateMessage({
-        message,
-        recipeId: recipe.id,
-        recipeVersion: recipe.versions[recipeVersion],
-      });
-    }
-
-    if (chatInputMode === "Ask") {
-      setIsAskModalOpen(true);
-    }
-  }
 
   if (!recipe) {
     return <div>Loading...</div>;
@@ -103,20 +76,15 @@ function Chat() {
           )}
           <div className="flex-1 flex justify-end">
             <ChatInput
-              message={message}
-              setMessage={setMessage}
-              handleSendMessage={handleSendMessage}
-              isPending={isPending}
               recipe={recipe}
               recipeVersion={recipeVersion}
               setRecipeVersion={setRecipeVersion}
               hasRecipeNavigation={hasRecipeNavigation}
               isChatOpen={isChatOpen}
               setIsChatOpen={setIsChatOpen}
-              chatInputMode={chatInputMode}
-              setChatInputMode={setChatInputMode}
               isAskModalOpen={isAskModalOpen}
               setIsAskModalOpen={setIsAskModalOpen}
+              showToast={showToast}
               variant="existing"
             />
           </div>

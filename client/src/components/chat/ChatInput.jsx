@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from "react";
+import { useChat } from "../../hooks/useChat.jsx";
 import {
   ArrowUp,
   LoaderCircle,
@@ -9,10 +10,6 @@ import {
 import ChatNavigation from "./ChatNavigation";
 
 function ChatInput({
-  message,
-  setMessage,
-  handleSendMessage,
-  isPending,
   // Navigation props
   recipe,
   recipeVersion,
@@ -21,18 +18,28 @@ function ChatInput({
   //Optional
   isChatOpen = true,
   setIsChatOpen,
-  chatInputMode,
-  setChatInputMode,
   isAskModalOpen,
   setIsAskModalOpen,
+  showToast,
   variant = "new-chat",
 }) {
+  const [message, setMessage] = useState("");
+  const [chatInputMode, setChatInputMode] = useState("Create");
   const [isExpanded, setIsExpanded] = useState(false);
   const isExpandedRef = useRef();
   const textAreaRef = useRef(null);
   const minHeight = 30;
   const maxHeight = 160;
   const isNewChat = variant === "new-chat";
+
+  const { sendCreateMessage, isPending, isSuccess } = useChat(
+    recipe,
+    showToast,
+  );
+
+  useEffect(() => {
+    setMessage("");
+  }, [recipe.id]);
 
   useEffect(() => {
     if (!isExpanded) return;
@@ -59,6 +66,28 @@ function ChatInput({
       )}px`;
     }
   }, [message]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      setMessage("");
+    }
+  }, [isSuccess, setMessage]);
+
+  function handleSendMessage() {
+    if (!message.trim()) return;
+
+    if (chatInputMode === "Create") {
+      sendCreateMessage({
+        message,
+        recipeId: recipe.id,
+        recipeVersion: recipe.versions[recipeVersion],
+      });
+    }
+
+    if (chatInputMode === "Ask") {
+      setIsAskModalOpen(true);
+    }
+  }
 
   return isChatOpen ? (
     <div

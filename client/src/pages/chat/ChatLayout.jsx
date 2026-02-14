@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Outlet, useParams } from "react-router";
 import { useUser } from "../../hooks/useUser";
 import { useRecipes } from "../../hooks/useRecipes";
@@ -14,14 +14,11 @@ const ChatLayout = () => {
   const { data: recipes } = useRecipes();
   const isMobile = useIsMobile();
   const { isSideBarOpen, setIsSideBarOpen } = useChatSidebar(user, isMobile);
-  const [message, setMessage] = useState("");
   const [toast, setToast] = useState(null);
   const [recipe, setRecipe] = useState(null);
   const [recipeVersion, setRecipeVersion] = useState(null);
-  const { deleteModal, openDeleteModal, closeDeleteModal, handleDelete } = useDeleteRecipe();
-  useEffect(() => {
-    setMessage("");
-  }, [recipe?.id]);
+  const { deleteModal, openDeleteModal, closeDeleteModal, handleDelete } =
+    useDeleteRecipe();
 
   function showToast(message, type = "error") {
     setToast({ message, type });
@@ -68,8 +65,6 @@ const ChatLayout = () => {
             recipe,
             recipeVersion,
             setRecipeVersion,
-            message,
-            setMessage,
             isMobile,
             isSideBarOpen,
             setIsSideBarOpen,

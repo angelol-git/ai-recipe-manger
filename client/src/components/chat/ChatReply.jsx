@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { Flame, Clock, Utensils } from "lucide-react";
+import { Flame, Clock, Utensils, Copy } from "lucide-react";
 
 function ChatReply({ recipe, recipeVersion }) {
-  const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
+  const [isPromptOpen, setIsPromptOpen] = useState(false);
   const sourcePromptRef = useRef(null);
   const current = recipe?.versions?.[recipeVersion];
   const {
@@ -13,12 +13,21 @@ function ChatReply({ recipe, recipeVersion }) {
     source_prompt,
   } = current;
   useEffect(() => {
-    if (isPromptModalOpen && sourcePromptRef.current) {
+    if (isPromptOpen && sourcePromptRef.current) {
       setTimeout(() => {
         sourcePromptRef.current.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }
-  }, [isPromptModalOpen]);
+  }, [isPromptOpen]);
+
+  async function setClipboard(text) {
+    const type = "text/plain";
+    const clipboardItemData = {
+      [type]: text,
+    };
+    const clipboardItem = new ClipboardItem(clipboardItemData);
+    await navigator.clipboard.write([clipboardItem]);
+  }
 
   return (
     <div role="log" aria-live="polite" className="flex flex-col gap-2">
@@ -91,18 +100,30 @@ function ChatReply({ recipe, recipeVersion }) {
         <div className="flex gap-4 justify-between text-secondary text-sm mt-4">
           <div className="flex flex-col items-start gap-2 py-2">
             <button
-              aria-expanded={isPromptModalOpen}
+              aria-expanded={isPromptOpen}
               aria-controls="source-prompt"
               onClick={() => {
-                setIsPromptModalOpen((prev) => !prev);
+                setIsPromptOpen((prev) => !prev);
               }}
-              className={`underline cursor-pointer p-1 rounded-lg hover:bg-mantle-hover duration-150 ${isPromptModalOpen && "bg-mantle-hover"}`}
+              className={`underline cursor-pointer p-1 rounded-lg hover:bg-mantle-hover duration-150 ${isPromptOpen && "bg-mantle-hover"}`}
             >
-              {!isPromptModalOpen ? "View Prompt" : "Close Prompt"}
+              {!isPromptOpen ? "View Prompt" : "Close Prompt"}
             </button>
-            {isPromptModalOpen && (
-              <div id="source_prompt" ref={sourcePromptRef} className="p-1">
-                {source_prompt}
+            {isPromptOpen && (
+              <div
+                id="source_prompt"
+                ref={sourcePromptRef}
+                className="p-1 flex gap-2"
+              >
+                <p>{source_prompt}</p>
+                <button
+                  onClick={() => {
+                    setClipboard(source_prompt);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <Copy size={18} />
+                </button>
               </div>
             )}
             {/* {errors?.length > 0 ? (
