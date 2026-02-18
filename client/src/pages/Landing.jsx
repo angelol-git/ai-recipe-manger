@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import GoogleLoginButton from "../components/GoogleLoginButton";
 import { useNavigate } from "react-router";
 import { BookMarked } from "lucide-react";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 import API_BASE_URL from "../config/api.js";
 
 function Landing() {
@@ -17,7 +17,7 @@ function Landing() {
       }
     }
     redirect();
-  }, []);
+  }, [navigate]);
 
   async function handleSuccess(response) {
     try {
@@ -51,9 +51,7 @@ function Landing() {
         <p className="text-lg font-medium">
           For creating, modifying and organizing recipes, with AI.
         </p>
-        <div>
-          <GoogleLoginButton onSuccess={handleSuccess} />
-        </div>
+        <GoogleLoginButton onSuccess={handleSuccess} />
       </div>
     </div>
   );
