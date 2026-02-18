@@ -3,14 +3,13 @@ import { useEffect, useRef } from "react";
 function GoogleLoginButton({ onSuccess }) {
   const buttonRef = useRef(null);
   const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-
   useEffect(() => {
     const initializeGoogle = () => {
       if (window.google?.accounts?.id && buttonRef.current) {
         window.google.accounts.id.initialize({
           client_id: clientID,
           callback: onSuccess,
-          use_fedcm_for_button: true,
+          // use_fedcm_for_button: true,
         });
 
         window.google.accounts.id.renderButton(buttonRef.current, {
