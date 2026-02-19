@@ -9,5 +9,13 @@ createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </StrictMode>
+  </StrictMode>,
 );
+
+window.hideShell = function () {
+  const shell = document.getElementById("shell");
+  if (shell) {
+    shell.classList.add("fade-out");
+    setTimeout(() => shell.remove(), 200);
+  }
+};

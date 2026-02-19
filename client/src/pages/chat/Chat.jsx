@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router";
 import ChatHeader from "../../components/chat/ChatHeader.jsx";
 import ChatReply from "../../components/chat/ChatReply.jsx";
@@ -29,8 +29,15 @@ function Chat() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const hasRecipeNavigation = recipe?.versions?.length > 1;
 
+  // Hide shell once recipe is loaded
+  useEffect(() => {
+    if (recipe) {
+      window.hideShell?.();
+    }
+  }, [recipe]);
+
   if (!recipe) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   return (

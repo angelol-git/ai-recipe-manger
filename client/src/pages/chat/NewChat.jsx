@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import ChatInput from "../../components/chat/ChatInput.jsx";
 import ChatHeader from "../../components/chat/ChatHeader.jsx";
 import Toast from "../../components/Toast.jsx";
@@ -13,6 +14,11 @@ function NewChat() {
     showToast,
   } = useOutletContext();
 
+  // Hide shell once component is ready
+  useEffect(() => {
+    window.hideShell?.();
+  }, []);
+
   return (
     <div className="w-full items-center flex h-full flex-col">
       <ChatHeader
@@ -26,7 +32,7 @@ function NewChat() {
             What recipe can I help you with?
           </h2>
           <div className="text-secondary">
-            Paste a link to any recipe, and I’ll extract the ingredients and
+            Paste a link to any recipe, and I'll extract the ingredients and
             steps.
           </div>
           <div className="text-secondary">

@@ -24,7 +24,7 @@ function ProtectedRoute() {
     checkAuth();
   }, []);
 
-  if (loading) return <p>Checking authentication...</p>;
+  if (loading) return null;
   if (!auth) return <Navigate to="/" replace />;
 
   return <Outlet />;
