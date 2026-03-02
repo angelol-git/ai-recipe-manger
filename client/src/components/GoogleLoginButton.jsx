@@ -1,21 +1,25 @@
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function GoogleLoginButton({ onSuccess }) {
+  const [isLoading, setIsLoading] = useState(true);
   const buttonRef = useRef(null);
   const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
   useEffect(() => {
     const initializeGoogle = () => {
       if (window.google?.accounts?.id && buttonRef.current) {
         window.google.accounts.id.initialize({
           client_id: clientID,
           callback: onSuccess,
-          // use_fedcm_for_button: true,
         });
 
         window.google.accounts.id.renderButton(buttonRef.current, {
           theme: "outline",
           size: "large",
         });
+
+        // Only set loading false AFTER the button is actually rendered
+        setIsLoading(false);
       }
     };
 
@@ -38,7 +42,18 @@ function GoogleLoginButton({ onSuccess }) {
     };
   }, [onSuccess, clientID]);
 
-  return <div ref={buttonRef}></div>;
+  return (
+    <div className="relative">
+      {isLoading && <div className="w-[180px] h-[40px] bg-white rounded" />}
+      <div
+        ref={buttonRef}
+        className={`transition-opacity duration-300 ${
+          isLoading ? "opacity-0" : "opacity-100"
+        }`}
+        style={{ minHeight: isLoading ? "40px" : "auto" }}
+      />
+    </div>
+  );
 }
 
 export default GoogleLoginButton;
