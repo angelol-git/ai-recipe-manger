@@ -13,6 +13,7 @@ import {
   saveRecipeToDb,
 } from "../services/dbService.js";
 import { extractRecipeFromUrl } from "../services/scrapingService.js";
+import { isValidUrl } from "../utils/urlValidator.js";
 
 const router = express.Router();
 
@@ -34,12 +35,14 @@ router.post("/create", optionalAuth, async (req, res) => {
     const url = containsUrl ? containsUrl[1] : null;
 
     let contextData = null;
-    if (url) {
+    if (url && isValidUrl(url)) {
       const urlContent = await extractRecipeFromUrl(url);
       contextData =
         typeof urlContent === "object"
           ? JSON.stringify(urlContent, null, 2)
           : urlContent;
+    } else if (url) {
+      console.warn(`Blocked potentially malicious URL: ${url}`);
     }
 
     const prompt = createPrompt(message, recipeVersion || null, contextData);
