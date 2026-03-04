@@ -135,6 +135,7 @@ function EditInstructions({
                     value={newInstruction}
                     rows={1}
                     placeholder="Enter new instruction..."
+                    aria-label="New instruction"
                     onChange={(event) => {
                       const el = event.target;
                       el.style.height = "auto";

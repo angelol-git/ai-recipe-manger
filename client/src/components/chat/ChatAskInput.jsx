@@ -37,6 +37,7 @@ function ChatAskInput({
         value={askMessage}
         onChange={(e) => setAskMessage(e.target.value)}
         placeholder="Ask a question about your recipe..."
+        aria-label="Ask a question about your recipe"
       />
 
       <button

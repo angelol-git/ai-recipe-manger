@@ -59,6 +59,7 @@ function SortableInstruction({
           className="w-full bg-transparent resize-none overflow-hidden outline-none text-primary leading-relaxed"
           value={instruction.text}
           rows={1}
+          aria-label={`Instruction step ${index + 1}`}
           onChange={(event) => {
             const el = event.target;
             el.style.height = "auto";

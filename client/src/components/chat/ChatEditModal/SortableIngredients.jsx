@@ -55,6 +55,7 @@ function SortableIngredients({
         className="w-full bg-transparent resize-none overflow-hidden outline-none text-primary  leading-relaxed"
         value={ingredient.text}
         rows={1}
+        aria-label={`Ingredient ${index + 1}`}
         onChange={(event) => {
           const el = event.target;
           el.style.height = "auto";

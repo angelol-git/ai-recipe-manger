@@ -130,6 +130,7 @@ function EditIngredients({
                     value={newIngredient}
                     rows={1}
                     placeholder="Enter new ingredient..."
+                    aria-label="New ingredient"
                     onChange={(event) => {
                       const el = event.target;
                       el.style.height = "auto";

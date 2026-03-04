@@ -30,6 +30,7 @@ function EditTagItem({
           className="underline bg-transparent outline-none text-sm px-0"
           value={tag.name}
           size={tag.name.length || 1}
+          aria-label="Tag name"
           onChange={(event) => {
             handleNameChange(event.target.value, tag.id);
           }}

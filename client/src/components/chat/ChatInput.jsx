@@ -123,6 +123,7 @@ const ChatInput = memo(
               handleSendMessage();
             }
           }}
+          aria-label="Enter recipe request or changes"
           placeholder="Enter any recipe or changes..."
           disabled={isPending}
         />

@@ -69,6 +69,8 @@ function ChatTags({ recipe }) {
     text-gray-500 border border-gray-300 rounded-full
     cursor-pointer hover:bg-gray-100 hover:text-gray-700
     transition-colors duration-150 w-[100px]"
+            aria-label="New tag name"
+            placeholder="Enter tag name"
           />
 
           <button
