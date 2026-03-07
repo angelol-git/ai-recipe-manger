@@ -1,11 +1,12 @@
 import { createPortal } from "react-dom";
-function Toast({ message, onClose }) {
+function Toast({ message, onClose, type = "error" }) {
   return createPortal(
     <div
       role="alert"
       aria-live="assertive"
-      className={`fixed top-15 left-1/2 transform -translate-x-1/2
-                w-[calc(100%-2rem)] sm:w-auto max-w-screen-md bg-rose text-white 
+      className={` ${type === "error" ? "bg-rose" : "bg-accent"}
+                fixed top-15 left-1/2 transform -translate-x-1/2
+                w-[calc(100%-2rem)] sm:w-auto max-w-screen-md  text-white 
                 p-4 rounded-lg shadow-lg flex gap-2 justify-between center z-[200] text-sm`}
     >
       <span>{message}</span>
@@ -13,7 +14,7 @@ function Toast({ message, onClose }) {
         Close
       </button>
     </div>,
-    document.body
+    document.body,
   );
 }
 
