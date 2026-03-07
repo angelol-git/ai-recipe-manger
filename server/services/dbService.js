@@ -5,7 +5,7 @@ function safeParse(jsonString) {
   try {
     return JSON.parse(jsonString);
   } catch {
-    return [];
+    return {};
   }
 }
 
@@ -112,7 +112,7 @@ export function getRecipesByUserId(userId) {
     .all(userId);
 
   if (recipes.length === 0) {
-    return [];
+    return {};
   }
 
   const recipeIds = recipes.map((r) => r.id);
@@ -229,7 +229,7 @@ export function getRecipeErrors(recipeId, userId) {
     .all(recipeId);
 
   return rows.map((row) => {
-    const parsed = JSON.parse(row.content || "{}");
+    const parsed = safeParse(row.content || "{}");
     return {
       id: row.id,
       status: row.status,
