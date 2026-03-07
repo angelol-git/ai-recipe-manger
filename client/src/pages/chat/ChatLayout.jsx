@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Outlet, useParams } from "react-router";
 import { useUser } from "../../hooks/useUser";
 import { useRecipes } from "../../hooks/useRecipes";
@@ -7,6 +7,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import ChatSideBar from "../../components/chat/ChatSideBar";
 import { useDeleteRecipe } from "../../hooks/useDeleteRecipe.jsx";
 import DeleteRecipePortal from "../../components/delete/DeleteRecipePortal.jsx";
+import { useToast } from "../../hooks/useToast";
 
 const ChatLayout = () => {
   const { id } = useParams();
@@ -14,19 +15,12 @@ const ChatLayout = () => {
   const { data: recipes } = useRecipes();
   const isMobile = useIsMobile();
   const { isSideBarOpen, setIsSideBarOpen } = useChatSidebar(user, isMobile);
-  const [toast, setToast] = useState(null);
+  const { showToast } = useToast();
   const [recipe, setRecipe] = useState(null);
   const [recipeVersion, setRecipeVersion] = useState(null);
 
   const { deleteModal, openDeleteModal, closeDeleteModal, handleDelete } =
     useDeleteRecipe();
-
-  const showToast = useCallback((message, type = "error") => {
-    setToast({ message, type });
-    setTimeout(() => {
-      setToast(null);
-    }, 5000);
-  }, []);
 
   const contextValue = useMemo(
     () => ({
@@ -36,8 +30,6 @@ const ChatLayout = () => {
       isMobile,
       isSideBarOpen,
       setIsSideBarOpen,
-      toast,
-      setToast,
       showToast,
       openDeleteModal,
     }),
@@ -48,8 +40,6 @@ const ChatLayout = () => {
       isMobile,
       isSideBarOpen,
       setIsSideBarOpen,
-      toast,
-      setToast,
       showToast,
       openDeleteModal,
     ],

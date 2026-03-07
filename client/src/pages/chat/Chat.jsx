@@ -6,9 +6,7 @@ import ChatNavigation from "../../components/chat/ChatNavigation.jsx";
 import ChatInput from "../../components/chat/ChatInput.jsx";
 import ChatEditModal from "../../components/chat/ChatEditModal/ChatEditModal.jsx";
 import ChatTags from "../../components/chat/ChatTags.jsx";
-import ChatErrorModal from "../../components/chat/ChatErrorModal.jsx";
 import ChatAskModal from "../../components/chat/ChatAskModal.jsx";
-import Toast from "../../components/Toast.jsx";
 import NotFound from "../NotFound.jsx";
 
 function Chat() {
@@ -19,9 +17,6 @@ function Chat() {
     isMobile,
     isSideBarOpen,
     setIsSideBarOpen,
-    toast,
-    setToast,
-    showToast,
     openDeleteModal,
   } = useOutletContext();
 
@@ -64,14 +59,6 @@ function Chat() {
         setIsEditModalOpen={setIsEditModalOpen}
       />
 
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
-
       <div className="sticky bottom-0 w-full max-w-screen-md mx-auto px-4 pb-4">
         <div className="flex justify-between items-center gap-3">
           {hasRecipeNavigation && !isChatOpen && (
@@ -91,7 +78,6 @@ function Chat() {
               setIsChatOpen={setIsChatOpen}
               isAskModalOpen={isAskModalOpen}
               setIsAskModalOpen={setIsAskModalOpen}
-              showToast={showToast}
               variant="existing"
             />
           </div>

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import ChatInput from "../../components/chat/ChatInput.jsx";
 import ChatHeader from "../../components/chat/ChatHeader.jsx";
-import Toast from "../../components/Toast.jsx";
 import { useOutletContext } from "react-router";
 
 function NewChat() {
@@ -9,9 +8,6 @@ function NewChat() {
     isMobile,
     isSideBarOpen,
     setIsSideBarOpen,
-    toast,
-    setToast,
-    showToast,
   } = useOutletContext();
 
   // Hide shell once component is ready
@@ -43,18 +39,8 @@ function NewChat() {
             servings.
           </div>
         </div>
-        {toast && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
-          />
-        )}
         <div className="bottom-0 absolute w-full px-4 pb-4">
-          <ChatInput
-            showToast={showToast}
-            variant="new-chat"
-          />
+          <ChatInput variant="new-chat" />
         </div>
       </div>
     </div>

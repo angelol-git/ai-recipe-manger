@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect, memo } from "react";
 import { Flame, Clock, Utensils, Copy } from "lucide-react";
+import { useToast } from "../../hooks/useToast";
 
 const ChatReply = memo(({ recipe, recipeVersion }) => {
   const [isPromptOpen, setIsPromptOpen] = useState(false);
   const sourcePromptRef = useRef(null);
+  const { showToast } = useToast();
   const current = recipe?.versions?.[recipeVersion];
 
   useEffect(() => {
@@ -31,8 +33,9 @@ const ChatReply = memo(({ recipe, recipeVersion }) => {
     try {
       const clipboardItem = new ClipboardItem(clipboardItemData);
       await navigator.clipboard.write([clipboardItem]);
-    } catch (err) {
-      console.error("Failed to copy:", err);
+      showToast("Copied to clipboard!", "success");
+    } catch {
+      // Clipboard access denied or failed
     }
   }
 

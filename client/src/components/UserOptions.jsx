@@ -2,10 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { CircleUserRound } from "lucide-react";
 import GoogleLoginButton from "./GoogleLoginButton";
 import API_BASE_URL from "../config/api.js";
+import { useToast } from "../hooks/useToast";
 
 function UserOptions({ user, logout }) {
   const [isUserOptionsOpen, setIsUserOptionsOpen] = useState(false);
   const menuRef = useRef(null);
+  const { showToast } = useToast();
 
   async function handleSuccess(response) {
     try {
@@ -19,11 +21,10 @@ function UserOptions({ user, logout }) {
       if (result.ok) {
         window.location.reload();
       } else {
-        const err = await result.json();
-        console.error("Login failed:", err);
+        showToast("Login failed. Please try again.", "error");
       }
     } catch {
-      // console.log(error);
+      showToast("Login failed. Please try again.", "error");
     }
   }
 

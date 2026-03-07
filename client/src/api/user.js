@@ -12,8 +12,7 @@ export async function fetchCurrentUser() {
       return null;
     }
     return res.json();
-  } catch (err) {
-    console.error("Error fetching user:", err);
+  } catch {
     return null;
   }
 }

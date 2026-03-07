@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState, memo } from "react";
 import { useNavigate } from "react-router";
 import { useChat } from "../../hooks/useChat.jsx";
+import { useToast } from "../../hooks/useToast";
 import {
   ArrowUp,
   LoaderCircle,
@@ -22,7 +23,6 @@ const ChatInput = memo(
     setIsChatOpen,
     // isAskModalOpen,
     setIsAskModalOpen,
-    showToast,
     variant = "new-chat",
   }) => {
     const [message, setMessage] = useState("");
@@ -30,6 +30,7 @@ const ChatInput = memo(
     const [isExpanded, setIsExpanded] = useState(false);
     const isExpandedRef = useRef();
     const textAreaRef = useRef(null);
+    const { showToast } = useToast();
     const minHeight = 30;
     const maxHeight = 160;
     const isNewChat = variant === "new-chat";
@@ -90,8 +91,8 @@ const ChatInput = memo(
           if (!recipe?.id && result?.reply?.id) {
             navigate(`/chat/${result.reply.id}`);
           }
-        } catch (error) {
-          console.error("Failed to create recipe:", error);
+        } catch {
+          showToast("Failed to create recipe. Please try again.", "error");
         }
       }
 
