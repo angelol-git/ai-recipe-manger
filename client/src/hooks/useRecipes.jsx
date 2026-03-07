@@ -45,10 +45,10 @@ export function useRecipes() {
     onMutate: async ({ recipeId, recipeVersionId }) => {
       //Pause any fetching result of the previous query, let our manual optimistic update finish first
       if (user) {
-        await queryClient.cancelQueries(["recipes"]);
+        await queryClient.cancelQueries(["recipes", user?.id || "guest_recipes"]);
 
-        const previousRecipes = queryClient.getQueryData(["recipes"]);
-        queryClient.setQueryData(["recipes"], (old) => {
+        const previousRecipes = queryClient.getQueryData(["recipes", user?.id || "guest_recipes"]);
+        queryClient.setQueryData(["recipes", user?.id || "guest_recipes"], (old) => {
           if (!old) return old;
 
           return old.map((recipe) => {
@@ -81,7 +81,7 @@ export function useRecipes() {
   const deleteRecipeMutation = useMutation({
     mutationFn: async (recipeId) => {
       if (user) {
-        deleteRecipe(recipeId);
+        await deleteRecipe(recipeId);
       } else {
         deleteLocalRecipeAll(recipeId);
       }
@@ -89,10 +89,10 @@ export function useRecipes() {
 
     onMutate: async (recipeId) => {
       if (user) {
-        await queryClient.cancelQueries(["recipes"]);
+        await queryClient.cancelQueries(["recipes", user?.id || "guest_recipes"]);
 
-        const previousRecipes = queryClient.getQueryData(["recipes"]);
-        queryClient.setQueryData(["recipes"], (old) => {
+        const previousRecipes = queryClient.getQueryData(["recipes", user?.id || "guest_recipes"]);
+        queryClient.setQueryData(["recipes", user?.id || "guest_recipes"], (old) => {
           if (!old) return old;
 
           return old.filter((recipe) => recipe.id !== recipeId);
@@ -103,12 +103,12 @@ export function useRecipes() {
 
     onError: (err, variables, context) => {
       if (context?.previousRecipes) {
-        queryClient.setQueryData(["recipes"], context.previousRecipes);
+        queryClient.setQueryData(["recipes", user?.id || "guest_recipes"], context.previousRecipes);
       }
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries(["recipes"]);
+      queryClient.invalidateQueries(["recipes", user?.id || "guest_recipes"]);
     },
   });
 
@@ -123,10 +123,10 @@ export function useRecipes() {
 
     onMutate: async (updatedRecipe) => {
       if (user) {
-        await queryClient.cancelQueries(["recipes"]);
+        await queryClient.cancelQueries(["recipes", user?.id || "guest_recipes"]);
 
-        const previousRecipes = queryClient.getQueryData(["recipes"]);
-        queryClient.setQueryData(["recipes"], (old) => {
+        const previousRecipes = queryClient.getQueryData(["recipes", user?.id || "guest_recipes"]);
+        queryClient.setQueryData(["recipes", user?.id || "guest_recipes"], (old) => {
           if (!old) return old;
 
           return old.map((recipe) => {
@@ -143,7 +143,7 @@ export function useRecipes() {
 
     onError: (err, variables, context) => {
       if (context?.previousRecipes) {
-        queryClient.setQueryData(["recipes"], context.previousRecipes);
+        queryClient.setQueryData(["recipes", user?.id || "guest_recipes"], context.previousRecipes);
       }
     },
 
@@ -163,12 +163,12 @@ export function useRecipes() {
 
     // onError: (err, variables, context) => {
     //   if (context?.previousRecipes) {
-    //     queryClient.setQueryData(["recipes"], context.previousRecipes);
+    //     queryClient.setQueryData(["recipes", user?.id || "guest_recipes"], context.previousRecipes);
     //   }
     // },
 
     onSettled: () => {
-      queryClient.invalidateQueries(["recipes"]);
+      queryClient.invalidateQueries(["recipes", user?.id || "guest_recipes"]);
     },
   });
 
