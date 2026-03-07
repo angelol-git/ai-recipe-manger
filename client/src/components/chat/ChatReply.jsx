@@ -78,7 +78,7 @@ const ChatReply = memo(({ recipe, recipeVersion }) => {
           </h3>
           <ul className="list-disc pl-4 pt-2">
             {ingredients.map((item, index) => (
-              <li key={index}>{item}</li>
+              <li key={`${recipe.id}-ingredient-${index}`}>{item}</li>
             ))}
           </ul>
         </section>
@@ -97,7 +97,7 @@ const ChatReply = memo(({ recipe, recipeVersion }) => {
           </h3>
           <ol className="list-decimal flex flex-col gap-2 pt-2">
             {instructions.map((item, index) => (
-              <li key={index} className="flex gap-2">
+              <li key={`${recipe.id}-instruction-${index}`} className="flex gap-2">
                 <span className="font-semibold font-lora">{index + 1}.</span>
                 {item}
               </li>
