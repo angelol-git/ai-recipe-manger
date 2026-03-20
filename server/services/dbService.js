@@ -112,7 +112,7 @@ export function getRecipesByUserId(userId) {
     .all(userId);
 
   if (recipes.length === 0) {
-    return {};
+    return [];
   }
 
   const recipeIds = recipes.map((r) => r.id);
