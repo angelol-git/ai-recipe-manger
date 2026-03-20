@@ -18,11 +18,11 @@ function EditDescription({ draft, handleDraftString }) {
           />
           <div className="flex justify-end">
             <button
-              className="text-xs"
               type="button"
               onClick={() => {
                 handleDraftString("description", "");
               }}
+              className="text-xs cursor-pointer"
             >
               Clear
             </button>

@@ -151,7 +151,11 @@ function EditInstructions({
                     }}
                   />
                 </div>
-                <button type="button" onClick={handleCancel}>
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="cursor-pointer"
+                >
                   <X size={14} color={"#8C7A68"} strokeWidth={1.5} />
                 </button>
               </li>

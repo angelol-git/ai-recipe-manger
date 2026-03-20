@@ -8,12 +8,6 @@ function HomeRecipeCard({ recipe, openDeleteModal }) {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   }
-  function formatDescription(description) {
-    if (description.length > 100) {
-      return description.slice(0, 100) + "...";
-    }
-    return description;
-  }
   return (
     <Link
       to={`/chat/${recipe.id}`}
@@ -27,12 +21,11 @@ function HomeRecipeCard({ recipe, openDeleteModal }) {
           }`}
         >
           <div className="flex flex-col gap-2">
-            <h3 className="font-medium font-lora text-xl">{recipe.title}</h3>
-            <p className="text-sm text-secondary">
-              {formatDescription(
-                recipe.versions?.[recipe.versions.length - 1]?.description ||
-                  "",
-              )}
+            <h3 className="font-medium font-lora text-xl line-clamp-2 min-h-[3.25rem] leading-snug">
+              {recipe.title}
+            </h3>
+            <p className="text-sm text-secondary line-clamp-5">
+              {recipe.versions?.[recipe.versions.length - 1]?.description || ""}
             </p>
           </div>
           <div className="flex justify-between  items-center">

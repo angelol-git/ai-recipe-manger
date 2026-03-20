@@ -70,7 +70,7 @@ function ChatTags({ recipe }) {
     cursor-pointer hover:bg-gray-100 hover:text-gray-700
     transition-colors duration-150 w-[100px]"
             aria-label="New tag name"
-            placeholder="Enter tag name"
+            placeholder="Tag name"
           />
 
           <button
