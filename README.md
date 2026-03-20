@@ -103,7 +103,7 @@ npm run dev
 
 The client will start on `http://localhost:5173` with hot module replacement.
 
-### Production
+## Production
 
 **Server:**
 
