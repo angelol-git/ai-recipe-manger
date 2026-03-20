@@ -62,9 +62,7 @@ const ChatLayout = () => {
 
   return (
     <div
-      className={`bg-base relative flex min-h-screen text-primary w-full ${
-        isMobile && isSideBarOpen ? "overflow-hidden h-screen" : ""
-      }`}
+      className={`bg-base relative flex min-h-screen h-full overflow-hidden text-primary w-full`}
     >
       <ChatSideBar
         recipes={recipes}
@@ -80,7 +78,7 @@ const ChatLayout = () => {
           onClick={() => setIsSideBarOpen(false)}
         />
       )}
-      <main className="relative flex flex-1 flex-col min-w-0">
+      <main className="relative flex flex-1 flex-col min-w-0 overflow-y-auto">
         <Outlet context={contextValue} />
       </main>
       {deleteModal.isOpen && (

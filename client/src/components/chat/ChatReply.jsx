@@ -40,7 +40,7 @@ const ChatReply = memo(({ recipe, recipeVersion }) => {
   }
 
   return (
-    <div role="log" aria-live="polite" className="flex flex-col gap-2">
+    <div role="log" aria-live="polite" className="flex flex-col gap-2 ">
       <div
         role="group"
         aria-label="Recipe details"

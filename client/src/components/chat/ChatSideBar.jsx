@@ -14,16 +14,17 @@ const ChatSideBar = memo(
   }) => {
     return (
       <nav
-        className={`  
-        fixed inset-y-0 left-0 z-100
-        overflow-y-auto
-        h-screen duration-200 ease-out transition-all flex-col flex bg-mantle
+        className={`
+        inset-y-0 left-0 z-100 
+        h-full duration-200 ease-out transition-all flex-col flex bg-mantle
         gap-4 text-sm lg:border-r-gray-300 lg:border-r-1 
         ${
           isSideBarOpen
             ? "translate-x-0 w-70 p-2"
             : "-translate-x-full w-0 p-0 lg:translate-x-0 overflow-hidden"
         }
+
+          ${isMobile && "fixed"}
       `}
       >
         <div className="flex justify-between items-center">
@@ -72,7 +73,7 @@ const ChatSideBar = memo(
         </button>
         <div className="flex flex-col gap-1">
           <h2 className="text-secondary">Recipes</h2>
-          <div className="flex w-full flex-col">
+          <div className="flex w-full flex-col overflow-y-auto">
             {recipes?.map((recipe) => {
               return (
                 <SideBarItem
