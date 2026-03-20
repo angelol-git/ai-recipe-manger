@@ -71,4 +71,7 @@ body,
   --color-overlay0: #dfd7d2;
   --color-overlay1: #cfc7c2;
   --color-overlay2: #bfb7b2;
+
+  /* Loading state - distinct warm gray */
+  --color-loading: #f4f2ef;
 }

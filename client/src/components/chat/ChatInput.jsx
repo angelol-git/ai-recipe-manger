@@ -102,14 +102,14 @@ const ChatInput = memo(
 
     return isChatOpen ? (
       <div
-        className={`relative bg-base p-2 border-crust border-8 rounded-2xl w-full ${isPending && "bg-gray-100"}`}
+        className={`relative bg-base p-2 border-crust border-8 rounded-2xl w-full ${isPending && "bg-loading"}`}
       >
         <textarea
           rows={1}
           ref={textAreaRef}
           className={`w-full px-2 rounded-xl
                  outline-none resize-none leading-6
-                 placeholder:text-icon-disabled ${isPending ? "text-gray-400" : " text-primary"}`}
+                 placeholder:text-icon-disabled ${isPending ? "text-icon-disabled" : "text-primary"}`}
           style={{
             minHeight: `${minHeight}px`,
             maxHeight: `${maxHeight}px`,
@@ -157,6 +157,7 @@ const ChatInput = memo(
               )}
               <select
                 value={chatInputMode}
+                disabled={isPending}
                 onChange={(event) => {
                   setChatInputMode(event.target.value);
                 }}
@@ -164,7 +165,7 @@ const ChatInput = memo(
                   chatInputMode === "Create"
                     ? "bg-overlay0 text-secondary"
                     : "bg-overlay2 text-white"
-                } w-min px-2 cursor-pointer py-1 rounded-2xl hover:brightness-90 duration-150 transition-colors text-sm flex items-center gap-1`}
+                } w-min px-2 ${isPending ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:brightness-90"} py-1 rounded-2xl duration-150 transition-colors text-sm flex items-center gap-1`}
               >
                 <option value="Create">Create</option>
               </select>
