@@ -11,7 +11,7 @@ import { useToast } from "../../hooks/useToast";
 
 const ChatLayout = () => {
   const { id } = useParams();
-  const { data: user } = useUser();
+  const { user } = useUser();
   const { data: recipes } = useRecipes();
   const isMobile = useIsMobile();
   const { isSideBarOpen, setIsSideBarOpen } = useChatSidebar(user, isMobile);
