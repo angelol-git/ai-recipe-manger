@@ -35,43 +35,42 @@ function ChatOptions({
           isOptionsOpen ? "bg-crust" : ""
         }`}
       >
-        <Ellipsis size={24} strokeWidth={1.5} className="stroke-icon" />
+        <Ellipsis size={18} strokeWidth={1.5} className="stroke-icon" />
       </button>
 
       {isOptionsOpen && (
         <div
-          className="absolute right-0 z-50 bg-mantle  w-42 p-2 rounded-lg shadow-xl border border-secondary/60"
+          className="absolute  right-0 z-50 bg-base  w-40 p-2 rounded-lg shadow-xl border border-secondary/20"
           role="menu"
         >
           <ul className="flex flex-col text-primary">
-            <li>
+            {/* <li>
               <button
                 onClick={() => setIsOptionsOpen(false)}
-                className="w-full flex justify-between items-center py-3 cursor-pointer hover:bg-mantle-hover duration-150 px-2 rounded-lg"
+                className="w-full flex gap-2 items-center py-2 cursor-pointer hover:bg-mantle-hover duration-150 px-1 rounded-lg"
               >
-                <Share size={22} strokeWidth={1.25} className="stroke-icon" />
+                <Share size={18} strokeWidth={1.5} className="stroke-icon" />
                 <div className="text-sm">Share</div>
               </button>
-            </li>
-            <div className="h-[1px] bg-secondary/60 my-1" />
+            </li> */}
             <li>
               <button
                 onClick={() => {
                   setIsOptionsOpen(false);
                   setIsEditModalOpen(true);
                 }}
-                className="w-full flex justify-between items-center py-3 cursor-pointer hover:bg-mantle-hover duration-150 px-2 rounded-lg"
+                className="w-full flex gap-2 items-center py-2 cursor-pointer hover:bg-base-hover duration-150 px-2 rounded-lg"
               >
                 <SquarePen
-                  size={22}
-                  strokeWidth={1.25}
+                  size={18}
+                  strokeWidth={1.5}
                   className="stroke-icon"
                 />
                 <div className="text-sm">Edit</div>
               </button>
             </li>
 
-            <div className="h-[1px] bg-secondary/60 my-1" />
+            <div className="h-[1px] bg-secondary/40 my-1" />
 
             <li>
               <button
@@ -86,14 +85,15 @@ function ChatOptions({
                   // }
                   // navigate("/");
                 }}
-                className="w-full flex justify-between items-center py-3 cursor-pointer hover:bg-mantle-hover duration-150 px-2 rounded-lg"
+                className="w-full flex  gap-2 items-center py-2 cursor-pointer hover:bg-base-hover duration-150 px-2 rounded-lg"
               >
-                <Trash2 size={22} strokeWidth={1.25} className="stroke-icon" />
-                <div className="text-sm">Delete Current</div>
+                <Trash2 size={18} strokeWidth={1.5} className="stroke-icon" />
+                <div className="text-sm">Delete</div>
               </button>
             </li>
 
-            <div className="h-[1px] bg-secondary/60 my-1" />
+            {/* <div className="h-[1px] bg-secondary/60 my-1" /> */}
+
             <li>
               <button
                 onClick={() => {
@@ -102,9 +102,9 @@ function ChatOptions({
                   // deleteRecipe(recipeId);
                   // navigate("/");
                 }}
-                className="w-full flex justify-between items-center py-3 text-rose cursor-pointer px-2 hover:bg-rose/10 duration-150 rounded-lg"
+                className="w-full flex gap-2 items-center py-2 text-rose cursor-pointer px-2 hover:bg-rose/10 duration-150 rounded-lg"
               >
-                <CircleX size={22} strokeWidth={1.5} className="stroke-rose" />
+                <CircleX size={18} strokeWidth={1.5} className="stroke-rose" />
                 <div className="text-sm font-medium">
                   Delete All ({recipe.versions.length})
                 </div>

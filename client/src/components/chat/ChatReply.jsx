@@ -1,20 +1,11 @@
-import { useState, useRef, useEffect, memo } from "react";
-import { Flame, Clock, Utensils, Copy } from "lucide-react";
-import { useToast } from "../../hooks/useToast";
+import { useState, memo } from "react";
+import { Flame, Clock, Utensils } from "lucide-react";
+import ChatPromptModal from "./ChatPromptModal";
 
 const ChatReply = memo(({ recipe, recipeVersion }) => {
-  const [isPromptOpen, setIsPromptOpen] = useState(false);
-  const sourcePromptRef = useRef(null);
-  const { showToast } = useToast();
+  const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
   const current = recipe?.versions?.[recipeVersion];
 
-  useEffect(() => {
-    if (isPromptOpen && sourcePromptRef.current) {
-      setTimeout(() => {
-        sourcePromptRef.current.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }
-  }, [isPromptOpen]);
   if (!current) return null;
 
   const {
@@ -25,22 +16,8 @@ const ChatReply = memo(({ recipe, recipeVersion }) => {
     source_prompt,
   } = current;
 
-  async function setClipboard(text) {
-    const type = "text/plain";
-    const clipboardItemData = {
-      [type]: text,
-    };
-    try {
-      const clipboardItem = new ClipboardItem(clipboardItemData);
-      await navigator.clipboard.write([clipboardItem]);
-      showToast("Copied to clipboard!", "success");
-    } catch {
-      // Clipboard access denied or failed
-    }
-  }
-
   return (
-    <div role="log" aria-live="polite" className="flex flex-col gap-2 ">
+    <div role="log" aria-live="polite" className="flex flex-col gap-2">
       <div
         role="group"
         aria-label="Recipe details"
@@ -68,6 +45,7 @@ const ChatReply = memo(({ recipe, recipeVersion }) => {
       </div>
 
       <p className="break-inside-avoid mb-4">{description}</p>
+
       {ingredients && (
         <section aria-labelledby="ingredients-heading" className="w-full mb-4">
           <h3
@@ -85,10 +63,7 @@ const ChatReply = memo(({ recipe, recipeVersion }) => {
       )}
 
       {instructions && (
-        <section
-          aria-labelledby="instructions-heading"
-          className="w-full mb-4 "
-        >
+        <section aria-labelledby="instructions-heading" className="w-full mb-4">
           <h3
             id="instructions-heading"
             className="font-lora font-medium text-lg"
@@ -110,35 +85,14 @@ const ChatReply = memo(({ recipe, recipeVersion }) => {
       )}
 
       {source_prompt && (
-        <div className="flex gap-4 justify-between text-secondary text-sm mt-4">
-          <div className="flex flex-col items-start gap-2 py-2">
+        <div className="flex gap-4 justify-between text-secondary text-sm mt-4 max-w-full">
+          <div className="flex flex-col items-start gap-2 py-2 min-w-0 max-w-full w-full">
             <button
-              aria-expanded={isPromptOpen}
-              aria-controls="source-prompt"
-              onClick={() => {
-                setIsPromptOpen((prev) => !prev);
-              }}
-              className={`underline cursor-pointer p-1 rounded-lg hover:bg-mantle-hover duration-150 ${isPromptOpen && "bg-mantle-hover"}`}
+              onClick={() => setIsPromptModalOpen(true)}
+              className="underline cursor-pointer p-1 rounded-lg hover:bg-base-hover duration-150 transition-colors"
             >
-              {!isPromptOpen ? "View Prompt" : "Close Prompt"}
+              View Prompt
             </button>
-            {isPromptOpen && (
-              <div
-                id="source_prompt"
-                ref={sourcePromptRef}
-                className="p-1 flex gap-2"
-              >
-                <p>{source_prompt}</p>
-                <button
-                  onClick={() => {
-                    setClipboard(source_prompt);
-                  }}
-                  className="cursor-pointer"
-                >
-                  <Copy size={18} />
-                </button>
-              </div>
-            )}
           </div>
           {recipe.versions.length > 1 && (
             <p
@@ -152,6 +106,12 @@ const ChatReply = memo(({ recipe, recipeVersion }) => {
           )}
         </div>
       )}
+
+      <ChatPromptModal
+        isOpen={isPromptModalOpen}
+        onClose={() => setIsPromptModalOpen(false)}
+        sourcePrompt={source_prompt || ""}
+      />
     </div>
   );
 });
