@@ -40,7 +40,7 @@ function ChatOptions({
 
       {isOptionsOpen && (
         <div
-          className="absolute  right-0 z-50 bg-base  w-40 p-2 rounded-lg shadow-xl border border-secondary/20"
+          className="absolute  right-0 z-50 bg-base w-42 p-2 rounded-lg shadow-xl border border-secondary/20"
           role="menu"
         >
           <ul className="flex flex-col text-primary">

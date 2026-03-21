@@ -16,7 +16,12 @@ const ChatLayout = () => {
   const isMobile = useIsMobile();
   const { isSideBarOpen, setIsSideBarOpen } = useChatSidebar(user, isMobile);
   const { showToast } = useToast();
-  const [recipe, setRecipe] = useState(null);
+
+  const recipe = useMemo(() => {
+    if (!recipes || !id) return null;
+    return recipes.find((r) => r.id === id) || null;
+  }, [recipes, id]);
+
   const [recipeVersion, setRecipeVersion] = useState(null);
 
   const { deleteModal, openDeleteModal, closeDeleteModal, handleDelete } =
@@ -45,20 +50,21 @@ const ChatLayout = () => {
     ],
   );
 
+  // Reset recipeVersion when recipe changes
   useEffect(() => {
-    if (!recipes) return;
-
-    const recipe = recipes?.find((r) => r.id === id) || null;
-    setRecipe(recipe);
-
     if (recipe?.versions?.length) {
       setRecipeVersion(recipe.versions.length - 1);
+    } else {
+      setRecipeVersion(null);
     }
+  }, [recipe?.id, recipe?.versions?.length]);
 
+  // Update document title when recipe changes
+  useEffect(() => {
     if (recipe?.title) {
       document.title = recipe.title;
     }
-  }, [recipes, id]);
+  }, [recipe?.title]);
 
   return (
     <div
