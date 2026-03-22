@@ -4,11 +4,11 @@ import HomeRecipeCard from "./HomeRecipeCard";
 function HomeItems({ filteredRecipes, openDeleteModal }) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-4">
+      <div className="flex gap-4 items-center">
         <div className="font-semibold">Items({filteredRecipes?.length})</div>
         <Link
           to="/chat"
-          className="items-center bg-base hover:bg-base-hover text-sm cursor-pointer rounded-2xl border-black/30 border-1 px-2 py-1"
+          className="inline-flex min-h-8 items-center justify-center rounded-full border border-gray-300 bg-gray-50 px-3 py-1 text-[15px] leading-none text-gray-600 shadow-xs transition-colors hover:bg-gray-100 hover:text-gray-700"
         >
           + Add
         </Link>

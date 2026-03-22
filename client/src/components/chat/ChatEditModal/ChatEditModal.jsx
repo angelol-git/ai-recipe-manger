@@ -60,11 +60,11 @@ function ChatEditModal({
       >
         <div
           ref={modalRef}
-          className={`w-full max-h-[90dvh] overflow-y-auto overscroll-contain px-3 pt-6 pb-10 flex flex-col bg-base rounded-t-xl shadow-lg transform transition-transform ease-out duration-300 lg:rounded-xl ${isEditModalOpen ? "translate-y-0" : "translate-y-full"}`}
+          className={`w-full max-h-[90dvh] overflow-y-auto overscroll-contain px-4 pt-5 pb-8 flex flex-col bg-base rounded-t-xl shadow-lg transform transition-transform ease-out duration-300 lg:rounded-xl lg:px-5 lg:pt-6 lg:pb-10 ${isEditModalOpen ? "translate-y-0" : "translate-y-full"}`}
           style={{ WebkitOverflowScrolling: "touch" }}
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between pb-4">
             <button
               onClick={() => setIsEditModalOpen(false)}
               className="hover:bg-base-hover duration-150 transition-color px-2 py-1 rounded-lg cursor-pointer w-18"
@@ -79,7 +79,7 @@ function ChatEditModal({
               Save
             </button>
           </div>
-          <form className="flex flex-col gap-5 py-5 px-2">
+          <form className="flex flex-col gap-6 pb-2">
             <EditTitle draft={draft} handleDraftString={handleDraftString} />
             <EditTags
               draft={draft}

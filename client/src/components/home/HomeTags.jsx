@@ -1,5 +1,6 @@
 import { useState } from "react";
 import EditTagItem from "../tags/EditTagItem.jsx";
+import TagChip from "../tags/TagChip.jsx";
 import useDraftTags from "../../hooks/useDraftTags.jsx";
 
 function HomeTags({
@@ -61,24 +62,22 @@ function HomeTags({
                   return selectedTag.name === tag.name;
                 });
                 return (
-                  <button
+                  <TagChip
+                    as="button"
                     onClick={() => {
                       handleTagSelectedClick(tag);
                     }}
-                    className={`inline-flex gap-2 items-center px-2 py-0.5 text-sm border  bg-tag text-primary border-mantle rounded-full cursor-pointer ${
-                      isSelected && "bg-tag-selected"
+                    className={`cursor-pointer hover:bg-tag-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 ${
+                      isSelected ? "bg-tag-selected" : ""
                     }`}
                     key={tag.id}
+                    color={tag.color}
                   >
-                    <div
-                      className={`w-4 h-4 rounded-full`}
-                      style={{ backgroundColor: tag.color }}
-                    ></div>
                     <div>
                       {tag.name}{" "}
                       <span className="text-secondary">({count})</span>
                     </div>
-                  </button>
+                  </TagChip>
                 );
               })
             ) : (

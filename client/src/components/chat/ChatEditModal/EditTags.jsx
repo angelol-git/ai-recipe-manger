@@ -7,13 +7,13 @@ function EditTags({
   handleDraftTagDelete,
 }) {
   return (
-    <section className="flex flex-col gap-2">
-      <h3 className="font-lora font-medium text-secondary tracking-wide">
+    <section className="flex flex-col gap-3">
+      <h3 className="font-lora text-lg font-medium text-secondary tracking-wide">
         Tags
       </h3>
       <div className="flex justify-between">
         <div className="flex flex-col gap-2 w-full">
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3">
             {draft?.tags.length > 0 ? (
               draft?.tags.map((tag) => {
                 return (

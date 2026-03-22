@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import { X } from "lucide-react";
 import ColorPickerPortal from "../home/ColorPickerPortal";
+import TagChip from "./TagChip";
+
 function EditTagItem({
   tag,
   handleNameChange,
@@ -10,27 +12,26 @@ function EditTagItem({
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const buttonRef = useRef(null);
   return (
-    <div key={tag.id} className="gap-1 flex items-center w-fit">
-      <div
-        className={`inline-flex w-fit gap-2 items-center px-2 py-0.5 border border-mantle  rounded-full cursor-pointer bg-tag text-primary text-sm`}
-      >
+    <div key={tag.id} className="flex w-fit items-center gap-1.5">
+      <TagChip>
         <button
           type="button"
           ref={buttonRef}
-          className="h-4 w-4"
+          className="h-3.5 w-3.5 shrink-0 rounded-full"
           style={{ backgroundColor: tag.color }}
           onClick={(event) => {
             event.stopPropagation();
             setIsPickerOpen(true);
           }}
-        ></button>
+        />
         <input
           id={tag.id}
           type="text"
-          className="underline bg-transparent outline-none text-sm px-0"
+          className="min-w-[4ch] border-0 border-b border-secondary/50 bg-transparent px-0 pb-0.5 text-[15px] leading-none text-primary outline-none placeholder:text-secondary/70"
           value={tag.name}
           size={tag.name.length || 1}
           aria-label="Tag name"
+          placeholder="Tag name"
           onChange={(event) => {
             handleNameChange(event.target.value, tag.id);
           }}
@@ -44,15 +45,15 @@ function EditTagItem({
             onClose={() => setIsPickerOpen(false)}
           />
         )}
-      </div>
+      </TagChip>
       <button
         type="button"
         onClick={() => {
           handleDelete(tag);
         }}
-        className="hover:bg-tag-hover p-1 duration-150 transition-colors rounded-full cursor-pointer"
+        className="inline-flex min-h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-gray-50 px-2 text-gray-600 shadow-xs transition-colors hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30"
       >
-        <X size={12} strokeWidth={1.5} className="stroke-icon-muted" />
+        <X size={12} strokeWidth={1.5} className="stroke-gray-600" />
       </button>
     </div>
   );

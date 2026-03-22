@@ -1,18 +1,18 @@
 function EditTitle({ draft, handleDraftString }) {
   return (
-    <section className="flex flex-col gap-2">
-      <label className="font-lora font-medium text-secondary tracking-wide">
+    <section className="flex flex-col gap-3">
+      <label className="font-lora text-lg font-medium text-secondary tracking-wide">
         Title
       </label>
-      <div className="bg-mantle/50 border border-crust rounded-xl p-4">
-        <div className="flex justify-between gap-4 items-center">
+      <div className="rounded-xl border border-crust bg-mantle/50 p-4">
+        <div className="flex items-center justify-between gap-4">
           <div className="flex flex-col gap-2 w-full">
             <input
               name="editTitle"
               id="editTitle"
               type="text"
               value={draft?.title || ""}
-              className="border-b-1 border-overlay0 px-2"
+              className="border-b border-overlay0 px-2 pb-1"
               onChange={(event) => {
                 handleDraftString("title", event.target.value);
               }}

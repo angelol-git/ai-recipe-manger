@@ -85,7 +85,7 @@ const ChatSideBar = memo(
         >
           <Link
             to="/chat"
-            className="flex gap-2 p-1 pl-2 rounded-lg duration-150 items-center hover:bg-mantle-hover"
+            className="flex gap-2 p-2 rounded-lg duration-150 items-center hover:bg-mantle-hover"
           >
             <CirclePlus size={18} strokeWidth={1.5} className="stroke-icon" />
             New Chat

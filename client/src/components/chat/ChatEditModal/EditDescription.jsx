@@ -1,11 +1,11 @@
 function EditDescription({ draft, handleDraftString }) {
   return (
-    <section className="flex flex-col gap-2">
-      <label className="font-lora font-medium text-secondary tracking-wide">
+    <section className="flex flex-col gap-3">
+      <label className="font-lora text-lg font-medium text-secondary tracking-wide">
         Description
       </label>
-      <div className="bg-mantle/50 border border-crust rounded-xl p-4">
-        <div className="flex flex-col gap-2 w-full">
+      <div className="rounded-xl border border-crust bg-mantle/50 p-4">
+        <div className="flex w-full flex-col gap-3">
           <textarea
             id="description"
             name="description"

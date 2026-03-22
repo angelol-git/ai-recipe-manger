@@ -107,7 +107,7 @@ const ChatInput = memo(
         <textarea
           rows={1}
           ref={textAreaRef}
-          className={`w-full bg-transparent px-4 pt-4 text-[15px] outline-none resize-none leading-6 placeholder:text-icon-disabled/90 ${!isNewChat ? "pr-14" : ""} ${isPending ? "text-icon-disabled" : "text-primary"}`}
+          className={`w-full bg-transparent px-4 pt-4  outline-none resize-none leading-6 placeholder:text-icon-disabled/90 ${!isNewChat ? "pr-14" : ""} ${isPending ? "text-icon-disabled" : "text-primary"}`}
           style={{
             minHeight: `${minHeight}px`,
             maxHeight: `${maxHeight}px`,

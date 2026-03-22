@@ -1,11 +1,11 @@
 function EditRecipeDetails({ draft, handleDraftDetail }) {
   return (
-    <section className="flex flex-col gap-2">
-      <h3 className="font-lora font-medium text-secondary tracking-wide">
+    <section className="flex flex-col gap-3">
+      <h3 className="font-lora text-lg font-medium text-secondary tracking-wide">
         Recipe Details
       </h3>
       <div>
-        <div className="bg-mantle/50 border border-crust rounded-xl p-4 flex flex-col gap-3">
+        <div className="flex flex-col gap-4 rounded-xl border border-crust bg-mantle/50 p-4">
           <DetailItem
             label="calories"
             value={draft?.recipeDetails.calories}

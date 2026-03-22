@@ -85,15 +85,17 @@ function EditInstructions({
   }
 
   return (
-    <section className="flex flex-col gap-2">
-      <div className="flex justify-between">
-        <h3 className="font-medium font-lora text-secondary">Instructions</h3>
+    <section className="flex flex-col gap-3">
+      <div className="flex justify-between items-center">
+        <h3 className="font-lora text-lg font-medium text-secondary">
+          Instructions
+        </h3>
         <button
           type="button"
           onClick={() => {
             setIsAddingInstruction((prev) => !prev);
           }}
-          className="inline-flex justify-center items-center px-2 py-0.5 text-sm text-gray-500 border border-gray-300 rounded-full cursor-pointer hover:bg-gray-100 hover:text-gray-700 transition-colors"
+          className="inline-flex min-h-8 items-center justify-center rounded-full border border-gray-300 bg-gray-50 px-3 py-1 text-[15px] leading-none text-gray-600 shadow-xs transition-colors hover:bg-gray-100 hover:text-gray-700"
         >
           + Add
         </button>
@@ -107,7 +109,7 @@ function EditInstructions({
           items={draft?.instructions?.map((item) => item.id) || []}
           strategy={verticalListSortingStrategy}
         >
-          <ol className="list-decimal space-y-2">
+          <ol className="list-decimal space-y-3">
             {draft?.instructions.map((instruction, index) => (
               <SortableInstruction
                 key={instruction.id}
