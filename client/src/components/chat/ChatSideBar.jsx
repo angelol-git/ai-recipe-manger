@@ -124,9 +124,9 @@ const SideBarItem = memo(
             setIsSideBarOpen(false);
           }
         }}
-        className={`items-center px-2 py-1 flex justify-between duration-150 cursor-pointer rounded-lg hover:bg-mantle-hover ${
-          isActive ? "bg-overlay0" : ""
-        }`}
+        className={`items-center px-2 py-1 flex justify-between duration-150 cursor-pointer rounded-lg hover:bg-mantle-hover 
+          ${isActive ? "bg-overlay0" : ""} 
+          ${isOptionsOpen ? "bg-mantle-hover" : ""}`}
       >
         <p className="truncate">{recipe.title}</p>
 

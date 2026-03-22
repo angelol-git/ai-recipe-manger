@@ -40,9 +40,7 @@ function RecipeOptions({
         aria-haspopup="true"
         aria-expanded={isOptionsOpen}
         aria-label="Chat options"
-        className={`cursor-pointer font-bold px-2 py-1 color-black duration-150 hover:bg-mantle-hover rounded-md ${
-          isOptionsOpen ? "bg-crust" : ""
-        }`}
+        className="cursor-pointer font-bold px-2 py-1 color-black duration-150 hover:bg-mantle-hover rounded-md"
         ref={buttonRef}
       >
         <Ellipsis size={24} strokeWidth={1.5} className="stroke-icon" />
@@ -58,11 +56,11 @@ function RecipeOptions({
               left:
                 buttonRef.current?.getBoundingClientRect().left - 100 + "px",
             }}
-            className="z-1000 bg-mantle w-42 rounded-lg shadow-xl border border-secondary/60"
+            className="z-1000 bg-mantle w-42 rounded-lg p-2 shadow-xl border border-secondary/20"
             role="menu"
           >
-            <ul className="flex flex-col text-primary p-1">
-              <li className="w-full">
+            <ul className="flex flex-col text-primary ">
+              {/* <li className="w-full">
                 <button
                   onClick={(event) => {
                     event.preventDefault();
@@ -78,9 +76,9 @@ function RecipeOptions({
                     className="stroke-icon opacity-80"
                   />
                 </button>
-              </li>
+              </li> */}
 
-              <div className="h-[1px] bg-secondary/30 mx-2 my-1" />
+              {/* <div className="h-[1px] bg-secondary/30 mx-2 my-1" /> */}
 
               <li className="w-full">
                 <button
@@ -90,16 +88,16 @@ function RecipeOptions({
                     openDeleteModal(recipe, "all");
                     setIsOptionsOpen(false);
                   }}
-                  className="w-full px-3 py-3 flex justify-between items-center cursor-pointer rounded-lg hover:bg-rose/10 duration-150 text-rose transition-colors"
+                  className="w-full px-2 py-2 flex justify-between items-center cursor-pointer rounded-lg hover:bg-rose/10 duration-150 text-rose transition-colors"
                 >
-                  <div className="text-sm font-medium">
-                    Delete All ({recipe.versions.length})
-                  </div>
                   <CircleX
-                    size={20}
+                    size={18}
                     strokeWidth={1.5}
                     className="stroke-rose"
                   />
+                  <div className="text-sm font-medium">
+                    Delete All ({recipe.versions.length})
+                  </div>
                 </button>
               </li>
             </ul>
