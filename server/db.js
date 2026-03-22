@@ -29,7 +29,7 @@ db.prepare(
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
     parent_id TEXT,
-    title TEXT NOT NULL,
+    title TEXT NOT NULL CHECK(length(title) <= 150),
     source_url TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
