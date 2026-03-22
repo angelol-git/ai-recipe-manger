@@ -5,7 +5,6 @@ import { useToast } from "../../hooks/useToast";
 import {
   ArrowUp,
   LoaderCircle,
-  History,
   MessageCircleMore,
   Minimize2,
 } from "lucide-react";
@@ -37,6 +36,7 @@ const ChatInput = memo(
     const navigate = useNavigate();
 
     const { sendCreateMessage, isPending, isSuccess } = useChat(showToast);
+    const canSend = message.trim().length > 0 && !isPending;
 
     useEffect(() => {
       setMessage("");
@@ -103,15 +103,11 @@ const ChatInput = memo(
     }
 
     return isChatOpen ? (
-      <div
-        className={`relative p-2 border-crust bg-base border-8 rounded-2xl w-full`}
-      >
+      <div className="relative w-full rounded-3xl border border-secondary/15 bg-base transition-colors duration-200 focus-within:border-secondary/30">
         <textarea
           rows={1}
           ref={textAreaRef}
-          className={`w-full px-2 rounded-xl
-                 outline-none resize-none leading-6
-                 placeholder:text-icon-disabled ${isPending ? "text-icon-disabled" : "text-primary"}`}
+          className={`w-full bg-transparent px-4 pt-4 text-[15px] outline-none resize-none leading-6 placeholder:text-icon-disabled/90 ${!isNewChat ? "pr-14" : ""} ${isPending ? "text-icon-disabled" : "text-primary"}`}
           style={{
             minHeight: `${minHeight}px`,
             maxHeight: `${maxHeight}px`,
@@ -133,23 +129,19 @@ const ChatInput = memo(
         {!isNewChat && (
           <button
             onClick={() => setIsChatOpen(false)}
-            className="cursor-pointer absolute top-1 right-1 p-1 rounded-full hover:bg-overlay0 duration-150"
+            className="absolute right-3 top-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-icon-muted transition-colors duration-150 hover:bg-overlay0/50"
             aria-label="Minimize chat"
           >
-            <Minimize2
-              size={20}
-              strokeWidth={1.5}
-              className="stroke-icon-muted"
-            />
+            <Minimize2 size={16} strokeWidth={1.5} className="stroke-current" />
           </button>
         )}
         <div
-          className={`flex gap-3 items-center ${
+          className={`relative z-1 flex items-end gap-3 px-3 pb-3 pt-2 ${
             !isNewChat ? "justify-between" : "justify-end"
           }`}
         >
           {!isNewChat && (
-            <div className="flex gap-2 items-center">
+            <div className="flex min-h-11 items-center gap-2">
               {hasRecipeNavigation && (
                 <ChatNavigation
                   recipe={recipe}
@@ -176,12 +168,17 @@ const ChatInput = memo(
 
           <button
             type="button"
-            className="cursor-pointer flex items-center justify-center w-9 h-9 p-0 text-white bg-accent hover:bg-accent-hover duration-150 transition-colors rounded-full shrink-0"
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white transition-colors duration-200 ${
+              canSend
+                ? "cursor-pointer bg-accent hover:bg-accent-hover"
+                : "cursor-not-allowed bg-overlay1"
+            }`}
             onClick={(event) => {
               event.stopPropagation();
               handleSendMessage();
             }}
-            disabled={isPending}
+            disabled={!canSend}
+            aria-label="Send message"
           >
             {isPending ? (
               <LoaderCircle
@@ -197,12 +194,16 @@ const ChatInput = memo(
       </div>
     ) : (
       <button
-        className=" bg-accent hover:bg-accent-hover transition-colors duration-150 rounded-full flex items-center justify-center w-9 h-9 cursor-pointer"
+        className="flex cursor-pointer items-center gap-2 rounded-full border border-secondary/15 bg-base px-3 py-2 text-secondary transition-colors duration-200 hover:text-primary"
         onClick={() => {
           setIsChatOpen(true);
         }}
+        aria-label="Open chat"
       >
-        <MessageCircleMore size={24} strokeWidth={1.5} color={"white"} />
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-white">
+          <MessageCircleMore size={20} strokeWidth={1.5} />
+        </span>
+        <span className="pr-1 text-sm font-medium">Open chat</span>
       </button>
     );
   },

@@ -8,7 +8,7 @@ export function ToastProvider({ children }) {
     setToast({ message, type });
     setTimeout(() => {
       setToast(null);
-    }, 5000);
+    }, 3000);
   }, []);
 
   const value = {
@@ -18,8 +18,6 @@ export function ToastProvider({ children }) {
   };
 
   return (
-    <ToastContext.Provider value={value}>
-      {children}
-    </ToastContext.Provider>
+    <ToastContext.Provider value={value}>{children}</ToastContext.Provider>
   );
 }
