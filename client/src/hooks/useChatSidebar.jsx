@@ -10,8 +10,9 @@ function getStoredSidebarState(userId) {
   }
 }
 
-export function useChatSidebar(user, isMobile) {
+export function useChatSidebar(user, isMobile, isUserLoading) {
   const userId = user?.id || "guest";
+  const [isSidebarHydrated, setIsSidebarHydrated] = useState(false);
 
   const [isSideBarOpen, setIsSideBarOpen] = useState(() => {
     if (isMobile) return false;
@@ -21,19 +22,29 @@ export function useChatSidebar(user, isMobile) {
   useEffect(() => {
     if (isMobile) {
       setIsSideBarOpen(false);
-    } else {
-      setIsSideBarOpen(getStoredSidebarState(userId));
+      setIsSidebarHydrated(true);
+      return;
     }
-  }, [userId, isMobile]);
+
+    if (isUserLoading) {
+      setIsSidebarHydrated(false);
+      return;
+    }
+
+    setIsSideBarOpen(getStoredSidebarState(userId));
+    setIsSidebarHydrated(true);
+  }, [userId, isMobile, isUserLoading]);
 
   useEffect(() => {
-    if (!isMobile) {
-      localStorage.setItem(
-        `recipe-is-sidebar-open-${userId}`,
-        JSON.stringify(isSideBarOpen),
-      );
+    if (isMobile || !isSidebarHydrated) {
+      return;
     }
-  }, [isSideBarOpen, userId, isMobile]);
 
-  return { isSideBarOpen, setIsSideBarOpen };
+    localStorage.setItem(
+      `recipe-is-sidebar-open-${userId}`,
+      JSON.stringify(isSideBarOpen),
+    );
+  }, [isSideBarOpen, userId, isMobile, isSidebarHydrated]);
+
+  return { isSideBarOpen, setIsSideBarOpen, isSidebarHydrated };
 }

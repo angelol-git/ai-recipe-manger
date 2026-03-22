@@ -12,10 +12,11 @@ import { useToast } from "../../hooks/useToast";
 
 const ChatLayout = () => {
   const { id } = useParams();
-  const { user } = useUser();
+  const { user, isLoading: isUserLoading } = useUser();
   const { data: recipes } = useRecipes();
   const isMobile = useIsMobile();
-  const { isSideBarOpen, setIsSideBarOpen } = useChatSidebar(user, isMobile);
+  const { isSideBarOpen, setIsSideBarOpen, isSidebarHydrated } =
+    useChatSidebar(user, isMobile, isUserLoading);
   const { showToast } = useToast();
 
   const recipe = useMemo(() => {
@@ -25,9 +26,15 @@ const ChatLayout = () => {
 
   const [recipeVersion, setRecipeVersion] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [hasSidebarInteracted, setHasSidebarInteracted] = useState(false);
 
   const { deleteModal, openDeleteModal, closeDeleteModal, handleDelete } =
     useDeleteRecipe();
+
+  const handleSidebarOpenChange = (nextIsOpen) => {
+    setHasSidebarInteracted(true);
+    setIsSideBarOpen(nextIsOpen);
+  };
 
   const contextValue = useMemo(
     () => ({
@@ -80,14 +87,16 @@ const ChatLayout = () => {
         recipes={recipes}
         isMobile={isMobile}
         isSideBarOpen={isSideBarOpen}
-        setIsSideBarOpen={setIsSideBarOpen}
+        isSidebarHydrated={isSidebarHydrated}
+        hasSidebarInteracted={hasSidebarInteracted}
+        setIsSideBarOpen={handleSidebarOpenChange}
         currentRecipe={recipe}
         openDeleteModal={openDeleteModal}
       />
       {isMobile && isSideBarOpen && (
         <div
           className="fixed inset-0 bg-black/30 z-20"
-          onClick={() => setIsSideBarOpen(false)}
+          onClick={() => handleSidebarOpenChange(false)}
         />
       )}
       <main className="relative flex flex-1 flex-col min-w-0 overflow-hidden">
@@ -95,7 +104,7 @@ const ChatLayout = () => {
           recipe={recipe}
           recipeVersion={recipeVersion}
           isSideBarOpen={isSideBarOpen}
-          setIsSideBarOpen={setIsSideBarOpen}
+          setIsSideBarOpen={handleSidebarOpenChange}
           setIsEditModalOpen={setIsEditModalOpen}
           openDeleteModal={openDeleteModal}
           isMobile={isMobile}

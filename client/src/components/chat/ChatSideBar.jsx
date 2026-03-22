@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import { useState, useEffect, memo } from "react";
 import { Link } from "react-router";
 import logo from "../../assets/logo.png";
 import { X, PanelLeftClose, CirclePlus } from "lucide-react";
@@ -9,24 +9,40 @@ const ChatSideBar = memo(
     recipes,
     isMobile,
     isSideBarOpen,
+    isSidebarHydrated,
+    hasSidebarInteracted,
     setIsSideBarOpen,
     currentRecipe,
     openDeleteModal,
   }) => {
+    const [hasMounted, setHasMounted] = useState(false);
+
+    useEffect(() => {
+      setHasMounted(true);
+    }, []);
+
     return (
       <nav
         className={`
-        inset-y-0 left-0 z-100 
-        h-full duration-200 ease-out transition-all flex-col flex bg-mantle
-        gap-4 text-sm lg:border-r-gray-300 lg:border-r-1 
+        inset-y-0 left-0 z-100 h-full flex-col flex bg-mantle gap-4 text-sm
+        ${isMobile ? "fixed" : "relative shrink-0 border-r-1 border-r-gray-300"}
         ${
-          isSideBarOpen
-            ? "translate-x-0 w-70 p-2"
-            : "-translate-x-full w-0 p-0 lg:translate-x-0 overflow-hidden"
+          isMobile
+            ? isSideBarOpen
+              ? "translate-x-0 w-70 p-2"
+              : "-translate-x-full w-0 p-0 overflow-hidden"
+            : isSideBarOpen
+              ? "w-70 p-2"
+              : "w-0 p-0 overflow-hidden"
         }
-
-          ${isMobile && "fixed"}
-      `}
+        ${
+          hasMounted && isSidebarHydrated && hasSidebarInteracted
+            ? isMobile
+              ? "duration-200 transition-all ease-out"
+              : "duration-200 transition-[width,padding] ease-out"
+            : "transition-none"
+        }
+        `}
       >
         <div className="flex justify-between items-center">
           <Link
