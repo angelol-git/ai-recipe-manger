@@ -1,13 +1,22 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { CircleUserRound, LogOut } from "lucide-react";
 import GoogleLoginButton from "./GoogleLoginButton";
 import API_BASE_URL from "../config/api.js";
 import { useToast } from "../hooks/useToast";
 
-function UserOptions({ user, logout }) {
+function UserOptions({
+  user,
+  logout,
+  openUpwards = false,
+  hideUserSummary = false,
+  redirectOnLogout = null,
+  redirectOnLogin = null,
+}) {
   const [isUserOptionsOpen, setIsUserOptionsOpen] = useState(false);
   const menuRef = useRef(null);
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
   async function handleSuccess(response) {
     try {
@@ -19,7 +28,12 @@ function UserOptions({ user, logout }) {
       });
 
       if (result.ok) {
-        window.location.reload();
+        if (redirectOnLogin) {
+          navigate(redirectOnLogin);
+          window.location.reload();
+        } else {
+          window.location.reload();
+        }
       } else {
         showToast("Login failed. Please try again.", "error");
       }
@@ -64,25 +78,38 @@ function UserOptions({ user, logout }) {
         <div
           role="menu"
           aria-labelledby="profileMenuButton"
-          className={`absolute right-0 z-50 rounded-lg border border-secondary/20 bg-base p-2 shadow-xl ${
-            user ? "w-52" : "w-[264px]"
-          }`}
+          className={`absolute z-50 rounded-lg border border-secondary/20 bg-base p-2 shadow-xl ${
+            openUpwards
+              ? "bottom-[calc(100%+0.35rem)] left-0"
+              : "top-[calc(100%+0.35rem)] right-0"
+          } ${user ? "w-52" : "w-[264px]"}`}
         >
           {user ? (
             <div className="flex flex-col text-primary">
-              <div className="px-2 py-2">
-                <p className="text-xs text-secondary">Signed in</p>
-                <p
-                  className="mt-1 truncate text-sm text-primary"
-                  title={user.email}
-                >
-                  {user.email}
-                </p>
-              </div>
-              <div className="my-1 h-[1px] bg-secondary/30" />
+              {!hideUserSummary && (
+                <>
+                  <div className="px-2 py-2">
+                    <p className="text-xs text-secondary">Signed in</p>
+                    <p
+                      className="mt-1 truncate text-sm text-primary"
+                      title={user.name || user.email}
+                    >
+                      {user.name || user.email}
+                    </p>
+                  </div>
+                  <div className="my-1 h-[1px] bg-secondary/30" />
+                </>
+              )}
               <button
                 onClick={() => {
-                  logout.mutate();
+                  logout.mutate(undefined, {
+                    onSuccess: () => {
+                      setIsUserOptionsOpen(false);
+                      if (redirectOnLogout) {
+                        navigate(redirectOnLogout);
+                      }
+                    },
+                  });
                 }}
                 className="flex gap-2 items-center rounded-lg px-2 py-2 text-sm text-primary cursor-pointer transition-colors duration-150 hover:bg-base-hover"
               >

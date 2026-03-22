@@ -12,7 +12,7 @@ import { useToast } from "../../hooks/useToast";
 
 const ChatLayout = () => {
   const { id } = useParams();
-  const { user, isLoading: isUserLoading } = useUser();
+  const { user, logout, isLoading: isUserLoading } = useUser();
   const { data: recipes } = useRecipes();
   const isMobile = useIsMobile();
   const { isSideBarOpen, setIsSideBarOpen, isSidebarHydrated } =
@@ -85,6 +85,8 @@ const ChatLayout = () => {
     >
       <ChatSideBar
         recipes={recipes}
+        user={user}
+        logout={logout}
         isMobile={isMobile}
         isSideBarOpen={isSideBarOpen}
         isSidebarHydrated={isSidebarHydrated}

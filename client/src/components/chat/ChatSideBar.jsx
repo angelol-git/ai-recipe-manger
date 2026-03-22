@@ -3,10 +3,13 @@ import { Link } from "react-router";
 import logo from "../../assets/logo.png";
 import { X, PanelLeftClose, CirclePlus } from "lucide-react";
 import RecipeOptions from "../RecipeOptions";
+import UserOptions from "../UserOptions";
 
 const ChatSideBar = memo(
   ({
     recipes,
+    user,
+    logout,
     isMobile,
     isSideBarOpen,
     isSidebarHydrated,
@@ -88,7 +91,7 @@ const ChatSideBar = memo(
             New Chat
           </Link>
         </button>
-        <div className="flex flex-col gap-1">
+        <div className="flex min-h-0 flex-1 flex-col gap-1">
           <h2 className="text-secondary">Recipes</h2>
           <div className="flex w-full flex-col overflow-y-auto">
             {recipes?.map((recipe) => {
@@ -103,6 +106,23 @@ const ChatSideBar = memo(
                 />
               );
             })}
+          </div>
+        </div>
+        <div className="mt-auto border-t border-secondary/20 pt-2">
+          <div className="flex items-center justify-between rounded-lg px-1 py-1 hover:bg-mantle-hover/40">
+            <UserOptions
+              user={user}
+              logout={logout}
+              openUpwards
+              hideUserSummary
+              redirectOnLogin="/"
+              redirectOnLogout="/"
+            />
+            <div className="min-w-0 flex-1 px-2">
+              <p className="truncate text-sm text-primary">
+                {user?.name || user?.email || "Guest"}
+              </p>
+            </div>
           </div>
         </div>
       </nav>
