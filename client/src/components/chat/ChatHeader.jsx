@@ -30,7 +30,7 @@ const ChatHeader = ({
 
         {isSideBarOpen && isMobile && <div className="h-8 w-8" />}
       </div>
-      <h1 className="font-lora w-full max-w-screen-md text-2xl font-semibold lg:px-4">
+      <h1 className="font-lora line-clamp-2 w-full max-w-screen-md text-2xl leading-snug font-semibold lg:px-4">
         {recipe?.title}
       </h1>
       {recipe && (

@@ -70,6 +70,18 @@ export function validateAiResponse(response, message) {
     );
   }
 
+  if(parsedRecipe.title.length > 150){
+      throw new AiValidationError(
+      "Recipe title is too long.",
+      {
+        type: "invalid_json",
+        rawResponse,
+        source_prompt: message,
+        ai_model: model,
+      },
+    ); 
+  }
+
   parsedRecipe.ai_model = model;
   parsedRecipe.source_prompt = message;
   return parsedRecipe;
@@ -87,6 +99,7 @@ export function createPrompt(message, recipeVersion = {}, urlContent = {}) {
     2. **Hierarchy**: If a URL is provided, prioritize structured JSON-LD or Recipe Schema data.
     3. **Modification Detection**: If a Current State is provided, analyze the User Message to determine if it requests a modification (scaling, substitution, dietary change, etc.) vs a new recipe. If modifying, apply changes to the Current State while preserving the original structure.
     4. **Format**: Return ONLY valid JSON. No markdown backticks. No conversational filler.
+    5. **Title Length**: The recipe title must be 150 characters or fewer.
 
     ### MODIFICATION HANDLING:
     **CRITICAL**: When a Current State is provided, determine if the user is requesting a recipe modification:
@@ -147,7 +160,7 @@ export function createPrompt(message, recipeVersion = {}, urlContent = {}) {
 
     ### SCHEMA:
      {
-      "title": "string",
+      "title": "string (max 150 characters)",
       "description": "string",
       "ingredients": ["string"],
       "instructions": ["string"],

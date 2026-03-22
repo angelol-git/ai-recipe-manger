@@ -11,11 +11,13 @@ function EditTitle({ draft, handleDraftString }) {
               name="editTitle"
               id="editTitle"
               type="text"
+              maxLength={150}
               value={draft?.title || ""}
               className="border-overlay0 border-b px-2 pb-1"
               onChange={(event) => {
                 handleDraftString("title", event.target.value);
               }}
+              required
             />
           </div>
           <button

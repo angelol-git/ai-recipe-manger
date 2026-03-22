@@ -26,7 +26,7 @@ export const updateRecipeSchema = z.object({
       title: z
         .string()
         .min(1)
-        .max(200)
+        .max(150)
         .transform((s) => s.trim()),
       recipeDetails: recipeDetailsSchema,
       description: z
