@@ -16,6 +16,16 @@ export async function extractRecipeFromUrl(url) {
   return extractRecipeFromHtml(html);
 }
 
+export async function extractJsonLdRecipeFromUrl(url) {
+  const html = await fetchHtmlFromUrl(url);
+  return extractJsonLdRecipeFromHtml(html);
+}
+
+export async function extractMarkdownFromUrl(url) {
+  const html = await fetchHtmlFromUrl(url);
+  return extractMarkdownFromHtml(html);
+}
+
 export async function fetchHtmlFromUrl(url) {
   const impit = new Impit({
     browser: "chrome",
@@ -34,6 +44,16 @@ export function extractRecipeFromHtml(html) {
     return jsonLd;
   }
 
+  return parseHtml($);
+}
+
+export function extractJsonLdRecipeFromHtml(html) {
+  const $ = cheerio.load(html);
+  return parseJsonLd($);
+}
+
+export function extractMarkdownFromHtml(html) {
+  const $ = cheerio.load(html);
   return parseHtml($);
 }
 

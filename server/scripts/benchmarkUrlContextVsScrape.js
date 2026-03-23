@@ -8,7 +8,10 @@ import {
   getModelName,
   validateAiResponse,
 } from "../services/aiService.js";
-import { extractRecipeFromUrl } from "../services/scrapingService.js";
+import {
+  extractJsonLdRecipeFromUrl,
+  extractMarkdownFromUrl,
+} from "../services/scrapingService.js";
 import { aiRecipeSchema } from "../validation/aiSchemas.js";
 
 dotenv.config();
@@ -67,6 +70,27 @@ function serializeContextData(urlContent) {
     : urlContent;
 }
 
+async function generateRecipe(ai, model, prompt, extraConfig = {}) {
+  const startedAt = performance.now();
+  const response = await ai.models.generateContent({
+    model,
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    config: {
+      responseMimeType: "application/json",
+      responseJsonSchema: z.toJSONSchema(aiRecipeSchema),
+      temperature: 0.7,
+      ...extraConfig,
+    },
+  });
+  const elapsedMs = performance.now() - startedAt;
+
+  if (!response.usageMetadata) {
+    throw new Error("Response is missing usageMetadata.");
+  }
+
+  return { response, elapsedMs };
+}
+
 function printUsage(label, usageMetadata) {
   console.log(`${label}:`);
   console.log(
@@ -83,33 +107,16 @@ function printUsage(label, usageMetadata) {
   );
 }
 
-async function runScrapePath(ai, model, url) {
-  const extractedContext = await extractRecipeFromUrl(url);
+async function runJsonLdPath(ai, model, url) {
+  const extractedContext = await extractJsonLdRecipeFromUrl(url);
   const extractedTitle = getExtractedTitle(extractedContext);
 
-  if (!extractedTitle) {
-    throw new Error("Scrape path did not extract a valid recipe title.");
+  if (!extractedContext || !extractedTitle) {
+    throw new Error("JSON-LD path did not extract a valid recipe object.");
   }
 
-  const contextData = serializeContextData(extractedContext);
-  const prompt = createPrompt(url, null, contextData);
-
-  const startedAt = performance.now();
-  const response = await ai.models.generateContent({
-    model,
-    contents: [{ role: "user", parts: [{ text: prompt }] }],
-    config: {
-      responseMimeType: "application/json",
-      responseJsonSchema: z.toJSONSchema(aiRecipeSchema),
-      temperature: 0.7,
-    },
-  });
-  const elapsedMs = performance.now() - startedAt;
-
-  if (!response.usageMetadata) {
-    throw new Error("Scrape path response is missing usageMetadata.");
-  }
-
+  const prompt = createPrompt(url, null, serializeContextData(extractedContext));
+  const { response, elapsedMs } = await generateRecipe(ai, model, prompt);
   const parsedRecipe = validateAiResponse(response, url);
 
   return {
@@ -120,26 +127,30 @@ async function runScrapePath(ai, model, url) {
   };
 }
 
-async function runUrlContextPath(ai, model, url) {
-  const prompt = createPrompt(url, null, null);
+async function runMarkdownPath(ai, model, url) {
+  const extractedContext = await extractMarkdownFromUrl(url);
 
-  const startedAt = performance.now();
-  const response = await ai.models.generateContent({
-    model,
-    contents: [{ role: "user", parts: [{ text: prompt }] }],
-    config: {
-      tools: [{ urlContext: {} }],
-      responseMimeType: "application/json",
-      responseJsonSchema: z.toJSONSchema(aiRecipeSchema),
-      temperature: 0.7,
-    },
-  });
-  const elapsedMs = performance.now() - startedAt;
-
-  if (!response.usageMetadata) {
-    throw new Error("urlContext path response is missing usageMetadata.");
+  if (!extractedContext || typeof extractedContext !== "string") {
+    throw new Error("Markdown path did not extract markdown content.");
   }
 
+  const prompt = createPrompt(url, null, extractedContext);
+  const { response, elapsedMs } = await generateRecipe(ai, model, prompt);
+  const parsedRecipe = validateAiResponse(response, url);
+
+  return {
+    elapsedMs,
+    markdownChars: extractedContext.length,
+    parsedTitle: parsedRecipe.title,
+    usageMetadata: response.usageMetadata,
+  };
+}
+
+async function runUrlContextPath(ai, model, url) {
+  const prompt = createPrompt(url, null, null);
+  const { response, elapsedMs } = await generateRecipe(ai, model, prompt, {
+    tools: [{ urlContext: {} }],
+  });
   const urlContextMetadata = response.candidates?.[0]?.urlContextMetadata;
   const retrievedUrls = urlContextMetadata?.urlMetadata ?? [];
 
@@ -157,6 +168,17 @@ async function runUrlContextPath(ai, model, url) {
   };
 }
 
+function printComparisonLine(label, result) {
+  console.log(`  ${label} input tokens: ${getInputTokens(result.usageMetadata)}`);
+  console.log(`  ${label} total tokens: ${result.usageMetadata.totalTokenCount ?? 0}`);
+}
+
+function getCheapestLabel(entries, selector) {
+  return entries.reduce((best, current) =>
+    selector(current.result) < selector(best.result) ? current : best,
+  ).label;
+}
+
 async function run() {
   const { url, model } = parseArgs(process.argv.slice(2));
   const apiKey = process.env.GOOGLE_API_KEY;
@@ -167,16 +189,23 @@ async function run() {
 
   const ai = new GoogleGenAI({ apiKey });
 
-  console.log("Benchmarking scrape vs urlContext");
+  console.log("Benchmarking jsonld vs markdown vs urlContext");
   console.log(`URL: ${url}`);
   console.log(`Model: ${model}`);
   console.log("");
 
-  const scrapeResult = await runScrapePath(ai, model, url);
-  printUsage("Scrape path", scrapeResult.usageMetadata);
-  console.log(`  elapsed: ${formatMs(scrapeResult.elapsedMs)}`);
-  console.log(`  extractedTitle: ${scrapeResult.extractedTitle}`);
-  console.log(`  parsedTitle: ${scrapeResult.parsedTitle}`);
+  const jsonLdResult = await runJsonLdPath(ai, model, url);
+  printUsage("JSON-LD path", jsonLdResult.usageMetadata);
+  console.log(`  elapsed: ${formatMs(jsonLdResult.elapsedMs)}`);
+  console.log(`  extractedTitle: ${jsonLdResult.extractedTitle}`);
+  console.log(`  parsedTitle: ${jsonLdResult.parsedTitle}`);
+  console.log("");
+
+  const markdownResult = await runMarkdownPath(ai, model, url);
+  printUsage("Markdown path", markdownResult.usageMetadata);
+  console.log(`  elapsed: ${formatMs(markdownResult.elapsedMs)}`);
+  console.log(`  markdownChars: ${markdownResult.markdownChars}`);
+  console.log(`  parsedTitle: ${markdownResult.parsedTitle}`);
   console.log("");
 
   const urlContextResult = await runUrlContextPath(ai, model, url);
@@ -187,30 +216,27 @@ async function run() {
   console.log(JSON.stringify(urlContextResult.urlContextMetadata, null, 2));
   console.log("");
 
-  const scrapeInputTokens = getInputTokens(scrapeResult.usageMetadata);
-  const urlContextInputTokens = getInputTokens(urlContextResult.usageMetadata);
-  const scrapeTotalTokens = scrapeResult.usageMetadata.totalTokenCount ?? 0;
-  const urlContextTotalTokens =
-    urlContextResult.usageMetadata.totalTokenCount ?? 0;
-  const inputDelta = Math.abs(scrapeInputTokens - urlContextInputTokens);
-  const totalDelta = Math.abs(scrapeTotalTokens - urlContextTotalTokens);
+  const results = [
+    { label: "jsonld", result: jsonLdResult },
+    { label: "markdown", result: markdownResult },
+    { label: "urlContext", result: urlContextResult },
+  ];
 
   console.log("Comparison summary:");
-  console.log(`  scrape input tokens: ${scrapeInputTokens}`);
-  console.log(`  urlContext input tokens: ${urlContextInputTokens}`);
-  console.log(`  scrape total tokens: ${scrapeTotalTokens}`);
-  console.log(`  urlContext total tokens: ${urlContextTotalTokens}`);
-  console.log(`  absolute input token delta: ${inputDelta}`);
-  console.log(`  absolute total token delta: ${totalDelta}`);
+  printComparisonLine("jsonld", jsonLdResult);
+  printComparisonLine("markdown", markdownResult);
+  printComparisonLine("urlContext", urlContextResult);
   console.log(
-    `  fewer input tokens: ${
-      scrapeInputTokens <= urlContextInputTokens ? "scrape" : "urlContext"
-    }`,
+    `  cheapest input path: ${getCheapestLabel(
+      results,
+      (result) => getInputTokens(result.usageMetadata),
+    )}`,
   );
   console.log(
-    `  fewer total tokens: ${
-      scrapeTotalTokens <= urlContextTotalTokens ? "scrape" : "urlContext"
-    }`,
+    `  cheapest total path: ${getCheapestLabel(
+      results,
+      (result) => result.usageMetadata.totalTokenCount ?? Number.POSITIVE_INFINITY,
+    )}`,
   );
 }
 
