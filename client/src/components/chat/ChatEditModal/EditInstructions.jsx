@@ -128,7 +128,7 @@ function EditInstructions({
                   </span>
                   <textarea
                     ref={newTextAreaRef}
-                    className="text-primary w-full resize-none overflow-hidden bg-transparent text-base leading-relaxed outline-none"
+                    className="text-primary w-full resize-none overflow-hidden bg-transparent leading-relaxed outline-none"
                     value={newInstruction}
                     rows={1}
                     placeholder="Enter new instruction..."

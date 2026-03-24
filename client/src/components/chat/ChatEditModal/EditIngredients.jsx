@@ -81,8 +81,8 @@ function EditIngredients({
   }
   return (
     <section className="flex flex-col gap-3">
-      <div className="flex justify-between items-center">
-        <h3 className="font-lora text-lg font-medium text-secondary">
+      <div className="flex items-center justify-between">
+        <h3 className="font-lora text-secondary text-lg font-medium">
           Ingredients
         </h3>
         <button
@@ -90,7 +90,7 @@ function EditIngredients({
           onClick={() => {
             setIsAddingIngredient((prev) => !prev);
           }}
-          className="focus-visible:ring-accent/25 inline-flex min-h-8 cursor-pointer items-center justify-center rounded-full border border-accent/45 bg-accent/8 px-3 py-1 text-sm leading-none text-accent-hover shadow-xs transition-colors hover:border-accent/55 hover:bg-accent/18 hover:text-accent-hover focus-visible:ring-2 focus-visible:outline-none"
+          className="focus-visible:ring-accent/25 border-accent/45 bg-accent/8 text-accent-hover hover:border-accent/55 hover:bg-accent/18 hover:text-accent-hover inline-flex min-h-8 cursor-pointer items-center justify-center rounded-full border px-3 py-1 text-sm leading-none shadow-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           + Add
         </button>
@@ -118,12 +118,12 @@ function EditIngredients({
             {isAddingIngredient && (
               <li
                 ref={newIngredientRef}
-                className="flex items-center gap-2 bg-mantle/70 border border-crust rounded-xl px-3 py-2 transition-all hover:shadow-sm"
+                className="bg-mantle/70 border-crust flex items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:shadow-sm"
               >
-                <div className="flex gap-2 w-full">
+                <div className="flex w-full gap-2">
                   <textarea
                     ref={newTextAreaRef}
-                    className="w-full resize-none overflow-hidden bg-transparent text-base leading-relaxed text-primary outline-none"
+                    className="text-primary w-full resize-none overflow-hidden bg-transparent leading-relaxed outline-none"
                     value={newIngredient}
                     rows={1}
                     placeholder="Enter new ingredient..."

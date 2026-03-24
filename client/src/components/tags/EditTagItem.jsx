@@ -27,7 +27,7 @@ function EditTagItem({
         <input
           id={tag.id}
           type="text"
-          className="border-secondary/50 text-primary placeholder:text-secondary/70 min-w-[4ch] border-0 border-b bg-transparent px-0 pb-0.5 text-base leading-none outline-none"
+          className="border-secondary/50 text-primary placeholder:text-secondary/70 min-w-[4ch] border-0 border-b bg-transparent px-0 pb-0.5 leading-none outline-none"
           value={tag.name}
           size={tag.name.length || 1}
           aria-label="Tag name"
@@ -51,12 +51,12 @@ function EditTagItem({
         onClick={() => {
           handleDelete(tag);
         }}
-        className="focus-visible:ring-accent/25 group inline-flex min-h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-accent/45 bg-accent/8 px-2 text-sm text-accent-hover shadow-xs transition-colors hover:border-accent/55 hover:bg-accent/18 hover:text-accent-hover focus-visible:ring-2 focus-visible:outline-none"
+        className="focus-visible:ring-accent/25 group border-accent/45 bg-accent/8 text-accent-hover hover:border-accent/55 hover:bg-accent/18 hover:text-accent-hover inline-flex min-h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border px-2 text-sm shadow-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
         <X
           size={12}
           strokeWidth={1.5}
-          className="stroke-accent-hover transition-colors group-hover:stroke-accent-hover"
+          className="stroke-accent-hover group-hover:stroke-accent-hover transition-colors"
         />
       </button>
     </div>

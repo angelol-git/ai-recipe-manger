@@ -21,7 +21,6 @@ const ChatLayout = () => {
     isUserLoading,
   );
   const { showToast } = useToast();
-
   const recipe = useMemo(() => {
     if (!recipes || !id) return null;
     return recipes.find((r) => r.id === id) || null;
@@ -32,7 +31,19 @@ const ChatLayout = () => {
   const [hasSidebarInteracted, setHasSidebarInteracted] = useState(false);
 
   const { deleteModal, openDeleteModal, closeDeleteModal, handleDelete } =
-    useDeleteRecipe();
+    useDeleteRecipe({
+      getRedirectPath: ({ type, recipe }) => {
+        const isDeletingActiveRecipe = recipe?.id === id;
+        const isDeletingLastVersion =
+          type === "version" && recipe?.versions?.length === 1;
+
+        if (isDeletingActiveRecipe && (type === "all" || isDeletingLastVersion)) {
+          return "/chat";
+        }
+
+        return null;
+      },
+    });
 
   const handleSidebarOpenChange = (nextIsOpen) => {
     setHasSidebarInteracted(true);

@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { useRecipes } from "./useRecipes";
 
-export function useDeleteRecipe() {
+export function useDeleteRecipe({ getRedirectPath = () => "/" } = {}) {
   const navigate = useNavigate();
   const { deleteRecipe, deleteRecipeVersion } = useRecipes();
 
@@ -23,10 +23,11 @@ export function useDeleteRecipe() {
 
   const handleDelete = useCallback(() => {
     const { type, recipe, recipeVersion } = deleteModal;
+    const redirectPath = getRedirectPath({ type, recipe, recipeVersion });
+
     if (type === "version") {
       if (recipe.versions?.length === 1) {
         deleteRecipe(recipe.id);
-        navigate("/");
       } else {
         deleteRecipeVersion({
           recipeId: recipe.id,
@@ -35,13 +36,18 @@ export function useDeleteRecipe() {
       }
     } else {
       deleteRecipe(recipe.id);
-      navigate("/");
     }
+
+    if (redirectPath) {
+      navigate(redirectPath);
+    }
+
     closeDeleteModal();
   }, [
     deleteModal,
     deleteRecipe,
     deleteRecipeVersion,
+    getRedirectPath,
     navigate,
     closeDeleteModal,
   ]);
