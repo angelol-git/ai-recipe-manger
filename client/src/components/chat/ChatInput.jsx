@@ -35,9 +35,17 @@ const ChatInput = memo(
     const maxHeight = 160;
     const isNewChat = variant === "new-chat";
     const navigate = useNavigate();
+    const isActiveRef = useRef(true);
 
     const { sendCreateMessage, isPending, isSuccess } = useChat(showToast);
     const canSend = message.trim().length > 0 && !isPending;
+
+    useEffect(() => {
+      isActiveRef.current = true;
+      return () => {
+        isActiveRef.current = false;
+      };
+    }, []);
 
     useEffect(() => {
       setMessage("");
@@ -88,11 +96,14 @@ const ChatInput = memo(
             recipeVersion: recipe?.versions?.[recipeVersion],
           });
 
-          if (!recipe?.id && result?.reply?.id) {
+          showToast("Recipe created successfully!", "success");
+
+          //Chat input in unmounted, the user is on a different page do not redirect
+          if (!isActiveRef.current) return;
+
+          if (isNewChat) {
             navigate(`/chat/${result.reply.id}`);
           }
-
-          showToast("Recipe created successfully!", "success");
         } catch {
           showToast("Failed to create recipe. Please try again.", "error");
         }
