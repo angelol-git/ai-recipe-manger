@@ -15,6 +15,7 @@ function Chat() {
     setRecipeVersion,
     isEditModalOpen,
     setIsEditModalOpen,
+    isLoading,
   } = useOutletContext();
 
   const [isAskModalOpen, setIsAskModalOpen] = useState(false);
@@ -50,16 +51,16 @@ function Chat() {
     };
   }, [isChatOpen, hasRecipeNavigation]);
 
-  if (!recipe) {
+  if (!recipe && !isLoading) {
     return <NotFound />;
   }
 
   return (
     <div className="relative flex h-full min-h-0 flex-col">
-      <div className="flex-1 min-h-0 overflow-y-auto ios-scroll">
+      <div className="ios-scroll min-h-0 flex-1 overflow-y-auto">
         <div
           ref={replyPanelRef}
-          className="w-full max-w-screen-md mx-auto px-4 pt-2"
+          className="mx-auto w-full max-w-screen-md px-4 pt-2"
           style={{ paddingBottom: `${composerHeight + 16}px` }}
         >
           <ChatTags recipe={recipe} />
@@ -82,9 +83,9 @@ function Chat() {
       <div className="pointer-events-none absolute inset-x-0 bottom-0">
         <div
           ref={composerRef}
-          className="w-full max-w-screen-md mx-auto px-2 pt-2 pb-safe"
+          className="pb-safe mx-auto w-full max-w-screen-md px-2 pt-2"
         >
-          <div className="flex justify-between items-center gap-3">
+          <div className="flex items-center justify-between gap-3">
             {hasRecipeNavigation && !isChatOpen && (
               <div className="pointer-events-auto shrink-0">
                 <ChatNavigation

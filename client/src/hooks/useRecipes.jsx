@@ -45,21 +45,32 @@ export function useRecipes() {
     onMutate: async ({ recipeId, recipeVersionId }) => {
       //Pause any fetching result of the previous query, let our manual optimistic update finish first
       if (user) {
-        await queryClient.cancelQueries(["recipes", user?.id || "guest_recipes"]);
+        await queryClient.cancelQueries([
+          "recipes",
+          user?.id || "guest_recipes",
+        ]);
 
-        const previousRecipes = queryClient.getQueryData(["recipes", user?.id || "guest_recipes"]);
-        queryClient.setQueryData(["recipes", user?.id || "guest_recipes"], (old) => {
-          if (!old) return old;
+        const previousRecipes = queryClient.getQueryData([
+          "recipes",
+          user?.id || "guest_recipes",
+        ]);
+        queryClient.setQueryData(
+          ["recipes", user?.id || "guest_recipes"],
+          (old) => {
+            if (!old) return old;
 
-          return old.map((recipe) => {
-            if (recipe.id !== recipeId) return recipe;
+            return old.map((recipe) => {
+              if (recipe.id !== recipeId) return recipe;
 
-            return {
-              ...recipe,
-              versions: recipe.versions.filter((v) => v.id !== recipeVersionId),
-            };
-          });
-        });
+              return {
+                ...recipe,
+                versions: recipe.versions.filter(
+                  (v) => v.id !== recipeVersionId,
+                ),
+              };
+            });
+          },
+        );
         return { previousRecipes };
       }
     },
@@ -89,21 +100,33 @@ export function useRecipes() {
 
     onMutate: async (recipeId) => {
       if (user) {
-        await queryClient.cancelQueries(["recipes", user?.id || "guest_recipes"]);
+        await queryClient.cancelQueries([
+          "recipes",
+          user?.id || "guest_recipes",
+        ]);
 
-        const previousRecipes = queryClient.getQueryData(["recipes", user?.id || "guest_recipes"]);
-        queryClient.setQueryData(["recipes", user?.id || "guest_recipes"], (old) => {
-          if (!old) return old;
+        const previousRecipes = queryClient.getQueryData([
+          "recipes",
+          user?.id || "guest_recipes",
+        ]);
+        queryClient.setQueryData(
+          ["recipes", user?.id || "guest_recipes"],
+          (old) => {
+            if (!old) return old;
 
-          return old.filter((recipe) => recipe.id !== recipeId);
-        });
+            return old.filter((recipe) => recipe.id !== recipeId);
+          },
+        );
         return { previousRecipes };
       }
     },
 
     onError: (err, variables, context) => {
       if (context?.previousRecipes) {
-        queryClient.setQueryData(["recipes", user?.id || "guest_recipes"], context.previousRecipes);
+        queryClient.setQueryData(
+          ["recipes", user?.id || "guest_recipes"],
+          context.previousRecipes,
+        );
       }
     },
 
@@ -123,27 +146,55 @@ export function useRecipes() {
 
     onMutate: async (updatedRecipe) => {
       if (user) {
-        await queryClient.cancelQueries(["recipes", user?.id || "guest_recipes"]);
+        await queryClient.cancelQueries([
+          "recipes",
+          user?.id || "guest_recipes",
+        ]);
 
-        const previousRecipes = queryClient.getQueryData(["recipes", user?.id || "guest_recipes"]);
-        queryClient.setQueryData(["recipes", user?.id || "guest_recipes"], (old) => {
-          if (!old) return old;
+        const previousRecipes = queryClient.getQueryData([
+          "recipes",
+          user?.id || "guest_recipes",
+        ]);
+        queryClient.setQueryData(
+          ["recipes", user?.id || "guest_recipes"],
+          (old) => {
+            if (!old?.length) return old;
 
-          return old.map((recipe) => {
-            if (recipe.id === updatedRecipe.id) {
-              return updatedRecipe;
-            } else {
-              return recipe;
-            }
-          });
-        });
+            return old.map((recipe) => {
+              if (recipe.id !== updatedRecipe.recipe_id) {
+                return recipe;
+              }
+
+              return {
+                ...recipe,
+                title: updatedRecipe.title,
+                tags: updatedRecipe.tags || [],
+                versions: recipe.versions.map((version) =>
+                  version.id === updatedRecipe.id
+                    ? {
+                        ...version,
+                        description: updatedRecipe.description,
+                        instructions: updatedRecipe.instructions,
+                        ingredients: updatedRecipe.ingredients,
+                        recipeDetails: updatedRecipe.recipeDetails,
+                        source_prompt: updatedRecipe.source_prompt,
+                      }
+                    : version,
+                ),
+              };
+            });
+          },
+        );
         return { previousRecipes };
       }
     },
 
     onError: (err, variables, context) => {
       if (context?.previousRecipes) {
-        queryClient.setQueryData(["recipes", user?.id || "guest_recipes"], context.previousRecipes);
+        queryClient.setQueryData(
+          ["recipes", user?.id || "guest_recipes"],
+          context.previousRecipes,
+        );
       }
     },
 

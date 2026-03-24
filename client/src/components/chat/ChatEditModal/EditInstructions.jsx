@@ -26,6 +26,7 @@ function EditInstructions({
   handleDraftArrayPush,
   handleDraftArrayReorder,
 }) {
+  const instructions = draft?.instructions || [];
   const [isAddingInstruction, setIsAddingInstruction] = useState(false);
   const [newInstruction, setNewInstruction] = useState("");
   const newInstructionRef = useRef(null);
@@ -56,15 +57,11 @@ function EditInstructions({
       return;
     }
 
-    const oldIndex = draft?.instructions.findIndex((i) => i.id === active.id);
-    const newIndex = draft?.instructions.findIndex((i) => i.id === over.id);
+    const oldIndex = instructions.findIndex((i) => i.id === active.id);
+    const newIndex = instructions.findIndex((i) => i.id === over.id);
 
     if (oldIndex !== -1 && newIndex !== -1) {
-      const reorderedInstructions = arrayMove(
-        draft?.instructions,
-        oldIndex,
-        newIndex,
-      );
+      const reorderedInstructions = arrayMove(instructions, oldIndex, newIndex);
       handleDraftArrayReorder("instructions", reorderedInstructions);
     }
   }
@@ -95,7 +92,7 @@ function EditInstructions({
           onClick={() => {
             setIsAddingInstruction((prev) => !prev);
           }}
-          className="focus-visible:ring-accent/25 inline-flex min-h-8 cursor-pointer items-center justify-center rounded-full border border-accent/45 bg-accent/8 px-3 py-1 text-sm leading-none text-accent-hover shadow-xs transition-colors hover:border-accent/55 hover:bg-accent/18 hover:text-accent-hover focus-visible:ring-2 focus-visible:outline-none"
+          className="focus-visible:ring-accent/25 border-accent/45 bg-accent/8 text-accent-hover hover:border-accent/55 hover:bg-accent/18 hover:text-accent-hover inline-flex min-h-8 cursor-pointer items-center justify-center rounded-full border px-3 py-1 text-sm leading-none shadow-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           + Add
         </button>
@@ -106,11 +103,11 @@ function EditInstructions({
         onDragEnd={handleDragEnd}
       >
         <SortableContext
-          items={draft?.instructions?.map((item) => item.id) || []}
+          items={instructions.map((item) => item.id)}
           strategy={verticalListSortingStrategy}
         >
           <ol className="list-decimal space-y-3">
-            {draft?.instructions.map((instruction, index) => (
+            {instructions.map((instruction, index) => (
               <SortableInstruction
                 key={instruction.id}
                 id={instruction.id}
@@ -127,7 +124,7 @@ function EditInstructions({
               >
                 <div className="flex w-full gap-2">
                   <span className="font-lora font-semibold">
-                    {(draft?.instructions?.length || 0) + 1}.{" "}
+                    {instructions.length + 1}.{" "}
                   </span>
                   <textarea
                     ref={newTextAreaRef}

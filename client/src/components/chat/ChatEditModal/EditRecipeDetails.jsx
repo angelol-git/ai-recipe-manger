@@ -1,4 +1,6 @@
 function EditRecipeDetails({ draft, handleDraftDetail }) {
+  const recipeDetails = draft?.recipeDetails || {};
+
   return (
     <section className="flex flex-col gap-3">
       <h3 className="font-lora text-secondary text-lg font-medium tracking-wide">
@@ -8,17 +10,17 @@ function EditRecipeDetails({ draft, handleDraftDetail }) {
         <div className="border-crust bg-mantle/50 flex flex-col gap-4 rounded-xl border p-4">
           <DetailItem
             label="calories"
-            value={draft?.recipeDetails.calories}
+            value={recipeDetails.calories}
             handleDraftDetail={handleDraftDetail}
           />
           <DetailItem
             label="total time"
-            value={draft?.recipeDetails.total_time}
+            value={recipeDetails.total_time}
             handleDraftDetail={handleDraftDetail}
           />
           <DetailItem
             label="servings"
-            value={draft?.recipeDetails.servings}
+            value={recipeDetails.servings}
             handleDraftDetail={handleDraftDetail}
           />
         </div>

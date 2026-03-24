@@ -1,3 +1,8 @@
+import {
+  normalizeStoredRecipe,
+  normalizeStoredRecipes,
+} from "./normalizeStoredRecipe.js";
+
 function generateId() {
   return crypto.randomUUID();
 }
@@ -12,7 +17,12 @@ export function getLocalRecipes() {
       localStorage.removeItem("recipe-guest-recipes");
       return [];
     }
-    return parsed;
+    const normalizedRecipes = normalizeStoredRecipes(parsed);
+    localStorage.setItem(
+      "recipe-guest-recipes",
+      JSON.stringify(normalizedRecipes),
+    );
+    return normalizedRecipes;
   } catch (error) {
     console.error("Failed to parse localStorage recipes:", error);
     localStorage.removeItem("recipe-guest-recipes");
@@ -22,17 +32,19 @@ export function getLocalRecipes() {
 
 export function addLocalRecipe(recipe) {
   const recipes = getLocalRecipes();
-  recipes.push(recipe);
+  const normalizedRecipe = normalizeStoredRecipe(recipe);
+  recipes.push(normalizedRecipe);
   localStorage.setItem("recipe-guest-recipes", JSON.stringify(recipes));
-  return recipe;
+  return normalizedRecipe;
 }
 
 export function addLocalRecipeVersion(recipe) {
   const recipes = getLocalRecipes();
-  const existingIndex = recipes.findIndex((r) => r.id === recipe.id);
+  const normalizedRecipe = normalizeStoredRecipe(recipe);
+  const existingIndex = recipes.findIndex((r) => r.id === normalizedRecipe.id);
 
-  if (existingIndex !== -1 && recipe.versions?.length > 0) {
-    const newVersion = recipe.versions[0];
+  if (existingIndex !== -1 && normalizedRecipe.versions?.length > 0) {
+    const newVersion = normalizedRecipe.versions[0];
     if (!Array.isArray(recipes[existingIndex].versions)) {
       recipes[existingIndex].versions = [];
     }
@@ -40,7 +52,7 @@ export function addLocalRecipeVersion(recipe) {
     localStorage.setItem("recipe-guest-recipes", JSON.stringify(recipes));
   }
 
-  return recipe;
+  return normalizedRecipe;
 }
 
 export function deleteLocalRecipeAll(id) {
@@ -86,11 +98,11 @@ export function updateLocalRecipe(recipe) {
     };
   }
 
-  recipes[existingIndex] = {
+  recipes[existingIndex] = normalizeStoredRecipe({
     ...recipes[existingIndex],
     title: recipe.title,
     tags: recipe.tags || [],
-  };
+  });
 
   localStorage.setItem("recipe-guest-recipes", JSON.stringify(recipes));
 }

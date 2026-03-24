@@ -13,10 +13,13 @@ import { useToast } from "../../hooks/useToast";
 const ChatLayout = () => {
   const { id } = useParams();
   const { user, logout, isLoading: isUserLoading } = useUser();
-  const { data: recipes } = useRecipes();
+  const { data: recipes, isLoading } = useRecipes();
   const isMobile = useIsMobile();
-  const { isSideBarOpen, setIsSideBarOpen, isSidebarHydrated } =
-    useChatSidebar(user, isMobile, isUserLoading);
+  const { isSideBarOpen, setIsSideBarOpen, isSidebarHydrated } = useChatSidebar(
+    user,
+    isMobile,
+    isUserLoading,
+  );
   const { showToast } = useToast();
 
   const recipe = useMemo(() => {
@@ -48,6 +51,7 @@ const ChatLayout = () => {
       openDeleteModal,
       isEditModalOpen,
       setIsEditModalOpen,
+      isLoading,
     }),
     [
       recipe,
@@ -60,6 +64,7 @@ const ChatLayout = () => {
       openDeleteModal,
       isEditModalOpen,
       setIsEditModalOpen,
+      isLoading,
     ],
   );
 
@@ -81,7 +86,7 @@ const ChatLayout = () => {
 
   return (
     <div
-      className={`bg-base relative flex overscroll-contain h-[100dvh] overflow-hidden text-primary w-full`}
+      className={`bg-base text-primary relative flex h-[100dvh] w-full overflow-hidden overscroll-contain`}
     >
       <ChatSideBar
         recipes={recipes}
@@ -97,11 +102,11 @@ const ChatLayout = () => {
       />
       {isMobile && isSideBarOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-20"
+          className="fixed inset-0 z-20 bg-black/30"
           onClick={() => handleSidebarOpenChange(false)}
         />
       )}
-      <main className="relative flex flex-1 flex-col min-w-0 overflow-hidden">
+      <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
         <ChatHeader
           recipe={recipe}
           recipeVersion={recipeVersion}
@@ -111,7 +116,7 @@ const ChatLayout = () => {
           openDeleteModal={openDeleteModal}
           isMobile={isMobile}
         />
-        <div className="flex-1 min-h-0 overflow-hidden">
+        <div className="min-h-0 flex-1 overflow-hidden">
           <Outlet context={contextValue} />
         </div>
       </main>

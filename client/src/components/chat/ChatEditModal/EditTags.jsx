@@ -10,6 +10,7 @@ function EditTags({
   handleDraftTagDelete,
   handleDraftTagAdd,
 }) {
+  const tags = draft?.tags || [];
   const [isAddingTag, setIsAddingTag] = useState(false);
   const [newTag, setNewTag] = useState({
     name: "",
@@ -46,8 +47,8 @@ function EditTags({
       <div className="flex justify-between">
         <div className="flex w-full flex-col gap-2">
           <div className="flex flex-wrap gap-3">
-            {draft?.tags.length > 0
-              ? draft?.tags.map((tag) => {
+            {tags.length > 0
+              ? tags.map((tag) => {
                   return (
                     <EditTagItem
                       key={tag.id}

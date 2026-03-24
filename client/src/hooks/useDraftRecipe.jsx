@@ -1,31 +1,34 @@
 import { useState, useEffect } from "react";
+
 export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
   const [draft, setDraft] = useState(null);
 
   useEffect(() => {
     if (!recipe || !isEditModalOpen) return;
 
-    const currentVersion = recipe.versions[recipeVersion];
+    const currentVersion = recipe.versions?.[recipeVersion];
     if (!currentVersion) return;
 
-    const instructionsWithIds =
-      currentVersion.instructions?.map((text, index) => ({
+    const instructionsWithIds = currentVersion.instructions.map(
+      (text, index) => ({
         id: `instruction-${recipe.id}-${index}`,
-        text: text,
-      })) || [];
+        text,
+      }),
+    );
 
-    const ingredientsWithIds =
-      currentVersion.ingredients?.map((text, index) => ({
-        id: `ingredient-${recipe.id}-${index}`,
-        text: text,
-      })) || [];
+    const ingredientsWithIds = currentVersion.ingredients.map((text, index) => ({
+      id: `ingredient-${recipe.id}-${index}`,
+      text,
+    }));
 
-    let draftRecipe = {
+    const draftRecipe = {
       recipe_id: recipe.id,
-      title: recipe.title,
+      title: recipe.title || "",
       created_at: recipe.created_at,
       tags: recipe.tags || [],
       ...currentVersion,
+      description: currentVersion.description || "",
+      recipeDetails: currentVersion.recipeDetails || {},
       instructions: instructionsWithIds,
       ingredients: ingredientsWithIds,
     };
@@ -35,6 +38,8 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
 
   function handleDraftString(field, value) {
     setDraft((prev) => {
+      if (!prev) return prev;
+
       return {
         ...prev,
         [field]: value,
@@ -42,20 +47,26 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     });
   }
   function handleDraftDetail(field, value) {
-    setDraft((prev) => ({
-      ...prev,
-      recipeDetails: {
-        ...prev.recipeDetails,
-        [field]: value,
-      },
-    }));
+    setDraft((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        recipeDetails: {
+          ...(prev.recipeDetails || {}),
+          [field]: value,
+        },
+      };
+    });
   }
 
   function handleDraftTagName(newName, tagId) {
     setDraft((prev) => {
+      if (!prev) return prev;
+
       return {
         ...prev,
-        tags: prev.tags.map((tag) => {
+        tags: (prev.tags || []).map((tag) => {
           if (tag.id === tagId) {
             return {
               ...tag,
@@ -71,6 +82,8 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
 
   function handleDraftTagColor(color, tag) {
     setDraft((prev) => {
+      if (!prev) return prev;
+
       return {
         ...prev,
         tags: (prev.tags || []).map((prevTag) => {
@@ -89,9 +102,11 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
 
   function handleDraftTagDelete(tagId) {
     setDraft((prev) => {
+      if (!prev) return prev;
+
       return {
         ...prev,
-        tags: prev.tags.filter((prevTag) => {
+        tags: (prev.tags || []).filter((prevTag) => {
           return prevTag.id !== tagId;
         }),
       };
@@ -103,6 +118,8 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     if (!trimmedName) return;
 
     setDraft((prev) => {
+      if (!prev) return prev;
+
       const hasMatchingTag = (prev.tags || []).some((prevTag) => {
         return prevTag.name.trim().toLowerCase() === trimmedName.toLowerCase();
       });
@@ -127,9 +144,11 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
 
   function handleDraftArrayUpdate(field, value, targetIndex) {
     setDraft((prev) => {
+      if (!prev) return prev;
+
       return {
         ...prev,
-        [field]: prev[field].map((item, index) => {
+        [field]: (prev[field] || []).map((item, index) => {
           if (targetIndex === index) {
             if (field === "instructions" || field === "ingredients") {
               return { ...item, text: value };
@@ -145,6 +164,8 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
 
   function handleDraftArrayReorder(field, reorderedArray) {
     setDraft((prev) => {
+      if (!prev) return prev;
+
       return {
         ...prev,
         [field]: reorderedArray,
@@ -154,6 +175,8 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
 
   function handleDraftArrayPush(field, newValue) {
     setDraft((prev) => {
+      if (!prev) return prev;
+
       if (field === "instructions" || field === "ingredients") {
         const newItem = {
           id: `${field.slice(0, -1)}-${prev.recipe_id}-${Date.now()}`,
@@ -161,21 +184,23 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
         };
         return {
           ...prev,
-          [field]: [...prev[field], newItem],
+          [field]: [...(prev[field] || []), newItem],
         };
       }
       return {
         ...prev,
-        [field]: [...prev[field], newValue],
+        [field]: [...(prev[field] || []), newValue],
       };
     });
   }
 
   function handleDraftArrayDelete(field, targetIndex) {
     setDraft((prev) => {
+      if (!prev) return prev;
+
       return {
         ...prev,
-        [field]: prev[field].filter((item, index) => {
+        [field]: (prev[field] || []).filter((item, index) => {
           return index !== targetIndex;
         }),
       };

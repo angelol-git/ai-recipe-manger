@@ -40,10 +40,10 @@ const ChatReply = memo(({ recipe, recipeVersion, modalAnchorRef }) => {
   if (!current) return null;
 
   const {
-    recipeDetails,
+    recipeDetails = {},
     description,
-    ingredients,
-    instructions,
+    ingredients = [],
+    instructions = [],
     source_prompt,
   } = current;
 
@@ -95,7 +95,7 @@ const ChatReply = memo(({ recipe, recipeVersion, modalAnchorRef }) => {
 
       <p className="mb-4 break-inside-avoid">{description}</p>
 
-      {ingredients && (
+      {ingredients.length > 0 && (
         <section aria-labelledby="ingredients-heading" className="mb-4 w-full">
           <h3
             id="ingredients-heading"
@@ -111,7 +111,7 @@ const ChatReply = memo(({ recipe, recipeVersion, modalAnchorRef }) => {
         </section>
       )}
 
-      {instructions && (
+      {instructions.length > 0 && (
         <section aria-labelledby="instructions-heading" className="mb-4 w-full">
           <h3
             id="instructions-heading"

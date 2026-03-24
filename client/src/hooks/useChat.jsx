@@ -7,6 +7,7 @@ import { useUser } from "./useUser";
 export function useChat(showToast) {
   const { user } = useUser();
   const queryClient = useQueryClient();
+  const recipesQueryKey = ["recipes", user?.id || "guest_recipes"];
 
   const sendCreateMessageMutation = useMutation({
     mutationFn: async (payload) => {
@@ -15,13 +16,10 @@ export function useChat(showToast) {
 
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: ["recipes", user?.id || "guest_recipes"],
+        queryKey: recipesQueryKey,
       });
 
-      const previousRecipes = queryClient.getQueryData([
-        "recipes",
-        user?.id || "guest_recipes",
-      ]);
+      const previousRecipes = queryClient.getQueryData(recipesQueryKey);
 
       return { previousRecipes };
     },
@@ -29,10 +27,7 @@ export function useChat(showToast) {
     onError: (err, variables, context) => {
       showToast(err.error);
       if (context?.previousRecipes) {
-        queryClient.setQueryData(
-          ["recipes", user?.id || "guest_recipes"],
-          context.previousRecipes,
-        );
+        queryClient.setQueryData(recipesQueryKey, context.previousRecipes);
       }
     },
 
@@ -40,16 +35,22 @@ export function useChat(showToast) {
       const newRecipe = data.reply;
       const isNewRecipe = !variables.recipeId;
 
-      if (!isNewRecipe) {
-        if (!user) {
-          queryClient.setQueryData(
-            ["recipes", user?.id || "guest_recipes"],
-            (old) => {
-              if (!old) return [newRecipe];
-              return old.map((r) => (r.id === newRecipe.id ? newRecipe : r));
-            },
-          );
+      queryClient.setQueryData(recipesQueryKey, (old) => {
+        if (!old?.length) return [newRecipe];
+
+        const existingIndex = old.findIndex(
+          (recipe) => recipe.id === newRecipe.id,
+        );
+        if (existingIndex === -1) {
+          return [...old, newRecipe];
         }
+
+        return old.map((recipe) =>
+          recipe.id === newRecipe.id ? newRecipe : recipe,
+        );
+      });
+
+      if (!isNewRecipe) {
         addLocalRecipeVersion(newRecipe);
       }
 
@@ -57,7 +58,7 @@ export function useChat(showToast) {
         addLocalRecipe(newRecipe);
       }
 
-      queryClient.invalidateQueries(["recipes", user?.id || "guest_recipes"]);
+      queryClient.invalidateQueries(recipesQueryKey);
     },
   });
 

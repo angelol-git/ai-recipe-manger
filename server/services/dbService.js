@@ -9,6 +9,81 @@ function safeParse(jsonString) {
   }
 }
 
+function safeParseArray(jsonString) {
+  const parsed = safeParse(jsonString);
+  return Array.isArray(parsed) ? parsed : [];
+}
+
+function mapRecipeVersionRow(version) {
+  return {
+    id: version.id,
+    recipeDetails: {
+      calories: version.calories ?? null,
+      servings: version.servings ?? null,
+      total_time: version.total_time ?? null,
+    },
+    description: version.description || "",
+    instructions: Array.isArray(version.instructions)
+      ? version.instructions
+      : safeParseArray(version.instructions),
+    ingredients: Array.isArray(version.ingredients)
+      ? version.ingredients
+      : safeParseArray(version.ingredients),
+    source_prompt: version.source_prompt || "",
+    ai_model: version.ai_model || null,
+    created_at: version.created_at,
+  };
+}
+
+function getRecipeTags(recipeId) {
+  return db
+    .prepare(
+      `SELECT t.id, t.name, t.color
+       FROM recipe_tags rt
+       JOIN tags t ON t.id = rt.tag_id
+       WHERE rt.recipe_id = ?
+       ORDER BY t.id ASC`,
+    )
+    .all(recipeId);
+}
+
+function getRecipeVersions(recipeId, order = "ASC") {
+  const normalizedOrder = order === "DESC" ? "DESC" : "ASC";
+
+  return db
+    .prepare(
+      `SELECT id, recipe_id, servings, total_time, calories, description,
+              ingredients, instructions, source_prompt, ai_model, created_at
+       FROM recipe_versions
+       WHERE recipe_id = ?
+       ORDER BY created_at ${normalizedOrder}`,
+    )
+    .all(recipeId)
+    .map(mapRecipeVersionRow);
+}
+
+function getRecipeByIdInternal(id, userId, versionOrder = "ASC") {
+  const recipe = db
+    .prepare(
+      `SELECT id, title, created_at
+       FROM recipes
+       WHERE id = ? AND user_id = ?`,
+    )
+    .get(id, userId);
+
+  if (!recipe) {
+    return null;
+  }
+
+  return {
+    id: recipe.id,
+    title: recipe.title || "",
+    created_at: recipe.created_at,
+    tags: getRecipeTags(id),
+    versions: getRecipeVersions(id, versionOrder),
+  };
+}
+
 export function saveUserMessage(userId, recipeId, message) {
   db.prepare(
     `INSERT INTO messages (user_id, recipe_id, role, content, status)
@@ -26,76 +101,49 @@ export function saveAiError(userId, recipeId, error) {
 export function saveRecipeToDb(parsedRecipe, { userId, recipeId, sourceUrl }) {
   const savedReply = db.transaction(() => {
     let newRecipeId = recipeId ?? uuidv7();
-    let recipe = null;
 
     if (!recipeId) {
-      recipe = db
-        .prepare(
-          `INSERT INTO recipes (id, user_id, title, source_url)
-           VALUES (?, ?, ?, ?)
-           RETURNING id, user_id, title, source_url, created_at`,
-        )
-        .get(newRecipeId, userId, parsedRecipe.title, sourceUrl);
-
-      const insertedRecipe = db
-        .prepare(
-          `SELECT id, user_id, title, source_url, created_at FROM recipes WHERE id = ?`,
-        )
-        .get(newRecipeId);
-
-      parsedRecipe.created_at = insertedRecipe.created_at;
-      parsedRecipe.tags = [];
+      db.prepare(
+        `INSERT INTO recipes (id, user_id, title, source_url)
+         VALUES (?, ?, ?, ?)`,
+      ).run(newRecipeId, userId, parsedRecipe.title, sourceUrl);
     }
 
-    const version = db
-      .prepare(
-        `INSERT INTO recipe_versions
-           (recipe_id, servings, total_time, calories, description,
-            instructions, ingredients, source_prompt, ai_model, relation)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-         RETURNING id, recipe_id, servings, total_time, calories,
-                   description, instructions, ingredients,
-                   source_prompt, ai_model, relation, created_at`,
-      )
-      .get(
-        newRecipeId,
-        parsedRecipe.servings,
-        parsedRecipe.total_time,
-        parsedRecipe.calories,
-        parsedRecipe.description,
-        JSON.stringify(
-          Array.isArray(parsedRecipe.instructions)
-            ? parsedRecipe.instructions
-            : [parsedRecipe.instructions],
-        ),
-        JSON.stringify(
-          Array.isArray(parsedRecipe.ingredients)
-            ? parsedRecipe.ingredients
-            : [parsedRecipe.ingredients],
-        ),
-        parsedRecipe.source_prompt,
-        parsedRecipe.ai_model,
-        parsedRecipe.relation,
-      );
+    const versionInsert = db.prepare(
+      `INSERT INTO recipe_versions
+         (recipe_id, servings, total_time, calories, description,
+          instructions, ingredients, source_prompt, ai_model, relation)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    );
+    const versionResult = versionInsert.run(
+      newRecipeId,
+      parsedRecipe.servings,
+      parsedRecipe.total_time,
+      parsedRecipe.calories,
+      parsedRecipe.description,
+      JSON.stringify(
+        Array.isArray(parsedRecipe.instructions)
+          ? parsedRecipe.instructions
+          : [parsedRecipe.instructions],
+      ),
+      JSON.stringify(
+        Array.isArray(parsedRecipe.ingredients)
+          ? parsedRecipe.ingredients
+          : [parsedRecipe.ingredients],
+      ),
+      parsedRecipe.source_prompt,
+      parsedRecipe.ai_model,
+      parsedRecipe.relation,
+    );
 
     db.prepare(
       `INSERT INTO messages (user_id, recipe_id, role, content, status)
        VALUES (?, ?, 'assistant', ?, 'recipe')`,
     ).run(userId, newRecipeId, JSON.stringify(parsedRecipe));
 
-    parsedRecipe.versionId = version.id;
+    parsedRecipe.versionId = versionResult.lastInsertRowid;
 
-    if (!recipeId) {
-      return {
-        id: recipe.id,
-        title: recipe.title,
-        created_at: recipe.created_at,
-        tags: [],
-        versions: [version],
-      };
-    }
-
-    return version;
+    return getRecipeByIdInternal(newRecipeId, userId);
   })();
 
   return savedReply;
@@ -141,18 +189,7 @@ export function getRecipesByUserId(userId) {
     if (!versionsMap.has(version.recipe_id)) {
       versionsMap.set(version.recipe_id, []);
     }
-    versionsMap.get(version.recipe_id).push({
-      id: version.id,
-      recipeDetails: {
-        calories: version.calories,
-        servings: version.servings,
-        total_time: version.total_time,
-      },
-      description: version.description,
-      instructions: safeParse(version.instructions),
-      ingredients: safeParse(version.ingredients),
-      source_prompt: version.source_prompt,
-    });
+    versionsMap.get(version.recipe_id).push(mapRecipeVersionRow(version));
   }
 
   const tagsMap = new Map();
@@ -171,44 +208,7 @@ export function getRecipesByUserId(userId) {
 }
 
 export function getRecipeById(id, userId) {
-  const recipe = db
-    .prepare(
-      `SELECT id, title, created_at
-       FROM recipes
-       WHERE id = ? AND user_id = ?`,
-    )
-    .get(id, userId);
-
-  if (!recipe) {
-    return null;
-  }
-
-  const versions = db
-    .prepare(
-      `SELECT id, calories, total_time, servings, description,
-              ingredients, instructions, source_prompt, ai_model, created_at
-       FROM recipe_versions
-       WHERE recipe_id = ?
-       ORDER BY created_at DESC`,
-    )
-    .all(id);
-
-  return {
-    id: recipe.id,
-    title: recipe.title,
-    created_at: recipe.created_at,
-    versions: versions.map((v) => ({
-      id: v.id,
-      servings: v.servings,
-      total_time: v.total_time,
-      calories: v.calories,
-      description: v.description,
-      ingredients: v.ingredients,
-      instructions: v.instructions,
-      source_prompt: v.source_prompt,
-      ai_model: v.ai_model,
-    })),
-  };
+  return getRecipeByIdInternal(id, userId, "DESC");
 }
 
 export function getRecipeErrors(recipeId, userId) {

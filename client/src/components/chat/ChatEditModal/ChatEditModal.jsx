@@ -40,11 +40,13 @@ function ChatEditModal({
 
   function handleSave(event) {
     event.preventDefault();
+    if (!draft) return;
+
     // Convert instructions from objects back to strings for saving
     const recipeToSave = {
       ...draft,
-      instructions: draft.instructions.map((item) => item.text),
-      ingredients: draft.ingredients.map((item) => item.text),
+      instructions: (draft.instructions || []).map((item) => item.text),
+      ingredients: (draft.ingredients || []).map((item) => item.text),
     };
     updateRecipe(recipeToSave);
     setIsEditModalOpen(false);

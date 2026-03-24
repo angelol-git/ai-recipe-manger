@@ -24,6 +24,7 @@ function EditIngredients({
   handleDraftArrayPush,
   handleDraftArrayReorder,
 }) {
+  const ingredients = draft?.ingredients || [];
   const [isAddingIngredient, setIsAddingIngredient] = useState(false);
   const [newIngredient, setNewIngredient] = useState("");
   const newIngredientRef = useRef(null);
@@ -54,15 +55,11 @@ function EditIngredients({
       return;
     }
 
-    const oldIndex = draft?.ingredients.findIndex((i) => i.id === active.id);
-    const newIndex = draft?.ingredients.findIndex((i) => i.id === over.id);
+    const oldIndex = ingredients.findIndex((i) => i.id === active.id);
+    const newIndex = ingredients.findIndex((i) => i.id === over.id);
 
     if (oldIndex !== -1 && newIndex !== -1) {
-      const reorderedIngredients = arrayMove(
-        draft?.ingredients,
-        oldIndex,
-        newIndex,
-      );
+      const reorderedIngredients = arrayMove(ingredients, oldIndex, newIndex);
       handleDraftArrayReorder("ingredients", reorderedIngredients);
     }
   }
@@ -104,11 +101,11 @@ function EditIngredients({
         onDragEnd={handleDragEnd}
       >
         <SortableContext
-          items={draft?.ingredients?.map((item) => item.id) || []}
+          items={ingredients.map((item) => item.id)}
           strategy={verticalListSortingStrategy}
         >
           <ul className="flex flex-col gap-3.5">
-            {draft?.ingredients.map((ingredient, index) => (
+            {ingredients.map((ingredient, index) => (
               <SortableIngredients
                 key={ingredient.id}
                 id={ingredient.id}

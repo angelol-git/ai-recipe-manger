@@ -1,4 +1,6 @@
 function EditDescription({ draft, handleDraftString }) {
+  const description = draft?.description || "";
+
   return (
     <section className="flex flex-col gap-3">
       <label className="font-lora text-secondary text-lg font-medium tracking-wide">
@@ -10,7 +12,7 @@ function EditDescription({ draft, handleDraftString }) {
             id="description"
             name="description"
             rows={5}
-            value={draft?.description}
+            value={description}
             onChange={(event) => {
               handleDraftString("description", event.target.value);
             }}
