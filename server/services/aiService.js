@@ -42,8 +42,20 @@ export async function generateResponse(prompt) {
   return aiResponse;
 }
 
+function extractTextParts(response) {
+  if (!Array.isArray(response?.candidates)) {
+    return "";
+  }
+
+  return response.candidates
+    .flatMap((candidate) => candidate?.content?.parts ?? [])
+    .map((part) => (typeof part?.text === "string" ? part.text : ""))
+    .join("")
+    .trim();
+}
+
 export function validateAiResponse(response, message) {
-  let rawResponse = response.text?.trim() || "";
+  let rawResponse = extractTextParts(response);
 
   if (!rawResponse) {
     throw new AiValidationError("The AI returned an empty response.", {
