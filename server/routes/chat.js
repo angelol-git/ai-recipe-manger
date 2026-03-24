@@ -37,6 +37,9 @@ router.post("/create", optionalAuth, async (req, res) => {
 
     let contextData = null;
     if (url && isValidUrl(url)) {
+      if(recipeId){
+           return res.status(409).json({ error: "URLs can't be used for new recipe threads. Start a new recipe to import one." }); 
+      }
       contextData = await getUrlContext(url);
     } else if (url) {
       console.warn(`Blocked potentially malicious URL: ${url}`);

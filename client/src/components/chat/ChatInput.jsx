@@ -104,8 +104,9 @@ const ChatInput = memo(
           if (isNewChat) {
             navigate(`/chat/${result.reply.id}`);
           }
-        } catch {
-          showToast("Failed to create recipe. Please try again.", "error");
+        } catch (err) {
+          // console.log(err);
+          showToast(err.error, "error", 6000);
         }
       }
 

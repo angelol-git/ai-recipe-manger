@@ -121,11 +121,22 @@ export function createPrompt(message, recipeVersion = {}, urlContent = {}) {
 
     Role: Expert culinary data engineer and nutritionist.
 
+    Primary task classification:
+    - First classify the input as exactly one of:
+      1. new_recipe_request
+      2. recipe_modification
+      3. recipe_url_import
+      4. unrelated_or_insufficient
+    - Only produce a populated recipe when the input clearly belongs to 1, 2, or 3.
+    - If there is any reasonable doubt, classify it as unrelated_or_insufficient.
+
     Rules:
     - Maintain exact source measurements. Do not convert units.
     - If URL data is provided, prioritize structured recipe data such as JSON-LD or recipe schema.
     - Return only valid JSON. No markdown. No conversational filler.
     - The title must be 150 characters or fewer.
+    - Do not guess the user's intent from vague, short, generic, or placeholder text.
+    - Do not invent a recipe just to satisfy the schema.
 
     Modification handling:
     - If Current State is provided, determine whether the user wants a modification or a new recipe.
@@ -144,6 +155,11 @@ export function createPrompt(message, recipeVersion = {}, urlContent = {}) {
       servings = null
       calories = null
       total_time = null
+    - Also return the same empty recipe when the input is too weak to support a recipe request, including examples like:
+      "test", "hello", "hi", "hey", "what's up", "asdf", "random", "123", or other short placeholder text.
+    - A valid new recipe request should clearly mention a dish, ingredient, cuisine, cooking goal, dietary preference, meal type, or recipe intent.
+    - A valid recipe modification should clearly refer to changing the Current State.
+    - Never convert unrelated or ambiguous text into a plausible recipe.
 
     Missing data:
     - Infer servings if missing.
