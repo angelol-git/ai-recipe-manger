@@ -1,4 +1,4 @@
-# <img src="https://github.com/angelol-git/ai-recipe-manger/blob/main/.github/logo.png?raw=true" width="32" /> AI Recipe Manager
+# <img src="https://github.com/angelol-git/recipe-manager/blob/main/.github/logo.png?raw=true" width="32" /> Recipe Manager
 
 AI-powered recipe app for importing, organizing, editing, and generating recipes.
 
@@ -20,8 +20,8 @@ AI-powered recipe app for importing, organizing, editing, and generating recipes
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/angelol-git/ai-recipe-manager.git
-cd ai-recipe-manager
+git clone https://github.com/angelol-git/recipe-manager.git
+cd recipe-manager
 ```
 
 2. Install dependencies:
@@ -64,3 +64,20 @@ cd client && npm run dev
 ```
 
 Runs on `http://localhost:5173`.
+
+## Benchmarks
+
+Run benchmarks from `server/`:
+
+```bash
+npm run benchmark:create:text
+npm run benchmark:scrape
+npm run benchmark:url
+npm run benchmark:url-context
+```
+
+Notes:
+
+- `benchmark:create:text` expects the server to already be running on `http://localhost:8080` unless you pass `--url`.
+- `benchmark:scrape` and `benchmark:url` fetch live pages and need outbound network access.
+- `benchmark:url-context` also requires `GOOGLE_API_KEY` in `server/.env`.

@@ -8,7 +8,8 @@ import {
 
 function parseArgs(argv) {
   const options = {
-    url:  "https://sallysbakingaddiction.com/blueberry-muffins/#tasty-recipes-67559",
+    url:"https://sallysbakingaddiction.com/best-banana-bread-recipe/",
+    // url:  "https://sallysbakingaddiction.com/blueberry-muffins/#tasty-recipes-67559",
     iterations: 1,
     warmup: 0,
     mode: "full",

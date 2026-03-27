@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "ai-recipe-manager",
+      name: "recipe-manager",
       cwd: "./server",
       script: "./server.js",
       autorestart: true,
