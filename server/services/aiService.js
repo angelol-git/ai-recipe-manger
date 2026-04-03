@@ -143,7 +143,14 @@ export function createPrompt(message, recipeVersion = {}, urlContent = {}) {
     - If there is any reasonable doubt, classify it as unrelated_or_insufficient.
 
     Rules:
-    - Maintain exact source measurements. Do not convert units.
+    - Preserve the original recipe's primary measurement style whenever possible.
+    - For ingredient lines, dual units are the default expectation whenever the ingredient uses a measurable weight or volume. Format them as primary unit first, then the converted secondary unit in parentheses. Examples: "8 oz (225 g) butter", "1 cup (240 ml) milk", "1 lb (450 g) chicken", "2 tbsp (30 ml) olive oil".
+    - When parsing an imported recipe from the original source, preserve the source unit first and add the converted secondary unit in parentheses when the source uses weight or volume and does not already include a useful dual unit.
+    - When modifying, converting, scaling, or otherwise regenerating an existing recipe, keep or update ingredient quantities in dual-unit form for all weight- and volume-based ingredients instead of returning only one unit system.
+    - Do not remove a useful existing secondary unit. If the source already includes dual units, preserve them unless scaling or substitution requires updating them.
+    - Use rounded kitchen-friendly equivalents for the secondary unit, while keeping the primary quantity practical for cooks.
+    - Count-based ingredients that do not need conversion, such as "2 eggs", "3 garlic cloves", or "1 onion", do not need a parenthetical second unit unless the conversion is genuinely useful.
+    - Do not add a second unit when it would be misleading, overly precise, or unnatural for cooks, but for standard liquids, powders, dairy, fats, grains, sugars, meats, and produce sold by weight or volume, include dual units by default.
     - If URL data is provided, prioritize structured recipe data such as JSON-LD or recipe schema.
     - Return only valid JSON. No markdown. No conversational filler.
     - The title must be 150 characters or fewer.
