@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+type GoogleCredentialResponse = {
+  credential: string;
+};
 
-function GoogleLoginButton({ onSuccess }) {
+type GoogleLoginButtonProps = {
+  onSuccess: (response: GoogleCredentialResponse) => void | Promise<void>;
+};
+function GoogleLoginButton({ onSuccess }: GoogleLoginButtonProps) {
   const [isLoading, setIsLoading] = useState(true);
   const buttonRef = useRef(null);
   const clientID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
