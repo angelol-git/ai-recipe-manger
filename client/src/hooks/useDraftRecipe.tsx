@@ -1,24 +1,60 @@
 import { useState, useEffect } from "react";
 import { DraftTag } from "../types/tag";
+import type { Recipe, RecipeDetails, RecipeVersion } from "../types/recipe";
+import type { EditableTag } from "../types/tag";
 
-export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
-  const [draft, setDraft] = useState(null);
+type ColorString = {
+  hex: string;
+};
+
+type UseDraftRecipeProps = {
+  recipe: Recipe | null;
+  recipeVersion: number | null;
+  isEditModalOpen: boolean;
+};
+
+type DraftTextItem = {
+  id: string;
+  text: string;
+};
+
+type DraftArrayField = "instructions" | "ingredients";
+
+type DraftRecipe = {
+  id: RecipeVersion["id"];
+  recipe_id: Recipe["id"];
+  title: Recipe["title"];
+  created_at: Recipe["created_at"];
+  tags: EditableTag[];
+  description: RecipeVersion["description"];
+  recipeDetails: RecipeDetails;
+  instructions: DraftTextItem[];
+  ingredients: DraftTextItem[];
+  source_prompt: RecipeVersion["source_prompt"];
+};
+
+export function useDraftRecipe({
+  recipe,
+  recipeVersion,
+  isEditModalOpen,
+}: UseDraftRecipeProps) {
+  const [draft, setDraft] = useState<DraftRecipe | null>(null);
 
   useEffect(() => {
-    if (!recipe || !isEditModalOpen) return;
+    if (!recipe || !isEditModalOpen || recipeVersion === null) return;
 
-    const currentVersion = recipe.versions?.[recipeVersion];
+    const currentVersion = recipe.versions[recipeVersion];
     if (!currentVersion) return;
 
     const instructionsWithIds = currentVersion.instructions.map(
-      (text, index) => ({
+      (text, index: number) => ({
         id: `instruction-${recipe.id}-${index}`,
         text,
       }),
     );
 
     const ingredientsWithIds = currentVersion.ingredients.map(
-      (text, index) => ({
+      (text, index: number) => ({
         id: `ingredient-${recipe.id}-${index}`,
         text,
       }),
@@ -39,7 +75,7 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     setDraft(draftRecipe);
   }, [recipe, isEditModalOpen, recipeVersion]);
 
-  function handleDraftString(field, value) {
+  function handleDraftString(field: string, value: string) {
     setDraft((prev) => {
       if (!prev) return prev;
 
@@ -49,7 +85,7 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
       };
     });
   }
-  function handleDraftDetail(field, value) {
+  function handleDraftDetail(field: string, value: string) {
     setDraft((prev) => {
       if (!prev) return prev;
 
@@ -63,7 +99,7 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     });
   }
 
-  function handleDraftTagName(newName, tagId) {
+  function handleDraftTagName(newName: string, tagId: number) {
     setDraft((prev) => {
       if (!prev) return prev;
 
@@ -83,7 +119,7 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     });
   }
 
-  function handleDraftTagColor(color, tag) {
+  function handleDraftTagColor(color: ColorString, tag: EditableTag) {
     setDraft((prev) => {
       if (!prev) return prev;
 
@@ -103,7 +139,7 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     });
   }
 
-  function handleDraftTagDelete(tagId) {
+  function handleDraftTagDelete(tagId: number) {
     setDraft((prev) => {
       if (!prev) return prev;
 
@@ -145,7 +181,11 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     });
   }
 
-  function handleDraftArrayUpdate(field, value, targetIndex) {
+  function handleDraftArrayUpdate(
+    field: DraftArrayField,
+    value: string,
+    targetIndex: number,
+  ) {
     setDraft((prev) => {
       if (!prev) return prev;
 
@@ -165,7 +205,10 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     });
   }
 
-  function handleDraftArrayReorder(field, reorderedArray) {
+  function handleDraftArrayReorder(
+    field: string,
+    reorderedArray: DraftTextItem,
+  ) {
     setDraft((prev) => {
       if (!prev) return prev;
 
@@ -176,7 +219,7 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     });
   }
 
-  function handleDraftArrayPush(field, newValue) {
+  function handleDraftArrayPush(field: DraftArrayField, newValue: string) {
     setDraft((prev) => {
       if (!prev) return prev;
 
@@ -197,7 +240,7 @@ export function useDraftRecipe({ recipe, recipeVersion, isEditModalOpen }) {
     });
   }
 
-  function handleDraftArrayDelete(field, targetIndex) {
+  function handleDraftArrayDelete(field: DraftArrayField, targetIndex: number) {
     setDraft((prev) => {
       if (!prev) return prev;
 

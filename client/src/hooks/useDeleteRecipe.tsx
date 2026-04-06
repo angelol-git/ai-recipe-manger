@@ -1,21 +1,46 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { useRecipes } from "./useRecipes";
+import type { Recipe } from "../types/recipe";
 
-export function useDeleteRecipe({ getRedirectPath = () => "/" } = {}) {
+type DeleteType = "version" | "all";
+
+type DeleteModalState = {
+  isOpen: boolean;
+  type: DeleteType | null;
+  recipe: Recipe | null;
+  recipeVersion: number | null;
+};
+
+type GetRedirectPathArgs = {
+  type: DeleteType | null;
+  recipe: Recipe | null;
+  recipeVersion: number | null;
+};
+
+type UseDeleteRecipeOptions = {
+  getRedirectPath?: (args: GetRedirectPathArgs) => string | null;
+};
+
+export function useDeleteRecipe(
+  { getRedirectPath = () => "/" }: UseDeleteRecipeOptions = {},
+) {
   const navigate = useNavigate();
   const { deleteRecipe, deleteRecipeVersion } = useRecipes();
 
-  const [deleteModal, setDeleteModal] = useState({
+  const [deleteModal, setDeleteModal] = useState<DeleteModalState>({
     isOpen: false,
-    type: null, // 'version' | 'all'
+    type: null,
     recipe: null,
     recipeVersion: null,
   });
 
-  const openDeleteModal = useCallback((recipe, type, recipeVersion = null) => {
-    setDeleteModal({ isOpen: true, type, recipe, recipeVersion });
-  }, []);
+  const openDeleteModal = useCallback(
+    (recipe: Recipe, type: DeleteType, recipeVersion: number | null = null) => {
+      setDeleteModal({ isOpen: true, type, recipe, recipeVersion });
+    },
+    [],
+  );
 
   const closeDeleteModal = useCallback(() => {
     setDeleteModal((prev) => ({ ...prev, isOpen: false }));
@@ -25,10 +50,15 @@ export function useDeleteRecipe({ getRedirectPath = () => "/" } = {}) {
     const { type, recipe, recipeVersion } = deleteModal;
     const redirectPath = getRedirectPath({ type, recipe, recipeVersion });
 
+    if (!type || !recipe) {
+      closeDeleteModal();
+      return;
+    }
+
     if (type === "version") {
-      if (recipe.versions?.length === 1) {
+      if (recipe.versions.length === 1) {
         deleteRecipe(recipe.id);
-      } else {
+      } else if (recipeVersion !== null) {
         deleteRecipeVersion({
           recipeId: recipe.id,
           recipeVersionId: recipe.versions[recipeVersion].id,

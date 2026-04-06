@@ -1,7 +1,20 @@
 import { useState, useEffect } from "react";
-
-function useDraftTags({ tags, isEditTags, setTagsToBeDeleted }) {
-  const [draftTags, setDraftTags] = useState([]);
+import type { Dispatch, SetStateAction } from "react";
+import type { Tag } from "../types/tag";
+type ColorString = {
+  hex: string;
+};
+type useDraftTagProps = {
+  tags: Tag[];
+  isEditTags: boolean;
+  setTagsToBeDeleted: Dispatch<SetStateAction<Tag[]>>;
+};
+function useDraftTags({
+  tags,
+  isEditTags,
+  setTagsToBeDeleted,
+}: useDraftTagProps) {
+  const [draftTags, setDraftTags] = useState<Tag[]>([]);
 
   useEffect(() => {
     if (isEditTags && tags) {
@@ -9,7 +22,7 @@ function useDraftTags({ tags, isEditTags, setTagsToBeDeleted }) {
     }
   }, [tags, isEditTags]);
 
-  function handleEditDraftTagName(newName, tagId) {
+  function handleEditDraftTagName(newName: string, tagId: number) {
     setDraftTags((prev) => {
       return prev.map((t) => {
         if (t.id === tagId) {
@@ -21,7 +34,7 @@ function useDraftTags({ tags, isEditTags, setTagsToBeDeleted }) {
     });
   }
 
-  function handleEditDraftTagColor(color, tag) {
+  function handleEditDraftTagColor(color: ColorString, tag: Tag) {
     const newColor = color.hex;
     const originalColor = tag.color;
     if (newColor === originalColor) {
@@ -38,7 +51,7 @@ function useDraftTags({ tags, isEditTags, setTagsToBeDeleted }) {
     });
   }
 
-  function handleDraftTagDelete(tag) {
+  function handleDraftTagDelete(tag: Tag) {
     setTagsToBeDeleted((prev) => [...prev, tag]);
     setDraftTags((prev) => {
       return prev.filter((t) => t.id !== tag.id);

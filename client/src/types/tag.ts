@@ -14,3 +14,9 @@ export type DraftTag = {
   name: string;
   color: string;
 };
+
+export type EditableTag = {
+  id: string | number;
+  name: string;
+  color: string;
+};
