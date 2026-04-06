@@ -26,10 +26,10 @@ const ChatLayout = () => {
     return recipes.find((r) => r.id === id) || null;
   }, [recipes, id]);
 
-  const [recipeVersion, setRecipeVersion] = useState<Number>(0);
-  const [isEditModalOpen, setIsEditModalOpen] = useState<Boolean>(false);
+  const [recipeVersion, setRecipeVersion] = useState<number>(0);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [hasSidebarInteracted, setHasSidebarInteracted] =
-    useState<Boolean>(false);
+    useState<boolean>(false);
 
   const { deleteModal, openDeleteModal, closeDeleteModal, handleDelete } =
     useDeleteRecipe({
