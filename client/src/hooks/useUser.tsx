@@ -16,7 +16,7 @@ export function useUser() {
     onSuccess: () => {
       // Clear user data and local recipes if needed (or keep them)
       queryClient.setQueryData(["user"], null);
-      queryClient.invalidateQueries(["recipes"]);
+      queryClient.invalidateQueries({ queryKey: ["recipes"] });
     },
   });
 

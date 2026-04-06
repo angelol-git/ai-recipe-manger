@@ -1,9 +1,24 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
+import type { UseMutationResult } from "@tanstack/react-query";
 import { CircleUserRound, LogOut } from "lucide-react";
 import GoogleLoginButton from "./GoogleLoginButton";
 import API_BASE_URL from "../config/api.js";
 import { useToast } from "../hooks/useToast";
+import type { User } from "../types/user";
+
+type GoogleLoginSuccess = {
+  credential: string;
+};
+
+type UserOptionsProps = {
+  user: User;
+  logout: UseMutationResult<unknown, Error, void, unknown>;
+  openUpwards?: boolean;
+  hideUserSummary?: boolean;
+  redirectOnLogout?: string | null;
+  redirectOnLogin?: string | null;
+};
 
 function UserOptions({
   user,
@@ -12,13 +27,13 @@ function UserOptions({
   hideUserSummary = false,
   redirectOnLogout = null,
   redirectOnLogin = null,
-}) {
+}: UserOptionsProps) {
   const [isUserOptionsOpen, setIsUserOptionsOpen] = useState(false);
-  const menuRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  async function handleSuccess(response) {
+  async function handleSuccess(response: GoogleLoginSuccess) {
     try {
       const result = await fetch(`${API_BASE_URL}/auth/google`, {
         method: "POST",
@@ -45,8 +60,8 @@ function UserOptions({
   useEffect(() => {
     if (!isUserOptionsOpen) return;
 
-    function handleClickOutside(e) {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setIsUserOptionsOpen(false);
       }
     }

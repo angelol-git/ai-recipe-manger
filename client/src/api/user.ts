@@ -24,8 +24,11 @@ export async function logoutUser() {
   });
 
   if (!res.ok) {
-    console.error(`Failed to log out: ${res.error}`);
+    const errorText = await res.text();
+    console.error(`Failed to log out: ${errorText}`);
+    throw new Error(`Failed to log out: ${errorText}`);
+
   }
 
-  return res.json({ message: "User logged out" });
+  return res.json();
 }
