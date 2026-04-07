@@ -1,7 +1,13 @@
 import { useState, memo, RefObject } from "react";
 import ChatPromptModal from "./ChatPromptModal";
 import RecipeDetailsBar from "./RecipeDetailsBar";
-import { Recipe } from "../../../types/recipe";
+import type { Recipe, RecipeDetails } from "../../../types/recipe";
+
+const EMPTY_RECIPE_DETAILS: RecipeDetails = {
+  calories: null,
+  servings: null,
+  total_time: null,
+};
 
 type ChatReplyProps = {
   recipe: Recipe;
@@ -17,7 +23,7 @@ const ChatReply = memo(
     if (!current) return null;
 
     const {
-      recipeDetails = {},
+      recipeDetails = EMPTY_RECIPE_DETAILS,
       description,
       ingredients = [],
       instructions = [],

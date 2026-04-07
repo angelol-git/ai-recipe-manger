@@ -1,21 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { X } from "lucide-react";
 import SortableIngredients from "./SortableIngredients";
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
   SortableContext,
   verticalListSortingStrategy,
-  sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
+import { useDraftSortableList } from "../../../hooks/useDraftSortableList";
+import type { DraftArrayEditorProps } from "../../../types/draftRecipe";
 
 function EditIngredients({
   draft,
@@ -23,46 +15,17 @@ function EditIngredients({
   handleDraftArrayDelete,
   handleDraftArrayPush,
   handleDraftArrayReorder,
-}) {
+}: DraftArrayEditorProps) {
   const ingredients = draft?.ingredients || [];
   const [isAddingIngredient, setIsAddingIngredient] = useState(false);
   const [newIngredient, setNewIngredient] = useState("");
-  const newIngredientRef = useRef(null);
-  const newTextAreaRef = useRef(null);
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 15,
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 200,
-        tolerance: 5,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-
-  function handleDragEnd(event) {
-    const { active, over } = event;
-    if (!over) {
-      return;
-    }
-    if (active.id === over.id) {
-      return;
-    }
-
-    const oldIndex = ingredients.findIndex((i) => i.id === active.id);
-    const newIndex = ingredients.findIndex((i) => i.id === over.id);
-
-    if (oldIndex !== -1 && newIndex !== -1) {
-      const reorderedIngredients = arrayMove(ingredients, oldIndex, newIndex);
-      handleDraftArrayReorder("ingredients", reorderedIngredients);
-    }
-  }
+  const newIngredientRef = useRef<HTMLLIElement | null>(null);
+  const newTextAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  const { sensors, handleDragEnd } = useDraftSortableList({
+    items: ingredients,
+    field: "ingredients",
+    handleDraftArrayReorder,
+  });
 
   useEffect(() => {
     if (newIngredientRef.current && newTextAreaRef.current) {
@@ -75,10 +38,12 @@ function EditIngredients({
     setIsAddingIngredient(false);
     setNewIngredient("");
   }
+
   function handleSave() {
     handleDraftArrayPush("ingredients", newIngredient);
     handleCancel();
   }
+
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between">

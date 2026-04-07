@@ -1,7 +1,8 @@
-import { useRef } from "react";
+import { Dispatch, FormEvent, RefObject, SetStateAction, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRecipes } from "../../../hooks/useRecipes";
 import { useDraftRecipe } from "../../../hooks/useDraftRecipe";
+import type { UpdateRecipeInput } from "../../../hooks/useRecipes";
 import EditTitle from "./EditTitle";
 import EditTags from "./EditTags";
 import EditRecipeDetails from "./EditRecipeDetails";
@@ -9,6 +10,15 @@ import EditDescription from "./EditDescription";
 import EditIngredients from "./EditIngredients";
 import EditInstructions from "./EditInstructions";
 import useModalAnchor from "../../../hooks/useModalAnchor";
+import type { Recipe } from "../../../types/recipe";
+
+type ChatEditModalProps = {
+  recipe: Recipe;
+  recipeVersion: number;
+  isEditModalOpen: boolean;
+  setIsEditModalOpen: Dispatch<SetStateAction<boolean>>;
+  anchorRef: RefObject<HTMLDivElement | null>;
+};
 
 function ChatEditModal({
   recipe,
@@ -16,7 +26,7 @@ function ChatEditModal({
   isEditModalOpen,
   setIsEditModalOpen,
   anchorRef,
-}) {
+}: ChatEditModalProps) {
   const modalRef = useRef(null);
   const anchorStyle = useModalAnchor(anchorRef, isEditModalOpen);
   const { updateRecipe } = useRecipes();
@@ -38,13 +48,19 @@ function ChatEditModal({
     isEditModalOpen,
   });
 
-  function handleSave(event) {
+  function handleSave(event: FormEvent) {
     event.preventDefault();
     if (!draft) return;
 
     // Convert instructions from objects back to strings for saving
-    const recipeToSave = {
-      ...draft,
+    const recipeToSave: UpdateRecipeInput = {
+      id: draft.id,
+      recipe_id: draft.recipe_id,
+      title: draft.title,
+      tags: draft.tags,
+      description: draft.description,
+      recipeDetails: draft.recipeDetails,
+      source_prompt: draft.source_prompt,
       instructions: (draft.instructions || []).map((item) => item.text),
       ingredients: (draft.ingredients || []).map((item) => item.text),
     };

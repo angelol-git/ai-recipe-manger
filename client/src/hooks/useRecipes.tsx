@@ -28,7 +28,7 @@ type AddRecipeTagMutationInput = {
   newTag: DraftTag;
 };
 
-type UpdateRecipeInput = {
+export type UpdateRecipeInput = {
   id: string;
   recipe_id: string;
   title: string;

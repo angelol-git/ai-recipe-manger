@@ -1,4 +1,10 @@
-function EditTitle({ draft, handleDraftString }) {
+import { DraftRecipe, DraftStringField } from "../../../types/draftRecipe";
+
+type EditTitleProps = {
+  draft: DraftRecipe | null;
+  handleDraftString: (field: DraftStringField, value: string) => void;
+};
+function EditTitle({ draft, handleDraftString }: EditTitleProps) {
   return (
     <section className="flex flex-col gap-3">
       <label className="font-lora text-secondary text-lg font-medium tracking-wide">

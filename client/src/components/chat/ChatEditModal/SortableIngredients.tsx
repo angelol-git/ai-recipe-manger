@@ -1,6 +1,19 @@
+import type { CSSProperties } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { X, GripVertical } from "lucide-react";
+import type {
+  DraftArrayEditorProps,
+  DraftTextItem,
+} from "../../../types/draftRecipe";
+
+type SortableIngredientsProps = {
+  id: DraftTextItem["id"];
+  index: number;
+  ingredient: DraftTextItem;
+  handleDraftArrayUpdate: DraftArrayEditorProps["handleDraftArrayUpdate"];
+  handleDraftArrayDelete: DraftArrayEditorProps["handleDraftArrayDelete"];
+};
 
 function SortableIngredients({
   id,
@@ -8,7 +21,7 @@ function SortableIngredients({
   ingredient,
   handleDraftArrayUpdate,
   handleDraftArrayDelete,
-}) {
+}: SortableIngredientsProps) {
   const {
     attributes,
     listeners,
@@ -18,7 +31,7 @@ function SortableIngredients({
     isDragging,
   } = useSortable({ id });
 
-  const style = {
+  const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,

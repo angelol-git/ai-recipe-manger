@@ -1,23 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-
 import { X } from "lucide-react";
-import SortableInstruction from "./SortableInstruction";
-
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
   SortableContext,
   verticalListSortingStrategy,
-  sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
+import SortableInstruction from "./SortableInstruction";
+import { useDraftSortableList } from "../../../hooks/useDraftSortableList";
+import type { DraftArrayEditorProps } from "../../../types/draftRecipe";
 
 function EditInstructions({
   draft,
@@ -25,46 +15,18 @@ function EditInstructions({
   handleDraftArrayDelete,
   handleDraftArrayPush,
   handleDraftArrayReorder,
-}) {
+}: DraftArrayEditorProps) {
   const instructions = draft?.instructions || [];
   const [isAddingInstruction, setIsAddingInstruction] = useState(false);
   const [newInstruction, setNewInstruction] = useState("");
-  const newInstructionRef = useRef(null);
-  const newTextAreaRef = useRef(null);
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 15,
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 200,
-        tolerance: 5,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
+  const newInstructionRef = useRef<HTMLOListElement | null>(null);
+  const newTextAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  const { sensors, handleDragEnd } = useDraftSortableList({
+    items: instructions,
+    field: "instructions",
+    handleDraftArrayReorder,
+  });
 
-  function handleDragEnd(event) {
-    const { active, over } = event;
-    if (!over) {
-      return;
-    }
-    if (active.id === over.id) {
-      return;
-    }
-
-    const oldIndex = instructions.findIndex((i) => i.id === active.id);
-    const newIndex = instructions.findIndex((i) => i.id === over.id);
-
-    if (oldIndex !== -1 && newIndex !== -1) {
-      const reorderedInstructions = arrayMove(instructions, oldIndex, newIndex);
-      handleDraftArrayReorder("instructions", reorderedInstructions);
-    }
-  }
   useEffect(() => {
     if (newInstructionRef.current && newTextAreaRef.current) {
       newInstructionRef.current.scrollIntoView({ behavior: "smooth" });
@@ -76,6 +38,7 @@ function EditInstructions({
     setIsAddingInstruction(false);
     setNewInstruction("");
   }
+
   function handleSave() {
     handleDraftArrayPush("instructions", newInstruction);
     handleCancel();
@@ -106,7 +69,7 @@ function EditInstructions({
           items={instructions.map((item) => item.id)}
           strategy={verticalListSortingStrategy}
         >
-          <ol className="list-decimal space-y-3">
+          <ol ref={newInstructionRef} className="list-decimal space-y-3">
             {instructions.map((instruction, index) => (
               <SortableInstruction
                 key={instruction.id}
@@ -118,10 +81,7 @@ function EditInstructions({
               />
             ))}
             {isAddingInstruction && (
-              <li
-                ref={newInstructionRef}
-                className="bg-mantle/70 border-crust flex items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:shadow-sm"
-              >
+              <li className="bg-mantle/70 border-crust flex items-center gap-2 rounded-xl border px-3 py-2 transition-all hover:shadow-sm">
                 <div className="flex w-full gap-2">
                   <span className="font-lora font-semibold">
                     {instructions.length + 1}.{" "}
@@ -139,9 +99,7 @@ function EditInstructions({
                       el.style.height = `${el.scrollHeight}px`;
                       setNewInstruction(event.target.value);
                     }}
-                    // onKeyDown={handleKeyDown}
                     onBlur={(event) => {
-                      // Check if relatedTarget is the cancel button
                       if (event.relatedTarget?.closest("button")) {
                         handleCancel();
                         return;

@@ -1,4 +1,11 @@
-function EditDescription({ draft, handleDraftString }) {
+import type { DraftRecipe, DraftStringField } from "../../../types/draftRecipe";
+
+type EditDescriptionProps = {
+  draft: DraftRecipe | null;
+  handleDraftString: (field: DraftStringField, value: string) => void;
+};
+
+function EditDescription({ draft, handleDraftString }: EditDescriptionProps) {
   const description = draft?.description || "";
 
   return (

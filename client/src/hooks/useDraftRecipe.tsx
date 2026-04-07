@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { DraftTag } from "../types/tag";
-import type { Recipe, RecipeDetails, RecipeVersion } from "../types/recipe";
 import type { EditableTag } from "../types/tag";
+import type { Recipe, RecipeDetails } from "../types/recipe";
+import type {
+  DraftArrayField,
+  DraftRecipe,
+  DraftStringField,
+  DraftTextItem,
+} from "../types/draftRecipe";
 
 type ColorString = {
   hex: string;
@@ -11,26 +17,6 @@ type UseDraftRecipeProps = {
   recipe: Recipe | null;
   recipeVersion: number | null;
   isEditModalOpen: boolean;
-};
-
-type DraftTextItem = {
-  id: string;
-  text: string;
-};
-
-type DraftArrayField = "instructions" | "ingredients";
-
-type DraftRecipe = {
-  id: RecipeVersion["id"];
-  recipe_id: Recipe["id"];
-  title: Recipe["title"];
-  created_at: Recipe["created_at"];
-  tags: EditableTag[];
-  description: RecipeVersion["description"];
-  recipeDetails: RecipeDetails;
-  instructions: DraftTextItem[];
-  ingredients: DraftTextItem[];
-  source_prompt: RecipeVersion["source_prompt"];
 };
 
 export function useDraftRecipe({
@@ -75,7 +61,7 @@ export function useDraftRecipe({
     setDraft(draftRecipe);
   }, [recipe, isEditModalOpen, recipeVersion]);
 
-  function handleDraftString(field: string, value: string) {
+  function handleDraftString(field: DraftStringField, value: string) {
     setDraft((prev) => {
       if (!prev) return prev;
 
@@ -85,7 +71,8 @@ export function useDraftRecipe({
       };
     });
   }
-  function handleDraftDetail(field: string, value: string) {
+
+  function handleDraftDetail(field: keyof RecipeDetails, value: string) {
     setDraft((prev) => {
       if (!prev) return prev;
 
@@ -206,8 +193,8 @@ export function useDraftRecipe({
   }
 
   function handleDraftArrayReorder(
-    field: string,
-    reorderedArray: DraftTextItem,
+    field: DraftArrayField,
+    reorderedArray: DraftTextItem[],
   ) {
     setDraft((prev) => {
       if (!prev) return prev;
