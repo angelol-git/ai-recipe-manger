@@ -5,7 +5,7 @@ export type Tag = {
 };
 
 export type EditableTagUpdate = {
-  id: number;
+  id: string | number;
   name?: string;
   color?: string;
 };

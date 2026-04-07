@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { Tag } from "../types/tag";
+
 type ColorString = {
   hex: string;
 };
-type useDraftTagProps = {
+
+type UseDraftTagProps = {
   tags: Tag[];
   isEditTags: boolean;
   setTagsToBeDeleted: Dispatch<SetStateAction<Tag[]>>;
 };
+
 function useDraftTags({
   tags,
   isEditTags,
   setTagsToBeDeleted,
-}: useDraftTagProps) {
+}: UseDraftTagProps) {
   const [draftTags, setDraftTags] = useState<Tag[]>([]);
 
   useEffect(() => {
@@ -22,7 +25,7 @@ function useDraftTags({
     }
   }, [tags, isEditTags]);
 
-  function handleEditDraftTagName(newName: string, tagId: number) {
+  function handleEditDraftTagName(newName: string, tagId: Tag["id"]) {
     setDraftTags((prev) => {
       return prev.map((t) => {
         if (t.id === tagId) {

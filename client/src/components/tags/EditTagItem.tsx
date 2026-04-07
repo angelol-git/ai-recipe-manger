@@ -10,9 +10,9 @@ type ColorChange = {
 
 type EditTagItemProps = {
   tag: Tag;
-  handleNameChange: (newName: string, tagId: number) => void;
+  handleNameChange: (newName: string, tagId: Tag["id"]) => void;
   handleColorChange: (color: ColorChange, tag: Tag) => void;
-  handleDelete: (tagId: number) => void;
+  handleDelete: (tag: Tag) => void;
 };
 
 function EditTagItem({
@@ -61,7 +61,7 @@ function EditTagItem({
       <button
         type="button"
         onClick={() => {
-          handleDelete(tag.id);
+          handleDelete(tag);
         }}
         className="focus-visible:ring-accent/25 group border-accent/45 bg-accent/8 text-accent-hover hover:border-accent/55 hover:bg-accent/18 hover:text-accent-hover inline-flex min-h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border px-2 text-sm shadow-xs transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >

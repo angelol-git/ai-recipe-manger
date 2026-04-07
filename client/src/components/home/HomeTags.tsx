@@ -1,15 +1,15 @@
-import { useState } from "react";
-import EditTagItem from "../tags/EditTagItem.jsx";
-import TagChip from "../tags/TagChip.jsx";
-import useDraftTags from "../../hooks/useDraftTags.js";
-import type { Tag, EditableTagUpdate } from "../../types/tag.js";
+import { useEffect, useState } from "react";
+import EditTagItem from "../tags/EditTagItem";
+import TagChip from "../tags/TagChip";
+import useDraftTags from "../../hooks/useDraftTags";
+import type { Tag, EditableTagUpdate } from "../../types/tag";
 
 type HomeTagsProps = {
   tags: Tag[];
   selectedTags: Tag[];
   handleTagSelectedClick: (tag: Tag) => void;
-  tagCounts: Record<number, number>;
-  deleteTagsAll: (tagIds: number[]) => void;
+  tagCounts: Partial<Record<Tag["id"], number>>;
+  deleteTagsAll: (tagIds: Tag["id"][]) => void;
   isDeletingTags: boolean;
   editTagsAll: (updatedTags: EditableTagUpdate[]) => void;
 };
@@ -23,25 +23,51 @@ function HomeTags({
   isDeletingTags,
   editTagsAll,
 }: HomeTagsProps) {
-  const [tagsToBeDeleted, setTagsToBeDeleted] = useState([]);
+  const [tagsToBeDeleted, setTagsToBeDeleted] = useState<Tag[]>([]);
   const [isEditTags, setIsEditTags] = useState(false);
+  const [optimisticTags, setOptimisticTags] = useState<Tag[] | null>(null);
   const {
     draftTags,
     handleDraftTagDelete,
     handleEditDraftTagName,
     handleEditDraftTagColor,
   } = useDraftTags({ tags, isEditTags, setTagsToBeDeleted });
+  const visibleTags = optimisticTags ?? tags;
+
+  useEffect(() => {
+    if (!optimisticTags) {
+      return;
+    }
+
+    const tagsMatchOptimisticState =
+      tags.length === optimisticTags.length &&
+      tags.every((tag, index) => {
+        const optimisticTag = optimisticTags[index];
+        return (
+          optimisticTag &&
+          optimisticTag.id === tag.id &&
+          optimisticTag.name === tag.name &&
+          optimisticTag.color === tag.color
+        );
+      });
+
+    if (tagsMatchOptimisticState) {
+      setOptimisticTags(null);
+    }
+  }, [optimisticTags, tags]);
 
   function handleTagDone() {
-    const tagsToUpdate = draftTags.filter((tag: Tag) => {
+    const tagsToUpdate = draftTags.filter((tag) => {
       const original = tags.find((t) => t.id === tag.id);
       return (
         original && (original.name !== tag.name || original.color !== tag.color)
       );
     });
 
+    setOptimisticTags(draftTags);
+
     if (tagsToBeDeleted.length) {
-      deleteTagsAll(tagsToBeDeleted.map((t: Tag) => t.id));
+      deleteTagsAll(tagsToBeDeleted.map((tag) => tag.id));
     }
     if (tagsToUpdate.length) {
       editTagsAll(tagsToUpdate);
@@ -68,8 +94,8 @@ function HomeTags({
             </button>
           </div>
           <div className="flex flex-wrap gap-2 py-2">
-            {tags.length > 0 ? (
-              tags.map((tag) => {
+            {visibleTags.length > 0 ? (
+              visibleTags.map((tag) => {
                 const count = tagCounts[tag.id] || 0;
                 const isSelected = selectedTags.some((selectedTag) => {
                   return selectedTag.name === tag.name;
@@ -116,7 +142,7 @@ function HomeTags({
           </div>
           <div className="flex flex-wrap gap-3 py-2">
             {draftTags.length > 0 ? (
-              draftTags.map((tag: Tag) => {
+              draftTags.map((tag) => {
                 return (
                   <EditTagItem
                     key={tag.id}
