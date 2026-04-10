@@ -6,7 +6,7 @@ import type { Tag, EditableTagUpdate } from "../types/tag";
 import type { User } from "../types/user";
 import type { Recipe } from "../types/recipe";
 
-export function useTags(user: User, recipes: Recipe[] = []) {
+export function useTags(user: User | null, recipes: Recipe[] = []) {
   const queryClient = useQueryClient();
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
@@ -77,10 +77,10 @@ export function useTags(user: User, recipes: Recipe[] = []) {
     });
   }, [uniqueTags]);
 
-  const tagCounts = useMemo<Record<number, number>>(() => {
+  const tagCounts = useMemo<Partial<Record<Tag["id"], number>>>(() => {
     if (!recipes.length) return {};
 
-    return recipes.reduce<Record<number, number>>((acc, recipe) => {
+    return recipes.reduce<Partial<Record<Tag["id"], number>>>((acc, recipe) => {
       recipe.tags.forEach((tag) => {
         acc[tag.id] = (acc[tag.id] ?? 0) + 1;
       });
@@ -89,7 +89,7 @@ export function useTags(user: User, recipes: Recipe[] = []) {
   }, [recipes]);
 
   const deleteTagsAllMutation = useMutation({
-    mutationFn: async (tagIds: number[]) => {
+    mutationFn: async (tagIds: Array<Tag["id"]>) => {
       if (user) {
         return deleteTagsAll(tagIds);
       } else {
@@ -97,7 +97,7 @@ export function useTags(user: User, recipes: Recipe[] = []) {
       }
     },
 
-    onMutate: async (tagIds: number[]) => {
+    onMutate: async (tagIds: Array<Tag["id"]>) => {
       await queryClient.cancelQueries({ queryKey: ["recipes"] });
 
       const previousRecipes = queryClient.getQueryData<Recipe[]>(["recipes"]);

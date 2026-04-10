@@ -1,7 +1,7 @@
 import { PanelLeftOpen } from "lucide-react";
 import ChatOptions from "./ChatOptions";
 import type { Recipe } from "../../../types/recipe";
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 
 type OpenDeleteModal = (
   recipe: Recipe,
@@ -10,10 +10,10 @@ type OpenDeleteModal = (
 ) => void;
 
 type ChatHeaderProps = {
-  recipe: Recipe;
+  recipe: Recipe | null;
   recipeVersion: number;
   isSideBarOpen: boolean;
-  setIsSideBarOpen: Dispatch<SetStateAction<boolean>>;
+  setIsSideBarOpen: ((nextIsOpen: boolean) => void) | Dispatch<SetStateAction<boolean>>;
   setIsEditModalOpen: Dispatch<SetStateAction<boolean>>;
   openDeleteModal: OpenDeleteModal;
   isMobile: boolean;
