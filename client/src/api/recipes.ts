@@ -1,20 +1,8 @@
 import API_BASE_URL from "../config/api";
-import type { Recipe, RecipeDetails } from "../types/recipe";
-import type { DraftTag, Tag } from "../types/tag";
+import type { Recipe, UpdateRecipeInput } from "../types/recipe";
+import type { DraftTag } from "../types/tag";
 
 const backendUrl = API_BASE_URL;
-
-export type UpdateRecipeInput = {
-  id: string;
-  recipe_id: string;
-  title: string;
-  tags: Tag[];
-  description: string;
-  instructions: string[];
-  ingredients: string[];
-  recipeDetails: RecipeDetails;
-  source_prompt: string;
-};
 
 export async function fetchAllRecipes(): Promise<Recipe[]> {
   const res = await fetch(`${backendUrl}/recipes/`, {

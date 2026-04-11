@@ -6,7 +6,6 @@ import {
   deleteRecipe,
   updateRecipe,
   addRecipeTag,
-  type UpdateRecipeInput,
 } from "../api/recipes";
 import {
   getLocalRecipes,
@@ -16,7 +15,7 @@ import {
   updateLocalRecipe,
   addLocalRecipeTag,
 } from "../utils/storage";
-import type { Recipe } from "../types/recipe";
+import type { Recipe, UpdateRecipeInput } from "../types/recipe";
 import type { DraftTag, Tag } from "../types/tag";
 
 type DeleteRecipeMutationProps = {

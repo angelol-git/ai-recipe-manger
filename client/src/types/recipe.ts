@@ -25,3 +25,15 @@ export type RecipeVersion = {
   recipeDetails: RecipeDetails;
   source_prompt: string;
 };
+
+export type UpdateRecipeInput = {
+  id: string;
+  recipe_id: string;
+  title: string;
+  tags: Tag[];
+  description: string;
+  instructions: string[];
+  ingredients: string[];
+  recipeDetails: RecipeDetails;
+  source_prompt: string;
+};

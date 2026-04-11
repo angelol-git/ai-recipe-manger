@@ -2,9 +2,8 @@ import {
   normalizeStoredRecipe,
   normalizeStoredRecipes,
 } from "./normalizeStoredRecipe";
-import type { Recipe } from "../types/recipe";
+import type { Recipe, UpdateRecipeInput } from "../types/recipe";
 import type { DraftTag, EditableTagUpdate, Tag } from "../types/tag";
-import type { UpdateRecipeInput } from "../api/recipes";
 
 function generateId(): string {
   return crypto.randomUUID();
