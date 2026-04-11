@@ -1,80 +1,99 @@
-import type { Recipe, RecipeDetails, RecipeVersion } from "../types/recipe";
+import { z } from "zod";
+import type { Recipe, RecipeVersion } from "../types/recipe";
 import type { Tag } from "../types/tag";
 
-type StoredRecipeLike = Partial<Recipe> & {
-  tags?: unknown;
-  versions?: unknown;
-};
+const storedListSchema = z
+  .union([z.array(z.unknown()), z.string(), z.undefined(), z.null()])
+  .transform((value): string[] => {
+    if (Array.isArray(value)) {
+      return value.map((item) => String(item ?? ""));
+    }
 
-type StoredRecipeVersionLike = Partial<RecipeVersion> &
-  Partial<RecipeDetails> & {
-    ingredients?: unknown;
-    instructions?: unknown;
-    recipeDetails?: Partial<RecipeDetails> | null;
-  };
+    if (typeof value === "string") {
+      const trimmed = value.trim();
 
-function normalizeStoredList(value: unknown): string[] {
-  if (Array.isArray(value)) {
-    return value.map((item) => String(item ?? ""));
-  }
+      if (!trimmed) return [];
 
-  if (typeof value === "string") {
-    const trimmed = value.trim();
-
-    if (!trimmed) return [];
-
-    try {
-      const parsed: unknown = JSON.parse(trimmed);
-      if (Array.isArray(parsed)) {
-        return parsed.map((item) => String(item ?? ""));
+      try {
+        const parsed: unknown = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed.map((item) => String(item ?? ""));
+        }
+      } catch {
+        return [value];
       }
-    } catch {
+
       return [value];
     }
 
-    return [value];
-  }
+    return [];
+  });
 
-  return [];
-}
+const recipeDetailsSchema = z.object({
+  calories: z.union([z.string(), z.number(), z.null()]).optional(),
+  servings: z.union([z.string(), z.number(), z.null()]).optional(),
+  total_time: z.union([z.string(), z.number(), z.null()]).optional(),
+});
 
-function normalizeStoredRecipeVersion(
-  version: StoredRecipeVersionLike = {},
-): RecipeVersion {
-  const recipeDetailsSource = version.recipeDetails || version;
+const tagSchema = z.object({
+  id: z.union([z.string(), z.number()]),
+  name: z.string(),
+  color: z.string(),
+}) satisfies z.ZodType<Tag>;
 
-  return {
-    id: version.id ?? "",
-    recipeDetails: {
-      calories: recipeDetailsSource.calories ?? null,
-      servings: recipeDetailsSource.servings ?? null,
-      total_time: recipeDetailsSource.total_time ?? null,
+const storedRecipeVersionSchema = z
+  .object({
+    id: z.union([z.string(), z.number()]).optional(),
+    description: z.string().optional(),
+    ingredients: storedListSchema.optional(),
+    instructions: storedListSchema.optional(),
+    source_prompt: z.string().optional(),
+    recipeDetails: recipeDetailsSchema.partial().nullable().optional(),
+  })
+  .transform(
+    (version): RecipeVersion => {
+      return {
+        id: String(version.id ?? ""),
+        recipeDetails: {
+          calories: version.recipeDetails?.calories ?? null,
+          servings: version.recipeDetails?.servings ?? null,
+          total_time: version.recipeDetails?.total_time ?? null,
+        },
+        description: version.description ?? "",
+        ingredients: version.ingredients ?? [],
+        instructions: version.instructions ?? [],
+        source_prompt: version.source_prompt ?? "",
+      };
     },
-    description: version.description || "",
-    ingredients: normalizeStoredList(version.ingredients),
-    instructions: normalizeStoredList(version.instructions),
-    source_prompt: version.source_prompt || "",
-  };
-}
+  );
 
-export function normalizeStoredRecipe(recipe: StoredRecipeLike = {}): Recipe {
-  return {
-    id: recipe.id ?? "",
-    title: recipe.title || "",
-    source_url: recipe.source_url ?? null,
-    created_at: recipe.created_at ?? null,
-    tags: Array.isArray(recipe.tags) ? (recipe.tags as Tag[]) : [],
-    versions: Array.isArray(recipe.versions)
-      ? recipe.versions.map((version) =>
-          normalizeStoredRecipeVersion(version as StoredRecipeVersionLike),
-        )
-      : [],
-  };
+const storedRecipeSchema = z
+  .object({
+    id: z.union([z.string(), z.number()]).optional(),
+    title: z.string().optional(),
+    source_url: z.string().nullable().optional(),
+    created_at: z.string().nullable().optional(),
+    tags: z.array(tagSchema).optional(),
+    versions: z.array(storedRecipeVersionSchema).optional(),
+  })
+  .transform(
+    (recipe): Recipe => ({
+      id: String(recipe.id ?? ""),
+      title: recipe.title ?? "",
+      source_url: recipe.source_url ?? null,
+      created_at: recipe.created_at ?? null,
+      tags: recipe.tags ?? [],
+      versions: recipe.versions ?? [],
+    }),
+  );
+
+const storedRecipesSchema = z.array(storedRecipeSchema);
+
+export function normalizeStoredRecipe(recipe: unknown = {}): Recipe {
+  return storedRecipeSchema.parse(recipe);
 }
 
 export function normalizeStoredRecipes(recipes: unknown): Recipe[] {
-  if (!Array.isArray(recipes)) return [];
-  return recipes.map((recipe) =>
-    normalizeStoredRecipe(recipe as StoredRecipeLike),
-  );
+  const result = storedRecipesSchema.safeParse(recipes);
+  return result.success ? result.data : [];
 }
